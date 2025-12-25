@@ -210,22 +210,6 @@ export default function AdminIcal() {
   return (
     <AdminLayout title="Sincronizzazione Calendari">
       <div className="space-y-6">
-        {/* Unit Selector */}
-        {units.length > 1 && (
-          <div className="flex gap-2">
-            {units.map(unit => (
-              <Button
-                key={unit.id}
-                variant={selectedUnit?.id === unit.id ? "default" : "outline"}
-                onClick={() => setSelectedUnit(unit)}
-                className={selectedUnit?.id === unit.id ? "bg-[#C5A059] hover:bg-[#B08A3E]" : ""}
-              >
-                <Home className="h-4 w-4 mr-2" />
-                {unit.nome}
-              </Button>
-            ))}
-          </div>
-        )}
 
         {/* Export Section */}
         <Card>
