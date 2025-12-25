@@ -471,7 +471,6 @@ Antonella – La Maisonette di Paestum`;
         <div className="flex gap-2 border-b">
           {[
             { key: 'bookings', label: 'Prenotazioni', icon: Calendar },
-            { key: 'units', label: 'Casette', icon: Home },
             { key: 'prices', label: 'Prezzi', icon: Euro },
             { key: 'blocks', label: 'Blocchi Date', icon: X }
           ].map(tab => (
