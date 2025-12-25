@@ -211,7 +211,43 @@ export default function AdminIcal() {
     <AdminLayout title="Sincronizzazione Calendari">
       <div className="space-y-6">
 
-        {/* Export Section */}
+        {/* Unit Selector */}
+        {units.length > 0 && (
+          <div className="bg-white p-4 rounded-lg border">
+            <Label className="text-sm font-medium mb-2 block">Seleziona Casetta</Label>
+            <div className="flex flex-wrap gap-2">
+              {units.map(unit => (
+                <Button
+                  key={unit.id}
+                  variant={selectedUnit?.id === unit.id ? "default" : "outline"}
+                  onClick={() => setSelectedUnit(unit)}
+                  className={selectedUnit?.id === unit.id ? "bg-[#C5A059] hover:bg-[#B08A3E]" : ""}
+                >
+                  <Home className="h-4 w-4 mr-2" />
+                  {unit.nome}
+                </Button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {units.length === 0 && (
+          <div className="bg-amber-50 border border-amber-200 rounded-lg p-6 text-center">
+            <Home className="h-12 w-12 mx-auto text-[#C5A059] mb-3" />
+            <h3 className="font-semibold text-lg mb-2">Nessuna Casetta</h3>
+            <p className="text-gray-600 mb-4">Devi prima creare almeno una casetta per configurare la sincronizzazione calendari.</p>
+            <Button 
+              onClick={() => window.location.href = '/admin/structure'}
+              className="bg-[#C5A059] hover:bg-[#B08A3E]"
+            >
+              Vai a Struttura → Casette
+            </Button>
+          </div>
+        )}
+
+        {selectedUnit && (
+          <>
+            {/* Export Section */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
