@@ -1,15 +1,8 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
-
-const AuthContext = createContext(null);
-
-// Use relative URL in production, env variable in development
 import { API } from '../lib/api';
 
-// API is now imported from lib/api.js
-const _API = window.location.hostname === 'localhost' 
-  ? `${process.env.REACT_APP_BACKEND_URL}/api`
-  : '/api';
+const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
