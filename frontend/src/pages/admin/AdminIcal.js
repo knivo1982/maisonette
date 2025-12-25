@@ -464,6 +464,8 @@ export default function AdminIcal() {
             </div>
           </DialogContent>
         </Dialog>
+          </>
+        )}
       </div>
     </AdminLayout>
   );
