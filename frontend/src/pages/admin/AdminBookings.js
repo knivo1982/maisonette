@@ -962,37 +962,55 @@ Antonella – La Maisonette di Paestum`;
                   </Dialog>
                 </div>
 
-                <div className="grid md:grid-cols-2 gap-4">
-                  {units.map((unit) => (
-                    <Card key={unit.id}>
-                      <CardContent className="py-4">
-                        <div className="flex justify-between items-start">
-                          <div>
-                            <div className="flex items-center gap-2">
-                              <h3 className="font-cinzel text-lg">{unit.nome}</h3>
-                              {!unit.attivo && (
-                                <span className="text-xs bg-red-100 text-red-800 px-2 py-0.5 rounded">Disattivata</span>
-                              )}
+                {units.length === 0 ? (
+                  <div className="text-center py-12 bg-amber-50 rounded-lg border-2 border-dashed border-[#C5A059]">
+                    <Home className="w-16 h-16 mx-auto text-[#C5A059] mb-4" />
+                    <h3 className="font-cinzel text-xl text-[#1A202C] mb-2">Nessuna Casetta</h3>
+                    <p className="text-[#4A5568] mb-4">Inizia creando la tua prima casetta per gestire le prenotazioni</p>
+                    <Button 
+                      className="bg-[#C5A059] hover:bg-[#B08D45]"
+                      onClick={() => { resetUnitForm(); setUnitDialogOpen(true); }}
+                    >
+                      <Plus className="w-4 h-4 mr-2" /> Crea Prima Casetta
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="grid md:grid-cols-2 gap-4">
+                    {units.map((unit) => (
+                      <Card key={unit.id} className="border-l-4 border-l-[#C5A059]">
+                        <CardContent className="py-4">
+                          <div className="flex justify-between items-start">
+                            <div>
+                              <div className="flex items-center gap-2">
+                                <h3 className="font-cinzel text-lg">{unit.nome}</h3>
+                                {unit.attivo ? (
+                                  <span className="text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded">Attiva</span>
+                                ) : (
+                                  <span className="text-xs bg-red-100 text-red-800 px-2 py-0.5 rounded">Disattivata</span>
+                                )}
+                              </div>
+                              <p className="text-sm text-[#4A5568] mt-1">{unit.descrizione || 'Nessuna descrizione'}</p>
+                              <div className="flex gap-4 mt-2 text-sm text-[#4A5568]">
+                                <span className="flex items-center gap-1">
+                                  <Users className="w-4 h-4" /> Max {unit.capacita_max} ospiti
+                                </span>
+                                <span className="text-[#C5A059] font-bold">€{unit.prezzo_base}/notte</span>
+                              </div>
                             </div>
-                            <p className="text-sm text-[#4A5568] mt-1">{unit.descrizione}</p>
-                            <div className="flex gap-4 mt-2 text-sm text-[#4A5568]">
-                              <span>Max {unit.capacita_max} ospiti</span>
-                              <span className="text-[#C5A059] font-medium">€{unit.prezzo_base}/notte</span>
+                            <div className="flex gap-2">
+                              <Button size="sm" variant="outline" onClick={() => openEditUnit(unit)}>
+                                <Edit className="w-4 h-4" />
+                              </Button>
+                              <Button size="sm" variant="outline" className="text-red-600 hover:bg-red-50" onClick={() => deleteUnit(unit.id)}>
+                                <Trash2 className="w-4 h-4" />
+                              </Button>
                             </div>
                           </div>
-                          <div className="flex gap-2">
-                            <Button size="sm" variant="outline" onClick={() => openEditUnit(unit)}>
-                              <Edit className="w-4 h-4" />
-                            </Button>
-                            <Button size="sm" variant="outline" className="text-red-600" onClick={() => deleteUnit(unit.id)}>
-                              <Trash2 className="w-4 h-4" />
-                            </Button>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
 
