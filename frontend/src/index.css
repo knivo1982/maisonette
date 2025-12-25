@@ -1,75 +1,144 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Manrope:wght@300;400;600&family=Playfair+Display:wght@400;600&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-body {
-    margin: 0;
-    font-family:
-        -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-        "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-        sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+/* Safe area support for iPhone notch/dynamic island */
+:root {
+    --safe-top: env(safe-area-inset-top);
 }
 
-code {
-    font-family:
-        source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
+body {
+    padding-top: var(--safe-top);
+}
+
+header, .header, navbar, .navbar, .top-bar, nav {
+    padding-top: var(--safe-top);
+}
+
+@supports (padding-top: env(safe-area-inset-top)) {
+    .pt-safe {
+        padding-top: env(safe-area-inset-top);
+    }
+}
+
+/* Splash Screen Animations */
+@keyframes splashLogo {
+    0% {
+        opacity: 0;
+        transform: scale(0.8) translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+@keyframes splashText {
+    0% {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes splashLoader {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes splashLine {
+    0% {
+        transform: scaleX(0);
+    }
+    100% {
+        transform: scaleX(1);
+    }
+}
+
+.animate-splash-logo {
+    animation: splashLogo 0.8s ease-out forwards;
+}
+
+.animate-splash-text {
+    opacity: 0;
+    animation: splashText 0.6s ease-out 0.4s forwards;
+}
+
+.animate-splash-loader {
+    opacity: 0;
+    animation: splashLoader 0.4s ease-out 0.8s forwards;
+}
+
+.animate-splash-line {
+    transform: scaleX(0);
+    animation: splashLine 1.5s ease-out 0.5s forwards;
+}
+
+:root {
+    --paestum-gold: #C5A059;
+    --paestum-gold-light: #E6C985;
+    --temple-stone: #F9F9F7;
+    --tyrrhenian-deep: #1A202C;
+    --neutral-light: #E2E8F0;
+    --neutral-dark: #4A5568;
+}
+
+body {
+    margin: 0;
+    font-family: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background-color: var(--temple-stone);
+    color: var(--tyrrhenian-deep);
+}
+
+.font-cinzel {
+    font-family: 'Cinzel', serif;
+}
+
+.font-cormorant {
+    font-family: 'Cormorant Garamond', serif;
+}
+
+.font-manrope {
+    font-family: 'Manrope', sans-serif;
+}
+
+.font-playfair {
+    font-family: 'Playfair Display', serif;
 }
 
 @layer base {
     :root {
-        --background: 0 0% 100%;
-        --foreground: 0 0% 3.9%;
+        --background: 60 20% 98%;
+        --foreground: 220 26% 14%;
         --card: 0 0% 100%;
-        --card-foreground: 0 0% 3.9%;
+        --card-foreground: 220 26% 14%;
         --popover: 0 0% 100%;
-        --popover-foreground: 0 0% 3.9%;
-        --primary: 0 0% 9%;
-        --primary-foreground: 0 0% 98%;
-        --secondary: 0 0% 96.1%;
-        --secondary-foreground: 0 0% 9%;
-        --muted: 0 0% 96.1%;
-        --muted-foreground: 0 0% 45.1%;
-        --accent: 0 0% 96.1%;
-        --accent-foreground: 0 0% 9%;
-        --destructive: 0 84.2% 60.2%;
-        --destructive-foreground: 0 0% 98%;
-        --border: 0 0% 89.8%;
-        --input: 0 0% 89.8%;
-        --ring: 0 0% 3.9%;
-        --chart-1: 12 76% 61%;
-        --chart-2: 173 58% 39%;
-        --chart-3: 197 37% 24%;
-        --chart-4: 43 74% 66%;
-        --chart-5: 27 87% 67%;
-        --radius: 0.5rem;
-    }
-    .dark {
-        --background: 0 0% 3.9%;
-        --foreground: 0 0% 98%;
-        --card: 0 0% 3.9%;
-        --card-foreground: 0 0% 98%;
-        --popover: 0 0% 3.9%;
-        --popover-foreground: 0 0% 98%;
-        --primary: 0 0% 98%;
-        --primary-foreground: 0 0% 9%;
-        --secondary: 0 0% 14.9%;
-        --secondary-foreground: 0 0% 98%;
-        --muted: 0 0% 14.9%;
-        --muted-foreground: 0 0% 63.9%;
-        --accent: 0 0% 14.9%;
-        --accent-foreground: 0 0% 98%;
-        --destructive: 0 62.8% 30.6%;
-        --destructive-foreground: 0 0% 98%;
-        --border: 0 0% 14.9%;
-        --input: 0 0% 14.9%;
-        --ring: 0 0% 83.1%;
-        --chart-1: 220 70% 50%;
-        --chart-2: 160 60% 45%;
-        --chart-3: 30 80% 55%;
-        --chart-4: 280 65% 60%;
-        --chart-5: 340 75% 55%;
+        --popover-foreground: 220 26% 14%;
+        --primary: 42 44% 55%;
+        --primary-foreground: 0 0% 100%;
+        --secondary: 60 20% 98%;
+        --secondary-foreground: 220 26% 14%;
+        --muted: 220 14% 96%;
+        --muted-foreground: 215 16% 47%;
+        --accent: 42 44% 55%;
+        --accent-foreground: 0 0% 100%;
+        --destructive: 0 72% 51%;
+        --destructive-foreground: 0 0% 100%;
+        --border: 220 13% 91%;
+        --input: 220 13% 91%;
+        --ring: 42 44% 55%;
+        --radius: 0.25rem;
     }
 }
 
@@ -78,38 +147,95 @@ code {
         @apply border-border;
     }
     body {
-        @apply bg-background text-foreground;
+        @apply bg-[#F9F9F7] text-[#1A202C];
+    }
+    h1, h2, h3 {
+        font-family: 'Cinzel', serif;
     }
 }
 
-@layer base {
-    [data-debug-wrapper="true"] {
-        display: contents !important;
-    }
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
 
-    [data-debug-wrapper="true"] > * {
-        margin-left: inherit;
-        margin-right: inherit;
-        margin-top: inherit;
-        margin-bottom: inherit;
-        padding-left: inherit;
-        padding-right: inherit;
-        padding-top: inherit;
-        padding-bottom: inherit;
-        column-gap: inherit;
-        row-gap: inherit;
-        gap: inherit;
-        border-left-width: inherit;
-        border-right-width: inherit;
-        border-top-width: inherit;
-        border-bottom-width: inherit;
-        border-left-style: inherit;
-        border-right-style: inherit;
-        border-top-style: inherit;
-        border-bottom-style: inherit;
-        border-left-color: inherit;
-        border-right-color: inherit;
-        border-top-color: inherit;
-        border-bottom-color: inherit;
-    }
+::-webkit-scrollbar-track {
+    background: var(--temple-stone);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--paestum-gold);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #B08D45;
+}
+
+/* Gold gradient text */
+.text-gold-gradient {
+    background: linear-gradient(135deg, var(--paestum-gold) 0%, var(--paestum-gold-light) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Subtle animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+}
+
+@keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
+.shimmer {
+    background: linear-gradient(90deg, transparent, rgba(197, 160, 89, 0.1), transparent);
+    background-size: 200% 100%;
+    animation: shimmer 2s infinite;
+}
+
+/* Card hover effect */
+.card-hover {
+    transition: all 0.3s ease;
+}
+
+.card-hover:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+}
+
+/* Button styles */
+.btn-gold {
+    @apply bg-[#C5A059] text-white font-cinzel tracking-widest uppercase px-6 py-3 hover:bg-[#B08D45] transition-all duration-300 shadow-lg hover:shadow-xl;
+}
+
+.btn-gold-outline {
+    @apply border-2 border-[#C5A059] text-[#C5A059] font-cinzel tracking-widest uppercase px-6 py-3 hover:bg-[#C5A059] hover:text-white transition-all duration-300;
+}
+
+/* Input styles */
+.input-underline {
+    @apply bg-transparent border-b-2 border-[#E2E8F0] focus:border-[#C5A059] px-0 py-3 outline-none transition-all placeholder:text-gray-400 w-full;
+}
+
+/* Gold border accent */
+.border-gold {
+    border-left: 4px solid var(--paestum-gold);
+}
+
+/* Soft shadow */
+.shadow-soft {
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
+}
+
+/* Gold glow */
+.glow-gold {
+    box-shadow: 0 0 15px rgba(197, 160, 89, 0.3);
 }

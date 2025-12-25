@@ -1,34 +1,213 @@
-.App-logo {
-    height: 40vmin;
-    pointer-events: none;
-}
+/* Maisonette di Paestum - App Styles */
 
-@media (prefers-reduced-motion: no-preference) {
-    .App-logo {
-        animation: App-logo-spin infinite 20s linear;
-    }
-}
-
-.App-header {
-    background-color: #0f0f10;
+.App {
     min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: calc(10px + 2vmin);
+    background-color: #F9F9F7;
+}
+
+/* Hero section */
+.hero-overlay {
+    background: linear-gradient(to bottom, rgba(26, 32, 44, 0.4), rgba(26, 32, 44, 0.7));
+}
+
+/* Navigation */
+.nav-link {
+    position: relative;
+    color: #1A202C;
+    transition: color 0.3s ease;
+}
+
+.nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: #C5A059;
+    transition: width 0.3s ease;
+}
+
+.nav-link:hover::after,
+.nav-link.active::after {
+    width: 100%;
+}
+
+.nav-link:hover,
+.nav-link.active {
+    color: #C5A059;
+}
+
+/* Cards */
+.structure-card {
+    background: white;
+    border: 1px solid #E2E8F0;
+    transition: all 0.4s ease;
+}
+
+.structure-card:hover {
+    border-color: #C5A059;
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+}
+
+/* Event card */
+.event-card {
+    background: #F9F9F7;
+    border-left: 4px solid #C5A059;
+    transition: all 0.3s ease;
+}
+
+.event-card:hover {
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+}
+
+/* Loyalty card */
+.loyalty-card {
+    background: linear-gradient(135deg, #1A202C 0%, #2D3748 100%);
     color: white;
+    position: relative;
+    overflow: hidden;
 }
 
-.App-link {
-    color: #61dafb;
+.loyalty-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, rgba(197, 160, 89, 0.2) 0%, transparent 70%);
 }
 
-@keyframes App-logo-spin {
-    from {
-        transform: rotate(0deg);
-    }
+/* Points display */
+.points-display {
+    font-family: 'Cinzel', serif;
+    font-size: 3rem;
+    color: #C5A059;
+    text-shadow: 0 0 20px rgba(197, 160, 89, 0.3);
+}
+
+/* Status badge */
+.status-pending {
+    background-color: #FEF3C7;
+    color: #92400E;
+}
+
+.status-confirmed {
+    background-color: #D1FAE5;
+    color: #065F46;
+}
+
+.status-completed {
+    background-color: #E0E7FF;
+    color: #3730A3;
+}
+
+.status-cancelled {
+    background-color: #FEE2E2;
+    color: #991B1B;
+}
+
+/* Admin sidebar */
+.admin-sidebar {
+    background: #1A202C;
+    min-height: 100vh;
+}
+
+.admin-nav-item {
+    color: #A0AEC0;
+    transition: all 0.3s ease;
+    padding: 12px 20px;
+    border-left: 3px solid transparent;
+}
+
+.admin-nav-item:hover,
+.admin-nav-item.active {
+    color: #C5A059;
+    background: rgba(197, 160, 89, 0.1);
+    border-left-color: #C5A059;
+}
+
+/* Form styles */
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-label {
+    display: block;
+    font-family: 'Manrope', sans-serif;
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: #4A5568;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Table styles */
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.admin-table th {
+    text-align: left;
+    padding: 1rem;
+    background: #F9F9F7;
+    font-family: 'Manrope', sans-serif;
+    font-weight: 600;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #4A5568;
+    border-bottom: 2px solid #E2E8F0;
+}
+
+.admin-table td {
+    padding: 1rem;
+    border-bottom: 1px solid #E2E8F0;
+}
+
+.admin-table tr:hover td {
+    background: rgba(197, 160, 89, 0.05);
+}
+
+/* Mobile menu */
+.mobile-menu {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    background-color: #1A202C !important;
+    z-index: 100 !important;
+}
+
+.mobile-menu a {
+    font-family: 'Manrope', sans-serif;
+    font-weight: 500;
+}
+
+/* Loading spinner */
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid #E2E8F0;
+    border-top-color: #C5A059;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
     to {
         transform: rotate(360deg);
+    }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .points-display {
+        font-size: 2rem;
     }
 }
