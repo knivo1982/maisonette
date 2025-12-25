@@ -3002,8 +3002,8 @@ async def admin_get_export_url(unit_id: str, admin: dict = Depends(get_admin_use
     if not unit:
         raise HTTPException(status_code=404, detail="Unità non trovata")
     
-    # Get app URL from environment or construct it
-    app_url = os.environ.get('APP_URL', 'https://booking.lamaisonettepaestum.com')
+    # Use production domain for iCal export URLs (must be stable for Booking/Airbnb)
+    app_url = "https://booking.lamaisonettepaestum.com"
     export_url = f"{app_url}/api/ical/{unit_id}.ics"
     
     return {
