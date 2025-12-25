@@ -8,7 +8,7 @@ import { Textarea } from '../components/ui/textarea';
 import { Calendar, Users, Euro, Check, X, Home, ArrowRight, Phone, Mail, ChevronLeft, ChevronRight } from 'lucide-react';
 import { toast } from 'sonner';
 
-const API = process.env.REACT_APP_BACKEND_URL;
+import { BASE_URL as API } from '../lib/api';
 
 // Mini Calendar Component for availability
 function AvailabilityCalendar({ unitId, bookedDates, onDateSelect }) {

@@ -8,7 +8,7 @@ import axios from 'axios';
 import { toast } from 'sonner';
 import { Calendar, MapPin, Gift, ClipboardCheck, ArrowRight, Star, Copy } from 'lucide-react';
 
-const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
+import { API } from '../lib/api';
 
 export default function DashboardPage() {
   const { user, token, loading: authLoading } = useAuth();

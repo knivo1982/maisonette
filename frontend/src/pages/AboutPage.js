@@ -4,7 +4,7 @@ import Layout from '../components/Layout';
 import { Button } from '../components/ui/button';
 import { Wifi, Car, Coffee, Sun, Waves, TreePine, Wind, Tv, MapPin, Star, ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 
-const API = process.env.REACT_APP_BACKEND_URL;
+import { BASE_URL as API } from '../lib/api';
 
 const ICON_MAP = {
   wifi: Wifi,

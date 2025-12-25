@@ -17,7 +17,7 @@ import { toast } from 'sonner';
 import { CalendarIcon, Users, Check, Upload, Image as ImageIcon, Plus, Trash2, User, Mail, Key } from 'lucide-react';
 import { useEffect } from 'react';
 
-const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
+import { API } from '../lib/api';
 
 const DOCUMENT_TYPES = [
   { value: 'carta_identita', label: "Carta d'Identità" },

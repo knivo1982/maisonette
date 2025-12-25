@@ -4,7 +4,10 @@ import axios from 'axios';
 const AuthContext = createContext(null);
 
 // Use relative URL in production, env variable in development
-const API = window.location.hostname === 'localhost' 
+import { API } from '../lib/api';
+
+// API is now imported from lib/api.js
+const _API = window.location.hostname === 'localhost' 
   ? `${process.env.REACT_APP_BACKEND_URL}/api`
   : '/api';
 

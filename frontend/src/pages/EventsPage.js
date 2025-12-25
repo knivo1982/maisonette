@@ -7,7 +7,7 @@ import axios from 'axios';
 import { Calendar, MapPin, Clock, Search, Tag, Navigation, ExternalLink } from 'lucide-react';
 import { Button } from '../components/ui/button';
 
-const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
+import { API } from '../lib/api';
 
 export default function EventsPage() {
   const [events, setEvents] = useState([]);
