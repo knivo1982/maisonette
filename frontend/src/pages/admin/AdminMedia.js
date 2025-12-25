@@ -8,7 +8,7 @@ import axios from 'axios';
 import { toast } from 'sonner';
 import { Upload, Trash2, Copy, Image, Check, X } from 'lucide-react';
 
-const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
+import { API, BASE_URL } from '../../lib/api';
 
 export default function AdminMedia() {
   const { token } = useAuth();
@@ -81,7 +81,7 @@ export default function AdminMedia() {
   const copyUrl = (url) => {
     // Use /api/uploads path for correct routing
     const apiUrl = url.replace('/uploads/', '/api/uploads/');
-    const fullUrl = `${process.env.REACT_APP_BACKEND_URL}${apiUrl}`;
+    const fullUrl = `${BASE_URL}${apiUrl}`;
     navigator.clipboard.writeText(fullUrl);
     setCopiedId(url);
     toast.success('URL copiato!');
@@ -90,7 +90,7 @@ export default function AdminMedia() {
 
   const getImageUrl = (url) => {
     const apiUrl = url.replace('/uploads/', '/api/uploads/');
-    return `${process.env.REACT_APP_BACKEND_URL}${apiUrl}`;
+    return `${BASE_URL}${apiUrl}`;
   };
 
   return (
