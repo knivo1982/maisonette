@@ -7,7 +7,7 @@ import axios from 'axios';
 import { toast } from 'sonner';
 import { ShoppingCart, Euro, Package } from 'lucide-react';
 
-const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
+import { API } from '../../lib/api';
 
 const STATUSES = [
   { value: 'pending', label: 'In attesa', class: 'bg-yellow-100 text-yellow-700' },

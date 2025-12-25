@@ -11,7 +11,7 @@ import axios from 'axios';
 import { toast } from 'sonner';
 import { Plus, Edit, Trash2, Image, Settings, Wifi, Car, Coffee, Sun, Waves, TreePine, Wind, Tv } from 'lucide-react';
 
-const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
+import { API } from '../../lib/api';
 
 const ICONS = [
   { value: 'wifi', label: 'WiFi', icon: Wifi },

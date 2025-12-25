@@ -13,7 +13,7 @@ import { Gift, User, Clock, Check, X, Search, Plus, Minus, Trophy, Star } from '
 import { formatDistanceToNow } from 'date-fns';
 import { it } from 'date-fns/locale';
 
-const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
+import { API } from '../../lib/api';
 
 export default function AdminRedemptions() {
   const { token } = useAuth();

@@ -31,7 +31,7 @@ import { useState, useEffect } from 'react';
 import { Button } from '../../components/ui/button';
 import axios from 'axios';
 
-const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
+import { API } from '../../lib/api';
 
 export default function AdminLayout({ children, title }) {
   const { user, logout, isAdmin, loading, token } = useAuth();

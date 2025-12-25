@@ -9,7 +9,7 @@ import axios from 'axios';
 import { toast } from 'sonner';
 import { Search, MapPin, Star, Import, Check, Loader2, Navigation } from 'lucide-react';
 
-const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
+import { API } from '../../lib/api';
 
 const PLACE_CATEGORIES = [
   { value: 'restaurant', label: 'Ristoranti', icon: '🍽️' },

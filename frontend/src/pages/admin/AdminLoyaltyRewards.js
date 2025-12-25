@@ -11,7 +11,7 @@ import axios from 'axios';
 import { toast } from 'sonner';
 import { Plus, Edit, Trash2, Gift, Wine, ShoppingBag, Compass, Home } from 'lucide-react';
 
-const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
+import { API } from '../../lib/api';
 
 const CATEGORIES = [
   { value: 'bevande', label: '🍾 Bevande', icon: Wine },

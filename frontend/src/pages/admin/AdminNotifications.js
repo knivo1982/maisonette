@@ -14,7 +14,7 @@ import { Plus, Trash2, Bell, Send, Users, User, Gift, Calendar, Info, Star, Aler
 import { formatDistanceToNow } from 'date-fns';
 import { it } from 'date-fns/locale';
 
-const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
+import { API } from '../../lib/api';
 
 const NOTIFICATION_TYPES = [
   { value: 'info', label: 'Informazione', icon: Info },

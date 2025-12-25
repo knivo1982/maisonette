@@ -12,7 +12,7 @@ import {
   DollarSign, Save, Calculator, Calendar, Percent, Users, Moon, Sun, Snowflake, Leaf
 } from 'lucide-react';
 
-const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
+import { API } from '../../lib/api';
 
 export default function AdminPricing() {
   const { token } = useAuth();

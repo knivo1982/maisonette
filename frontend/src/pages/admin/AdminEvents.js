@@ -11,7 +11,7 @@ import axios from 'axios';
 import { toast } from 'sonner';
 import { Plus, Edit, Trash2, Calendar, MapPin, Clock } from 'lucide-react';
 
-const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
+import { API } from '../../lib/api';
 
 const CATEGORIES = [
   { value: 'musica', label: 'Musica' },
