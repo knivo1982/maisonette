@@ -1890,6 +1890,27 @@ async def get_suggested_itineraries():
 
 # ==================== UNITS (CASETTE) ROUTES ====================
 
+@api_router.delete("/admin/reset-units")
+async def reset_all_units(admin: dict = Depends(get_admin_user)):
+    """Delete ALL units and related data (bookings, blocks, feeds, price_periods)"""
+    # Delete all related data
+    await db.bookings.delete_many({})
+    await db.date_blocks.delete_many({})
+    await db.ical_feeds.delete_many({})
+    await db.price_periods.delete_many({})
+    await db.units.delete_many({})
+    
+    return {
+        "message": "Tutte le casette e i dati correlati sono stati eliminati",
+        "deleted": {
+            "units": "all",
+            "bookings": "all", 
+            "date_blocks": "all",
+            "ical_feeds": "all",
+            "price_periods": "all"
+        }
+    }
+
 @api_router.get("/units", response_model=List[UnitResponse])
 async def get_units():
     """Get all active units"""
