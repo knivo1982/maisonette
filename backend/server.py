@@ -3003,7 +3003,7 @@ async def admin_get_export_url(unit_id: str, admin: dict = Depends(get_admin_use
         raise HTTPException(status_code=404, detail="Unità non trovata")
     
     # Get app URL from environment or construct it
-    app_url = os.environ.get('APP_URL', 'https://lamaisonette.it')
+    app_url = os.environ.get('APP_URL', 'https://booking.lamaisonettepaestum.com')
     export_url = f"{app_url}/api/ical/{unit_id}.ics"
     
     return {
