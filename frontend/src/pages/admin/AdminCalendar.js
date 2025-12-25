@@ -11,7 +11,7 @@ import axios from 'axios';
 import { toast } from 'sonner';
 import { ChevronLeft, ChevronRight, Lock, Unlock, Calendar, Home, Users, X, Plus, UserPlus, ArrowRight } from 'lucide-react';
 
-const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
+import { API } from '../../lib/api';
 
 export default function AdminCalendar() {
   const { token } = useAuth();

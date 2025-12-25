@@ -11,7 +11,7 @@ import axios from 'axios';
 import { toast } from 'sonner';
 import { Plus, Edit, Trash2, Home, Euro, Calendar, Users, Check, X, Clock, Phone, Mail, Key, Copy, Search, User, Gift, UserPlus } from 'lucide-react';
 
-const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
+import { API } from '../../lib/api';
 
 export default function AdminBookings() {
   const { token } = useAuth();
