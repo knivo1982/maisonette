@@ -9,7 +9,7 @@ import { Textarea } from '../../components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../../components/ui/dialog';
 import axios from 'axios';
 import { toast } from 'sonner';
-import { Plus, Edit, Trash2, Image, Settings, Wifi, Car, Coffee, Sun, Waves, TreePine, Wind, Tv } from 'lucide-react';
+import { Plus, Edit, Trash2, Image, Settings, Wifi, Car, Coffee, Sun, Waves, TreePine, Wind, Tv, Home, Users, Euro } from 'lucide-react';
 
 import { API } from '../../lib/api';
 
@@ -26,16 +26,19 @@ const ICONS = [
 
 export default function AdminStructure() {
   const { token } = useAuth();
-  const [activeTab, setActiveTab] = useState('gallery');
+  const [activeTab, setActiveTab] = useState('units');
   const [gallery, setGallery] = useState([]);
   const [amenities, setAmenities] = useState([]);
+  const [units, setUnits] = useState([]);
   const [loading, setLoading] = useState(true);
   
   // Dialogs
   const [galleryDialogOpen, setGalleryDialogOpen] = useState(false);
   const [amenityDialogOpen, setAmenityDialogOpen] = useState(false);
+  const [unitDialogOpen, setUnitDialogOpen] = useState(false);
   const [editingGallery, setEditingGallery] = useState(null);
   const [editingAmenity, setEditingAmenity] = useState(null);
+  const [editingUnit, setEditingUnit] = useState(null);
   
   // Forms
   const [galleryForm, setGalleryForm] = useState({
@@ -44,6 +47,9 @@ export default function AdminStructure() {
   const [amenityForm, setAmenityForm] = useState({
     nome: '', descrizione: '', icona: 'wifi', ordine: 0, attivo: true
   });
+  const [unitForm, setUnitForm] = useState({
+    nome: '', descrizione: '', capacita_max: 4, prezzo_base: 90, attivo: true
+  });
 
   useEffect(() => {
     fetchAll();
@@ -51,17 +57,72 @@ export default function AdminStructure() {
 
   const fetchAll = async () => {
     try {
-      const [galleryRes, amenitiesRes] = await Promise.all([
+      const [galleryRes, amenitiesRes, unitsRes] = await Promise.all([
         axios.get(`${API}/admin/gallery`, { headers: { Authorization: `Bearer ${token}` } }),
-        axios.get(`${API}/admin/amenities`, { headers: { Authorization: `Bearer ${token}` } })
+        axios.get(`${API}/admin/amenities`, { headers: { Authorization: `Bearer ${token}` } }),
+        axios.get(`${API}/admin/units`, { headers: { Authorization: `Bearer ${token}` } })
       ]);
       setGallery(galleryRes.data);
       setAmenities(amenitiesRes.data);
+      setUnits(unitsRes.data);
     } catch (error) {
       console.error('Error fetching data:', error);
     } finally {
       setLoading(false);
     }
+  };
+
+  // Unit handlers
+  const handleUnitSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      if (editingUnit) {
+        await axios.put(`${API}/admin/units/${editingUnit.id}`, unitForm, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        toast.success('Casetta aggiornata!');
+      } else {
+        await axios.post(`${API}/admin/units`, unitForm, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        toast.success('Casetta creata!');
+      }
+      setUnitDialogOpen(false);
+      resetUnitForm();
+      fetchAll();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Errore');
+    }
+  };
+
+  const deleteUnit = async (id) => {
+    if (!window.confirm('Eliminare questa casetta? Verranno eliminate anche le prenotazioni collegate.')) return;
+    try {
+      await axios.delete(`${API}/admin/units/${id}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      toast.success('Casetta eliminata!');
+      fetchAll();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Errore nell\'eliminazione');
+    }
+  };
+
+  const openEditUnit = (unit) => {
+    setEditingUnit(unit);
+    setUnitForm({
+      nome: unit.nome,
+      descrizione: unit.descrizione || '',
+      capacita_max: unit.capacita_max,
+      prezzo_base: unit.prezzo_base,
+      attivo: unit.attivo !== false
+    });
+    setUnitDialogOpen(true);
+  };
+
+  const resetUnitForm = () => {
+    setEditingUnit(null);
+    setUnitForm({ nome: '', descrizione: '', capacita_max: 4, prezzo_base: 90, attivo: true });
   };
 
   // Gallery handlers
@@ -185,13 +246,14 @@ export default function AdminStructure() {
         <div>
           <h1 className="text-2xl font-cinzel text-[#1A202C]">Gestione Struttura</h1>
           <p className="text-[#4A5568] font-manrope text-sm mt-1">
-            Gestisci galleria immagini e servizi della struttura
+            Gestisci casette, galleria immagini e servizi della struttura
           </p>
         </div>
 
         {/* Tabs */}
         <div className="flex gap-2 border-b">
           {[
+            { key: 'units', label: 'Casette', icon: Home },
             { key: 'gallery', label: 'Galleria Immagini', icon: Image },
             { key: 'amenities', label: 'Servizi', icon: Settings }
           ].map(tab => (
@@ -216,6 +278,138 @@ export default function AdminStructure() {
           </div>
         ) : (
           <>
+            {/* UNITS TAB */}
+            {activeTab === 'units' && (
+              <div className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <h2 className="font-cinzel text-xl">Le Tue Casette</h2>
+                  <Dialog open={unitDialogOpen} onOpenChange={setUnitDialogOpen}>
+                    <DialogTrigger asChild>
+                      <Button className="bg-[#C5A059] hover:bg-[#B08D45]" onClick={resetUnitForm}>
+                        <Plus className="w-4 h-4 mr-2" /> Nuova Casetta
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>{editingUnit ? 'Modifica Casetta' : 'Nuova Casetta'}</DialogTitle>
+                      </DialogHeader>
+                      <form onSubmit={handleUnitSubmit} className="space-y-4">
+                        <div>
+                          <Label>Nome *</Label>
+                          <Input
+                            value={unitForm.nome}
+                            onChange={(e) => setUnitForm({ ...unitForm, nome: e.target.value })}
+                            required
+                            placeholder="Es. Casetta 1"
+                          />
+                        </div>
+                        <div>
+                          <Label>Descrizione</Label>
+                          <Textarea
+                            value={unitForm.descrizione}
+                            onChange={(e) => setUnitForm({ ...unitForm, descrizione: e.target.value })}
+                            placeholder="Descrizione della casetta..."
+                            rows={3}
+                          />
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div>
+                            <Label>Capacità Max (ospiti)</Label>
+                            <Input
+                              type="number"
+                              min="1"
+                              value={unitForm.capacita_max}
+                              onChange={(e) => setUnitForm({ ...unitForm, capacita_max: parseInt(e.target.value) })}
+                            />
+                          </div>
+                          <div>
+                            <Label>Prezzo Base (€/notte)</Label>
+                            <Input
+                              type="number"
+                              min="0"
+                              step="0.01"
+                              value={unitForm.prezzo_base}
+                              onChange={(e) => setUnitForm({ ...unitForm, prezzo_base: parseFloat(e.target.value) })}
+                            />
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <input
+                            type="checkbox"
+                            id="unit_attivo"
+                            checked={unitForm.attivo}
+                            onChange={(e) => setUnitForm({ ...unitForm, attivo: e.target.checked })}
+                            className="rounded"
+                          />
+                          <Label htmlFor="unit_attivo">Casetta attiva (visibile per prenotazioni)</Label>
+                        </div>
+                        <div className="flex justify-end gap-2">
+                          <Button type="button" variant="outline" onClick={() => setUnitDialogOpen(false)}>
+                            Annulla
+                          </Button>
+                          <Button type="submit" className="bg-[#C5A059] hover:bg-[#B08D45]">
+                            {editingUnit ? 'Salva' : 'Crea'}
+                          </Button>
+                        </div>
+                      </form>
+                    </DialogContent>
+                  </Dialog>
+                </div>
+
+                {units.length === 0 ? (
+                  <div className="text-center py-12 bg-amber-50 rounded-lg border-2 border-dashed border-[#C5A059]">
+                    <Home className="w-16 h-16 mx-auto text-[#C5A059] mb-4" />
+                    <h3 className="font-cinzel text-xl text-[#1A202C] mb-2">Nessuna Casetta</h3>
+                    <p className="text-[#4A5568] mb-4">Inizia creando la tua prima casetta per gestire le prenotazioni</p>
+                    <Button 
+                      className="bg-[#C5A059] hover:bg-[#B08D45]"
+                      onClick={() => { resetUnitForm(); setUnitDialogOpen(true); }}
+                    >
+                      <Plus className="w-4 h-4 mr-2" /> Crea Prima Casetta
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="grid md:grid-cols-2 gap-4">
+                    {units.map((unit) => (
+                      <Card key={unit.id} className="border-l-4 border-l-[#C5A059]">
+                        <CardContent className="py-4">
+                          <div className="flex justify-between items-start">
+                            <div>
+                              <div className="flex items-center gap-2">
+                                <h3 className="font-cinzel text-lg">{unit.nome}</h3>
+                                {unit.attivo ? (
+                                  <span className="text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded">Attiva</span>
+                                ) : (
+                                  <span className="text-xs bg-red-100 text-red-800 px-2 py-0.5 rounded">Disattivata</span>
+                                )}
+                              </div>
+                              <p className="text-sm text-[#4A5568] mt-1">{unit.descrizione || 'Nessuna descrizione'}</p>
+                              <div className="flex gap-4 mt-2 text-sm text-[#4A5568]">
+                                <span className="flex items-center gap-1">
+                                  <Users className="w-4 h-4" /> Max {unit.capacita_max} ospiti
+                                </span>
+                                <span className="flex items-center gap-1 text-[#C5A059] font-bold">
+                                  <Euro className="w-4 h-4" /> {unit.prezzo_base}/notte
+                                </span>
+                              </div>
+                            </div>
+                            <div className="flex gap-2">
+                              <Button size="sm" variant="outline" onClick={() => openEditUnit(unit)}>
+                                <Edit className="w-4 h-4" />
+                              </Button>
+                              <Button size="sm" variant="outline" className="text-red-600 hover:bg-red-50" onClick={() => deleteUnit(unit.id)}>
+                                <Trash2 className="w-4 h-4" />
+                              </Button>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
             {/* GALLERY TAB */}
             {activeTab === 'gallery' && (
               <div className="space-y-4">
@@ -250,44 +444,20 @@ export default function AdminStructure() {
                             placeholder="https://..."
                           />
                         </div>
-                        {galleryForm.url && (
-                          <div className="rounded-lg overflow-hidden border">
-                            <img src={galleryForm.url} alt="Preview" className="w-full h-40 object-cover" />
-                          </div>
-                        )}
                         <div>
                           <Label>Descrizione</Label>
                           <Textarea
                             value={galleryForm.descrizione}
                             onChange={(e) => setGalleryForm({ ...galleryForm, descrizione: e.target.value })}
-                            rows={2}
+                            placeholder="Descrizione opzionale..."
                           />
-                        </div>
-                        <div className="grid grid-cols-2 gap-4">
-                          <div>
-                            <Label>Ordine</Label>
-                            <Input
-                              type="number"
-                              value={galleryForm.ordine}
-                              onChange={(e) => setGalleryForm({ ...galleryForm, ordine: parseInt(e.target.value) || 0 })}
-                              min={0}
-                            />
-                          </div>
-                          <div className="flex items-center gap-2 pt-6">
-                            <input
-                              type="checkbox"
-                              checked={galleryForm.attivo}
-                              onChange={(e) => setGalleryForm({ ...galleryForm, attivo: e.target.checked })}
-                            />
-                            <Label>Attiva</Label>
-                          </div>
                         </div>
                         <div className="flex justify-end gap-2">
                           <Button type="button" variant="outline" onClick={() => setGalleryDialogOpen(false)}>
                             Annulla
                           </Button>
                           <Button type="submit" className="bg-[#C5A059] hover:bg-[#B08D45]">
-                            {editingGallery ? 'Aggiorna' : 'Aggiungi'}
+                            {editingGallery ? 'Salva' : 'Aggiungi'}
                           </Button>
                         </div>
                       </form>
@@ -296,37 +466,28 @@ export default function AdminStructure() {
                 </div>
 
                 {gallery.length === 0 ? (
-                  <Card>
-                    <CardContent className="py-12 text-center">
-                      <Image className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-                      <p className="text-[#4A5568]">Nessuna immagine nella galleria</p>
-                    </CardContent>
-                  </Card>
+                  <div className="text-center py-12 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
+                    <Image className="w-16 h-16 mx-auto text-gray-400 mb-4" />
+                    <p className="text-gray-500">Nessuna immagine nella galleria</p>
+                  </div>
                 ) : (
-                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {gallery.map((image) => (
-                      <Card key={image.id} className={!image.attivo ? 'opacity-60' : ''}>
-                        <div className="h-40 overflow-hidden">
-                          <img src={image.url} alt={image.titolo} className="w-full h-full object-cover" />
+                  <div className="grid md:grid-cols-3 gap-4">
+                    {gallery.map((img) => (
+                      <Card key={img.id}>
+                        <div className="aspect-video bg-gray-100 rounded-t-lg overflow-hidden">
+                          <img src={img.url} alt={img.titolo} className="w-full h-full object-cover" />
                         </div>
-                        <CardContent className="py-4">
+                        <CardContent className="py-3">
                           <div className="flex justify-between items-start">
                             <div>
-                              <h3 className="font-medium text-[#1A202C]">
-                                {image.titolo}
-                                {!image.attivo && (
-                                  <span className="ml-2 text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded">Off</span>
-                                )}
-                              </h3>
-                              {image.descrizione && (
-                                <p className="text-sm text-[#4A5568] mt-1 line-clamp-2">{image.descrizione}</p>
-                              )}
+                              <h3 className="font-medium">{img.titolo}</h3>
+                              {img.descrizione && <p className="text-sm text-gray-500">{img.descrizione}</p>}
                             </div>
                             <div className="flex gap-1">
-                              <Button size="sm" variant="ghost" onClick={() => openEditGallery(image)}>
+                              <Button size="sm" variant="ghost" onClick={() => openEditGallery(img)}>
                                 <Edit className="w-4 h-4" />
                               </Button>
-                              <Button size="sm" variant="ghost" className="text-red-600" onClick={() => deleteGalleryImage(image.id)}>
+                              <Button size="sm" variant="ghost" className="text-red-600" onClick={() => deleteGalleryImage(img.id)}>
                                 <Trash2 className="w-4 h-4" />
                               </Button>
                             </div>
@@ -365,55 +526,31 @@ export default function AdminStructure() {
                           />
                         </div>
                         <div>
-                          <Label>Descrizione *</Label>
+                          <Label>Descrizione</Label>
                           <Textarea
                             value={amenityForm.descrizione}
                             onChange={(e) => setAmenityForm({ ...amenityForm, descrizione: e.target.value })}
-                            required
-                            rows={2}
-                            placeholder="Es. Connessione veloce in tutta la struttura"
+                            placeholder="Descrizione opzionale..."
                           />
                         </div>
                         <div>
                           <Label>Icona</Label>
                           <div className="grid grid-cols-4 gap-2 mt-2">
-                            {ICONS.map(icon => {
-                              const IconComp = icon.icon;
-                              return (
-                                <button
-                                  key={icon.value}
-                                  type="button"
-                                  onClick={() => setAmenityForm({ ...amenityForm, icona: icon.value })}
-                                  className={`p-3 rounded-lg border-2 flex flex-col items-center gap-1 transition-all ${
-                                    amenityForm.icona === icon.value 
-                                      ? 'border-[#C5A059] bg-[#C5A059]/10' 
-                                      : 'border-gray-200 hover:border-[#C5A059]/50'
-                                  }`}
-                                >
-                                  <IconComp className="w-5 h-5" />
-                                  <span className="text-xs">{icon.label}</span>
-                                </button>
-                              );
-                            })}
-                          </div>
-                        </div>
-                        <div className="grid grid-cols-2 gap-4">
-                          <div>
-                            <Label>Ordine</Label>
-                            <Input
-                              type="number"
-                              value={amenityForm.ordine}
-                              onChange={(e) => setAmenityForm({ ...amenityForm, ordine: parseInt(e.target.value) || 0 })}
-                              min={0}
-                            />
-                          </div>
-                          <div className="flex items-center gap-2 pt-6">
-                            <input
-                              type="checkbox"
-                              checked={amenityForm.attivo}
-                              onChange={(e) => setAmenityForm({ ...amenityForm, attivo: e.target.checked })}
-                            />
-                            <Label>Attivo</Label>
+                            {ICONS.map((icon) => (
+                              <button
+                                key={icon.value}
+                                type="button"
+                                onClick={() => setAmenityForm({ ...amenityForm, icona: icon.value })}
+                                className={`p-3 rounded-lg border-2 flex flex-col items-center gap-1 ${
+                                  amenityForm.icona === icon.value
+                                    ? 'border-[#C5A059] bg-amber-50'
+                                    : 'border-gray-200'
+                                }`}
+                              >
+                                <icon.icon className="w-5 h-5" />
+                                <span className="text-xs">{icon.label}</span>
+                              </button>
+                            ))}
                           </div>
                         </div>
                         <div className="flex justify-end gap-2">
@@ -421,7 +558,7 @@ export default function AdminStructure() {
                             Annulla
                           </Button>
                           <Button type="submit" className="bg-[#C5A059] hover:bg-[#B08D45]">
-                            {editingAmenity ? 'Aggiorna' : 'Aggiungi'}
+                            {editingAmenity ? 'Salva' : 'Aggiungi'}
                           </Button>
                         </div>
                       </form>
@@ -430,33 +567,33 @@ export default function AdminStructure() {
                 </div>
 
                 {amenities.length === 0 ? (
-                  <Card>
-                    <CardContent className="py-12 text-center">
-                      <Settings className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-                      <p className="text-[#4A5568]">Nessun servizio configurato</p>
-                    </CardContent>
-                  </Card>
+                  <div className="text-center py-12 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
+                    <Settings className="w-16 h-16 mx-auto text-gray-400 mb-4" />
+                    <p className="text-gray-500">Nessun servizio configurato</p>
+                  </div>
                 ) : (
-                  <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+                  <div className="grid md:grid-cols-2 gap-4">
                     {amenities.map((amenity) => (
-                      <Card key={amenity.id} className={!amenity.attivo ? 'opacity-60' : ''}>
-                        <CardContent className="py-6 text-center">
-                          <div className={`w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-3 ${
-                            amenity.attivo ? 'bg-[#C5A059]/10 text-[#C5A059]' : 'bg-gray-200 text-gray-500'
-                          }`}>
-                            {getIconComponent(amenity.icona)}
-                          </div>
-                          <h3 className="font-medium text-[#1A202C]">
-                            {amenity.nome}
-                          </h3>
-                          <p className="text-sm text-[#4A5568] mt-1">{amenity.descrizione}</p>
-                          <div className="flex justify-center gap-2 mt-4">
-                            <Button size="sm" variant="ghost" onClick={() => openEditAmenity(amenity)}>
-                              <Edit className="w-4 h-4" />
-                            </Button>
-                            <Button size="sm" variant="ghost" className="text-red-600" onClick={() => deleteAmenity(amenity.id)}>
-                              <Trash2 className="w-4 h-4" />
-                            </Button>
+                      <Card key={amenity.id}>
+                        <CardContent className="py-4">
+                          <div className="flex justify-between items-start">
+                            <div className="flex items-start gap-3">
+                              <div className="p-2 bg-amber-50 rounded-lg text-[#C5A059]">
+                                {getIconComponent(amenity.icona)}
+                              </div>
+                              <div>
+                                <h3 className="font-medium">{amenity.nome}</h3>
+                                {amenity.descrizione && <p className="text-sm text-gray-500">{amenity.descrizione}</p>}
+                              </div>
+                            </div>
+                            <div className="flex gap-1">
+                              <Button size="sm" variant="ghost" onClick={() => openEditAmenity(amenity)}>
+                                <Edit className="w-4 h-4" />
+                              </Button>
+                              <Button size="sm" variant="ghost" className="text-red-600" onClick={() => deleteAmenity(amenity.id)}>
+                                <Trash2 className="w-4 h-4" />
+                              </Button>
+                            </div>
                           </div>
                         </CardContent>
                       </Card>
