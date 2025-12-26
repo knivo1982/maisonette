@@ -289,28 +289,50 @@ export default function AdminStructure() {
                         <Plus className="w-4 h-4 mr-2" /> Nuova Casetta
                       </Button>
                     </DialogTrigger>
-                    <DialogContent>
+                    <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
                       <DialogHeader>
                         <DialogTitle>{editingUnit ? 'Modifica Casetta' : 'Nuova Casetta'}</DialogTitle>
                       </DialogHeader>
                       <form onSubmit={handleUnitSubmit} className="space-y-4">
-                        <div>
-                          <Label>Nome *</Label>
-                          <Input
-                            value={unitForm.nome}
-                            onChange={(e) => setUnitForm({ ...unitForm, nome: e.target.value })}
-                            required
-                            placeholder="Es. Casetta 1"
-                          />
+                        <div className="grid grid-cols-2 gap-4">
+                          <div>
+                            <Label>Nome (IT) *</Label>
+                            <Input
+                              value={unitForm.nome}
+                              onChange={(e) => setUnitForm({ ...unitForm, nome: e.target.value })}
+                              required
+                              placeholder="Es. Casetta 1"
+                            />
+                          </div>
+                          <div>
+                            <Label>Name (EN)</Label>
+                            <Input
+                              value={unitForm.nome_en || ''}
+                              onChange={(e) => setUnitForm({ ...unitForm, nome_en: e.target.value })}
+                              placeholder="E.g. Cottage 1"
+                            />
+                          </div>
                         </div>
-                        <div>
-                          <Label>Descrizione</Label>
-                          <Textarea
-                            value={unitForm.descrizione}
-                            onChange={(e) => setUnitForm({ ...unitForm, descrizione: e.target.value })}
-                            placeholder="Descrizione della casetta..."
-                            rows={3}
-                          />
+                        <div className="grid grid-cols-2 gap-4">
+                          <div>
+                            <Label>Descrizione (IT)</Label>
+                            <Textarea
+                              value={unitForm.descrizione}
+                              onChange={(e) => setUnitForm({ ...unitForm, descrizione: e.target.value })}
+                              placeholder="Descrizione della casetta..."
+                              rows={3}
+                            />
+                          </div>
+                          <div>
+                            <Label>Description (EN)</Label>
+                            <Textarea
+                              value={unitForm.descrizione_en || ''}
+                              onChange={(e) => setUnitForm({ ...unitForm, descrizione_en: e.target.value })}
+                              placeholder="Cottage description..."
+                              rows={3}
+                            />
+                          </div>
+                        </div>
                         </div>
                         <div className="grid grid-cols-2 gap-4">
                           <div>
