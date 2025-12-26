@@ -331,7 +331,9 @@ class CheckInResponse(BaseModel):
 
 class UnitCreate(BaseModel):
     nome: str  # es. "Casetta 1", "Casetta 2"
+    nome_en: Optional[str] = None  # English name
     descrizione: Optional[str] = None
+    descrizione_en: Optional[str] = None  # English description
     capacita_max: int = 5
     prezzo_base: float  # Prezzo a notte
     immagine_url: Optional[str] = None
@@ -340,7 +342,9 @@ class UnitCreate(BaseModel):
 class UnitResponse(BaseModel):
     id: str
     nome: str
+    nome_en: Optional[str] = None
     descrizione: Optional[str] = None
+    descrizione_en: Optional[str] = None
     capacita_max: int = 5
     prezzo_base: float
     immagine_url: Optional[str] = None
