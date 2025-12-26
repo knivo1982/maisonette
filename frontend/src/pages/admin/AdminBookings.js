@@ -67,18 +67,34 @@ export default function AdminBookings() {
 
   const fetchAll = async () => {
     try {
-      const [unitsRes, bookingsRes, pricesRes, blocksRes] = await Promise.all([
+      // Carica units e bookings (essenziali)
+      const [unitsRes, bookingsRes] = await Promise.all([
         axios.get(`${API}/admin/units`, { headers: { Authorization: `Bearer ${token}` } }),
-        axios.get(`${API}/admin/bookings`, { headers: { Authorization: `Bearer ${token}` } }),
-        axios.get(`${API}/admin/price-periods`, { headers: { Authorization: `Bearer ${token}` } }),
-        axios.get(`${API}/admin/date-blocks`, { headers: { Authorization: `Bearer ${token}` } })
+        axios.get(`${API}/admin/bookings`, { headers: { Authorization: `Bearer ${token}` } })
       ]);
       setUnits(unitsRes.data);
       setBookings(bookingsRes.data);
-      setPricePeriods(pricesRes.data);
-      setDateBlocks(blocksRes.data);
+      
+      // Carica price-periods (opzionale, non blocca se fallisce)
+      try {
+        const pricesRes = await axios.get(`${API}/admin/price-periods`, { headers: { Authorization: `Bearer ${token}` } });
+        setPricePeriods(pricesRes.data);
+      } catch (e) {
+        console.warn('Could not load price periods:', e);
+        setPricePeriods([]);
+      }
+      
+      // Carica date-blocks (opzionale, non blocca se fallisce)
+      try {
+        const blocksRes = await axios.get(`${API}/admin/date-blocks`, { headers: { Authorization: `Bearer ${token}` } });
+        setDateBlocks(blocksRes.data);
+      } catch (e) {
+        console.warn('Could not load date blocks:', e);
+        setDateBlocks([]);
+      }
     } catch (error) {
       console.error('Error fetching data:', error);
+      toast.error('Errore nel caricamento dei dati');
     } finally {
       setLoading(false);
     }
