@@ -684,7 +684,9 @@ class GalleryImageResponse(BaseModel):
 
 class AmenityCreate(BaseModel):
     nome: str
+    nome_en: Optional[str] = None
     descrizione: str
+    descrizione_en: Optional[str] = None
     icona: str  # wifi, car, coffee, sun, waves, tree, etc.
     ordine: int = 0
     attivo: bool = True
@@ -692,7 +694,9 @@ class AmenityCreate(BaseModel):
 class AmenityResponse(BaseModel):
     id: str
     nome: str
+    nome_en: Optional[str] = None
     descrizione: str
+    descrizione_en: Optional[str] = None
     icona: str
     ordine: int = 0
     attivo: bool = True
