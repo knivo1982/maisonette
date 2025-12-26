@@ -7,16 +7,20 @@ import { Label } from '../components/ui/label';
 import { Textarea } from '../components/ui/textarea';
 import { Calendar, Users, Euro, Check, X, Home, ArrowRight, Phone, Mail, ChevronLeft, ChevronRight } from 'lucide-react';
 import { toast } from 'sonner';
+import { useLanguage } from '../contexts/LanguageContext';
 
 import { BASE_URL as API } from '../lib/api';
 
 // Mini Calendar Component for availability
-function AvailabilityCalendar({ unitId, bookedDates, onDateSelect }) {
+function AvailabilityCalendar({ unitId, bookedDates, onDateSelect, language }) {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   
-  const monthNames = ['Gennaio', 'Febbraio', 'Marzo', 'Aprile', 'Maggio', 'Giugno',
-                      'Luglio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre'];
-  const dayNames = ['Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab', 'Dom'];
+  const monthNames = language === 'en' 
+    ? ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+    : ['Gennaio', 'Febbraio', 'Marzo', 'Aprile', 'Maggio', 'Giugno', 'Luglio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre'];
+  const dayNames = language === 'en'
+    ? ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+    : ['Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab', 'Dom'];
   
   const getDaysInMonth = (date) => {
     const year = date.getFullYear();
