@@ -111,6 +111,7 @@ function App() {
         </BrowserRouter>
         <Toaster position="top-right" richColors offset="60px" />
       </div>
+    </LanguageProvider>
     </AuthProvider>
   );
 }
