@@ -484,12 +484,15 @@ class BookingResponse(BaseModel):
 
 class EventCreate(BaseModel):
     titolo: str
+    titolo_en: Optional[str] = None
     descrizione: str
+    descrizione_en: Optional[str] = None
     data: str  # Data inizio evento
     data_fine: Optional[str] = None  # Data fine evento (opzionale per eventi di un giorno)
     ora: Optional[str] = None
     ora_fine: Optional[str] = None
     luogo: str
+    luogo_en: Optional[str] = None
     indirizzo: Optional[str] = None
     immagine_url: Optional[str] = None
     categoria: Optional[str] = None
@@ -497,12 +500,15 @@ class EventCreate(BaseModel):
 class EventResponse(BaseModel):
     id: str
     titolo: str
+    titolo_en: Optional[str] = None
     descrizione: str
+    descrizione_en: Optional[str] = None
     data: str
     data_fine: Optional[str] = None
     ora: Optional[str] = None
     ora_fine: Optional[str] = None
     luogo: str
+    luogo_en: Optional[str] = None
     indirizzo: Optional[str] = None
     immagine_url: Optional[str] = None
     categoria: Optional[str] = None
