@@ -365,13 +365,14 @@ export default function BookingPage() {
                   <CardHeader>
                     <CardTitle className="font-cinzel text-lg flex items-center gap-2">
                       <Calendar className="w-5 h-5 text-[#C5A059]" />
-                      Calendario Disponibilità - {selectedUnit.nome}
+                      {language === 'en' ? 'Availability Calendar' : 'Calendario Disponibilità'} - {selectedUnit.nome}
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
                     <AvailabilityCalendar
                       unitId={selectedUnit.id}
                       bookedDates={unitAvailability.bookings}
+                      language={language}
                       onDateSelect={(date) => {
                         const dateStr = date.toISOString().split('T')[0];
                         if (!formData.data_arrivo) {
@@ -383,7 +384,9 @@ export default function BookingPage() {
                       }}
                     />
                     <p className="text-xs text-gray-500 mt-3">
-                      Clicca su una data verde per selezionarla come arrivo/partenza
+                      {language === 'en' 
+                        ? 'Click on a green date to select it as check-in/check-out'
+                        : 'Clicca su una data verde per selezionarla come arrivo/partenza'}
                     </p>
                   </CardContent>
                 </Card>
@@ -394,13 +397,13 @@ export default function BookingPage() {
                 <CardHeader>
                   <CardTitle className="font-cinzel text-lg flex items-center gap-2">
                     <Calendar className="w-5 h-5 text-[#C5A059]" />
-                    2. Scegli le Date
+                    {language === 'en' ? '2. Select Dates' : '2. Scegli le Date'}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <Label>Arrivo</Label>
+                      <Label>{language === 'en' ? 'Check-in' : 'Arrivo'}</Label>
                       <Input
                         type="date"
                         value={formData.data_arrivo}
@@ -412,7 +415,7 @@ export default function BookingPage() {
                       />
                     </div>
                     <div>
-                      <Label>Partenza</Label>
+                      <Label>{language === 'en' ? 'Check-out' : 'Partenza'}</Label>
                       <Input
                         type="date"
                         value={formData.data_partenza}
