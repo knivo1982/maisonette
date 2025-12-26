@@ -333,7 +333,6 @@ export default function AdminStructure() {
                             />
                           </div>
                         </div>
-                        </div>
                         <div className="grid grid-cols-2 gap-4">
                           <div>
                             <Label>Capacità Max (ospiti)</Label>
