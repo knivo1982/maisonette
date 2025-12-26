@@ -1,9 +1,11 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { Menu, X, User, Calendar, MapPin, Gift, LogOut, Home, Settings, Sparkles, FileText, ShoppingBag, Building, CalendarCheck } from 'lucide-react';
+import { useLanguage } from '../contexts/LanguageContext';
+import { Menu, X, User, Calendar, MapPin, Gift, LogOut, Home, Settings, Sparkles, FileText, ShoppingBag, Building, CalendarCheck, Globe } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from './ui/button';
 import NotificationBell from './NotificationBell';
+import LanguageSwitch from './LanguageSwitch';
 
 export function Navbar() {
   const { user, logout, isAuthenticated, isAdmin } = useAuth();
