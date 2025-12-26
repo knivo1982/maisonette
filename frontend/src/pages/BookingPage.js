@@ -234,13 +234,13 @@ export default function BookingPage() {
 
       if (response.ok) {
         setBookingComplete(true);
-        toast.success('Richiesta di prenotazione inviata!');
+        toast.success(language === 'en' ? 'Booking request sent!' : 'Richiesta di prenotazione inviata!');
       } else {
         const error = await response.json();
-        toast.error(error.detail || 'Errore durante la prenotazione');
+        toast.error(error.detail || (language === 'en' ? 'Booking error' : 'Errore durante la prenotazione'));
       }
     } catch (error) {
-      toast.error('Errore di connessione');
+      toast.error(language === 'en' ? 'Connection error' : 'Errore di connessione');
     } finally {
       setSubmitting(false);
     }
@@ -256,18 +256,20 @@ export default function BookingPage() {
                 <Check className="w-8 h-8 text-green-600" />
               </div>
               <h2 className="font-cinzel text-2xl text-[#1A202C] mb-4">
-                Richiesta Inviata!
+                {language === 'en' ? 'Request Sent!' : 'Richiesta Inviata!'}
               </h2>
               <p className="text-[#4A5568] mb-6">
-                La tua richiesta di prenotazione è stata ricevuta. Ti contatteremo presto per confermare la disponibilità e organizzare il pagamento.
+                {language === 'en' 
+                  ? 'Your booking request has been received. We will contact you soon to confirm availability and arrange payment.'
+                  : 'La tua richiesta di prenotazione è stata ricevuta. Ti contatteremo presto per confermare la disponibilità e organizzare il pagamento.'}
               </p>
               <div className="bg-[#F9F9F7] p-4 rounded-lg mb-6">
                 <p className="text-sm text-[#4A5568]">
                   <strong>{selectedUnit?.nome}</strong><br />
                   {formData.data_arrivo} → {formData.data_partenza}<br />
-                  {formData.num_ospiti} ospiti<br />
+                  {formData.num_ospiti} {language === 'en' ? 'guests' : 'ospiti'}<br />
                   <span className="text-[#C5A059] font-semibold">
-                    Totale: €{availability?.prezzo?.prezzo_totale}
+                    {language === 'en' ? 'Total' : 'Totale'}: €{availability?.prezzo?.prezzo_totale}
                   </span>
                 </p>
               </div>
@@ -275,7 +277,7 @@ export default function BookingPage() {
                 onClick={() => window.location.href = '/'}
                 className="bg-[#C5A059] hover:bg-[#B08D45]"
               >
-                Torna alla Home
+                {language === 'en' ? 'Back to Home' : 'Torna alla Home'}
               </Button>
             </CardContent>
           </Card>
