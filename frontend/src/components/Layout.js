@@ -103,20 +103,23 @@ export function Navbar() {
               <>
                 <Link to="/login">
                   <Button variant="ghost" className="font-manrope" data-testid="nav-login-btn">
-                    Accedi
+                    {language === 'it' ? 'Accedi' : 'Login'}
                   </Button>
                 </Link>
                 <Link to="/register">
                   <Button className="bg-[#C5A059] hover:bg-[#B08D45] text-white font-manrope" data-testid="nav-register-btn">
-                    Registrati
+                    {language === 'it' ? 'Registrati' : 'Sign Up'}
                   </Button>
                 </Link>
               </>
             )}
+            {/* Language Switch */}
+            <LanguageSwitch />
           </div>
 
           {/* Mobile notification + menu button */}
           <div className="md:hidden flex items-center gap-2">
+            <LanguageSwitch className="text-xs" />
             {isAuthenticated && <NotificationBell />}
             <button
               className="p-3 -mr-2 touch-manipulation"
