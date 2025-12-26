@@ -293,13 +293,15 @@ export default function BookingPage() {
           {/* Header */}
           <div className="text-center mb-12">
             <p className="font-cormorant text-[#C5A059] tracking-[0.2em] uppercase text-sm mb-4">
-              Prenota il Tuo Soggiorno
+              {language === 'en' ? 'Book Your Stay' : 'Prenota il Tuo Soggiorno'}
             </p>
             <h1 className="font-cinzel text-4xl text-[#1A202C] mb-4">
-              Le Nostre Casette
+              {language === 'en' ? 'Our Cottages' : 'Le Nostre Casette'}
             </h1>
             <p className="text-[#4A5568] max-w-2xl mx-auto">
-              Scegli la tua casetta e verifica la disponibilità. Ti contatteremo per confermare la prenotazione.
+              {language === 'en' 
+                ? 'Choose your cottage and check availability. We will contact you to confirm your booking.'
+                : 'Scegli la tua casetta e verifica la disponibilità. Ti contatteremo per confermare la prenotazione.'}
             </p>
           </div>
 
@@ -311,7 +313,7 @@ export default function BookingPage() {
                 <CardHeader>
                   <CardTitle className="font-cinzel text-lg flex items-center gap-2">
                     <Home className="w-5 h-5 text-[#C5A059]" />
-                    1. Scegli la Casetta
+                    {language === 'en' ? '1. Choose Cottage' : '1. Scegli la Casetta'}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -341,13 +343,13 @@ export default function BookingPage() {
                               <div className="flex items-center gap-4 mt-2 text-sm text-[#4A5568]">
                                 <span className="flex items-center gap-1">
                                   <Users className="w-4 h-4" />
-                                  Max {unit.capacita_max} ospiti
+                                  Max {unit.capacita_max} {language === 'en' ? 'guests' : 'ospiti'}
                                 </span>
                               </div>
                             </div>
                             <div className="text-right">
                               <p className="font-cinzel text-2xl text-[#C5A059]">€{unit.prezzo_base}</p>
-                              <p className="text-xs text-[#4A5568]">a notte</p>
+                              <p className="text-xs text-[#4A5568]">{language === 'en' ? 'per night' : 'a notte'}</p>
                             </div>
                           </div>
                         </div>
