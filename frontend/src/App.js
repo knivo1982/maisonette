@@ -61,6 +61,7 @@ function App() {
 
   return (
     <AuthProvider>
+    <LanguageProvider>
       <div className="App">
         {showSplash && <SplashScreen onComplete={handleSplashComplete} />}
         <BrowserRouter>
