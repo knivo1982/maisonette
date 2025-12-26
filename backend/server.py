@@ -2576,13 +2576,33 @@ async def admin_delete_unit(unit_id: str, admin: dict = Depends(get_admin_user))
 
 # ==================== ADMIN PRICE PERIODS ====================
 
-@api_router.get("/admin/price-periods", response_model=List[PricePeriodResponse])
+@api_router.get("/admin/price-periods")
 async def admin_get_price_periods(admin: dict = Depends(get_admin_user), unit_id: Optional[str] = None):
     query = {}
     if unit_id:
         query["unit_id"] = unit_id
-    periods = await db.price_periods.find(query, {"_id": 0}).sort("data_inizio", 1).to_list(200)
-    return periods
+    try:
+        periods = await db.price_periods.find(query, {"_id": 0}).sort("data_inizio", 1).to_list(200)
+        # Filter out any invalid periods
+        valid_periods = []
+        for p in periods:
+            try:
+                valid_periods.append({
+                    "id": p.get("id", ""),
+                    "unit_id": p.get("unit_id", ""),
+                    "nome_periodo": p.get("nome_periodo", ""),
+                    "data_inizio": p.get("data_inizio", ""),
+                    "data_fine": p.get("data_fine", ""),
+                    "prezzo_notte": float(p.get("prezzo_notte", 0)),
+                    "prezzo_weekend": float(p.get("prezzo_weekend")) if p.get("prezzo_weekend") else None,
+                    "soggiorno_minimo": int(p.get("soggiorno_minimo", 1))
+                })
+            except:
+                continue
+        return valid_periods
+    except Exception as e:
+        print(f"Error in price-periods: {e}")
+        return []
 
 @api_router.post("/admin/price-periods", response_model=PricePeriodResponse)
 async def admin_create_price_period(data: PricePeriodCreate, admin: dict = Depends(get_admin_user)):
