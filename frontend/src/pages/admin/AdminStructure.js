@@ -48,7 +48,7 @@ export default function AdminStructure() {
     nome: '', descrizione: '', icona: 'wifi', ordine: 0, attivo: true
   });
   const [unitForm, setUnitForm] = useState({
-    nome: '', descrizione: '', capacita_max: 4, prezzo_base: 90, attivo: true
+    nome: '', nome_en: '', descrizione: '', descrizione_en: '', capacita_max: 4, prezzo_base: 90, attivo: true
   });
 
   useEffect(() => {
