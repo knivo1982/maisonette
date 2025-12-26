@@ -529,7 +529,9 @@ class StructureCreate(BaseModel):
 
 class ServiceCreate(BaseModel):
     nome: str
+    nome_en: Optional[str] = None
     descrizione: str
+    descrizione_en: Optional[str] = None
     categoria: str  # spiaggia, comfort, trasporti, esperienze, shop
     prezzo: Optional[float] = None
     gratuito: bool = False
@@ -542,7 +544,9 @@ class ServiceCreate(BaseModel):
 class ServiceResponse(BaseModel):
     id: str
     nome: str
+    nome_en: Optional[str] = None
     descrizione: str
+    descrizione_en: Optional[str] = None
     categoria: str
     prezzo: Optional[float] = None
     gratuito: bool = False
