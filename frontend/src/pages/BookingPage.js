@@ -338,8 +338,12 @@ export default function BookingPage() {
                         >
                           <div className="flex justify-between items-start">
                             <div>
-                              <h3 className="font-cinzel text-lg text-[#1A202C]">{unit.nome}</h3>
-                              <p className="text-sm text-[#4A5568] mt-1">{unit.descrizione}</p>
+                              <h3 className="font-cinzel text-lg text-[#1A202C]">
+                                {language === 'en' && unit.nome_en ? unit.nome_en : unit.nome}
+                              </h3>
+                              <p className="text-sm text-[#4A5568] mt-1">
+                                {language === 'en' && unit.descrizione_en ? unit.descrizione_en : unit.descrizione}
+                              </p>
                               <div className="flex items-center gap-4 mt-2 text-sm text-[#4A5568]">
                                 <span className="flex items-center gap-1">
                                   <Users className="w-4 h-4" />
