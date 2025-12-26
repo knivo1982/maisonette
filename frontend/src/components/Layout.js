@@ -9,6 +9,7 @@ import LanguageSwitch from './LanguageSwitch';
 
 export function Navbar() {
   const { user, logout, isAuthenticated, isAdmin } = useAuth();
+  const { t, language } = useLanguage();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
@@ -20,20 +21,20 @@ export function Navbar() {
 
   const navLinks = isAuthenticated ? [
     { to: '/dashboard', label: 'Dashboard', icon: Home },
-    { to: '/about', label: 'La Struttura', icon: Building },
-    { to: '/booking', label: 'Prenota', icon: CalendarCheck },
-    { to: '/events', label: 'Eventi', icon: Calendar },
-    { to: '/structures', label: 'Territorio', icon: MapPin },
-    { to: '/services', label: 'Servizi', icon: Sparkles },
+    { to: '/about', label: language === 'it' ? 'La Struttura' : 'The Property', icon: Building },
+    { to: '/booking', label: language === 'it' ? 'Prenota' : 'Book', icon: CalendarCheck },
+    { to: '/events', label: language === 'it' ? 'Eventi' : 'Events', icon: Calendar },
+    { to: '/structures', label: language === 'it' ? 'Territorio' : 'Area', icon: MapPin },
+    { to: '/services', label: language === 'it' ? 'Servizi' : 'Services', icon: Sparkles },
     { to: '/shop', label: 'Shop', icon: ShoppingBag },
-    { to: '/house-rules', label: 'Regole', icon: FileText },
-    { to: '/loyalty', label: 'Punti', icon: Gift },
+    { to: '/house-rules', label: language === 'it' ? 'Regole' : 'Rules', icon: FileText },
+    { to: '/loyalty', label: language === 'it' ? 'Punti' : 'Points', icon: Gift },
   ] : [
-    { to: '/about', label: 'La Struttura', icon: Building },
-    { to: '/booking', label: 'Prenota', icon: CalendarCheck },
-    { to: '/events', label: 'Eventi', icon: Calendar },
-    { to: '/structures', label: 'Territorio', icon: MapPin },
-    { to: '/loyalty', label: 'Fedeltà', icon: Gift },
+    { to: '/about', label: language === 'it' ? 'La Struttura' : 'The Property', icon: Building },
+    { to: '/booking', label: language === 'it' ? 'Prenota' : 'Book', icon: CalendarCheck },
+    { to: '/events', label: language === 'it' ? 'Eventi' : 'Events', icon: Calendar },
+    { to: '/structures', label: language === 'it' ? 'Territorio' : 'Area', icon: MapPin },
+    { to: '/loyalty', label: language === 'it' ? 'Fedeltà' : 'Loyalty', icon: Gift },
   ];
 
   return (
