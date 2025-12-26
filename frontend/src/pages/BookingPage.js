@@ -120,11 +120,11 @@ function AvailabilityCalendar({ unitId, bookedDates, onDateSelect, language }) {
       <div className="flex items-center gap-4 mt-4 text-xs">
         <span className="flex items-center gap-1">
           <span className="w-3 h-3 bg-green-50 border border-green-200 rounded"></span>
-          Disponibile
+          {language === 'en' ? 'Available' : 'Disponibile'}
         </span>
         <span className="flex items-center gap-1">
           <span className="w-3 h-3 bg-red-100 border border-red-200 rounded"></span>
-          Occupato
+          {language === 'en' ? 'Booked' : 'Occupato'}
         </span>
       </div>
     </div>
@@ -132,6 +132,7 @@ function AvailabilityCalendar({ unitId, bookedDates, onDateSelect, language }) {
 }
 
 export default function BookingPage() {
+  const { t, language } = useLanguage();
   const [units, setUnits] = useState([]);
   const [selectedUnit, setSelectedUnit] = useState(null);
   const [loading, setLoading] = useState(true);
