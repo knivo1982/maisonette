@@ -112,7 +112,9 @@ export default function AdminStructure() {
     setEditingUnit(unit);
     setUnitForm({
       nome: unit.nome,
+      nome_en: unit.nome_en || '',
       descrizione: unit.descrizione || '',
+      descrizione_en: unit.descrizione_en || '',
       capacita_max: unit.capacita_max,
       prezzo_base: unit.prezzo_base,
       attivo: unit.attivo !== false
@@ -122,7 +124,7 @@ export default function AdminStructure() {
 
   const resetUnitForm = () => {
     setEditingUnit(null);
-    setUnitForm({ nome: '', descrizione: '', capacita_max: 4, prezzo_base: 90, attivo: true });
+    setUnitForm({ nome: '', nome_en: '', descrizione: '', descrizione_en: '', capacita_max: 4, prezzo_base: 90, attivo: true });
   };
 
   // Gallery handlers
