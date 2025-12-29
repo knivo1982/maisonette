@@ -2305,15 +2305,35 @@ async def admin_search_guests(q: str = "", admin: dict = Depends(get_admin_user)
     
     return result
 
-@api_router.get("/admin/checkins", response_model=List[CheckInResponse])
+@api_router.get("/admin/checkins")
 async def admin_get_checkins(admin: dict = Depends(get_admin_user)):
-    checkins = await db.checkins.find({}, {"_id": 0}).sort("created_at", -1).to_list(500)
-    # Enrich with guest name
-    for checkin in checkins:
-        guest = await db.guests.find_one({"id": checkin["guest_id"]}, {"_id": 0, "nome": 1, "cognome": 1})
+    """Get all check-ins from both collections (form + online/validated)"""
+    # Get check-ins from form submissions
+    form_checkins = await db.checkins.find({}, {"_id": 0}).sort("created_at", -1).to_list(500)
+    for checkin in form_checkins:
+        checkin["source"] = "form"
+        guest = await db.guests.find_one({"id": checkin.get("guest_id")}, {"_id": 0, "nome": 1, "cognome": 1})
         if guest:
-            checkin["guest_nome"] = f"{guest['nome']} {guest['cognome']}"
-    return checkins
+            checkin["guest_nome"] = f"{guest.get('nome', '')} {guest.get('cognome', '')}"
+    
+    # Get online check-ins (including manually validated)
+    online_checkins = await db.online_checkins.find({}, {"_id": 0}).sort("created_at", -1).to_list(500)
+    for checkin in online_checkins:
+        checkin["source"] = "online"
+        # Get booking info for guest name
+        booking = await db.bookings.find_one({"id": checkin.get("booking_id")}, {"_id": 0})
+        if booking:
+            checkin["guest_nome"] = booking.get("nome_ospite", "")
+            checkin["booking"] = booking
+        # Map status for consistency
+        if checkin.get("validated_by_admin"):
+            checkin["admin_validated"] = True
+    
+    # Combine and sort
+    all_checkins = form_checkins + online_checkins
+    all_checkins.sort(key=lambda x: x.get("created_at", ""), reverse=True)
+    
+    return all_checkins
 
 @api_router.put("/admin/checkins/{checkin_id}/status")
 async def admin_update_checkin_status(checkin_id: str, status: str, admin: dict = Depends(get_admin_user)):
