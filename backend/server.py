@@ -3884,7 +3884,7 @@ async def admin_update_booking_status(booking_id: str, status: str, admin: dict 
 
 @api_router.put("/admin/bookings/{booking_id}")
 async def admin_update_booking(booking_id: str, data: dict, admin: dict = Depends(get_admin_user)):
-    """Update booking details - creates guest if email provided and guest doesn't exist"""
+    """Update booking details - creates/updates guest if email provided"""
     booking = await db.bookings.find_one({"id": booking_id})
     if not booking:
         raise HTTPException(status_code=404, detail="Prenotazione non trovata")
@@ -3908,37 +3908,74 @@ async def admin_update_booking(booking_id: str, data: dict, admin: dict = Depend
     if "status" in update_data and update_data["status"] not in ["pending", "confirmed", "cancelled", "completed"]:
         raise HTTPException(status_code=400, detail="Status non valido")
     
-    # Se viene fornita un'email e non c'è già un guest_id, crea/trova l'ospite
-    email_ospite = data.get("email_ospite", booking.get("email_ospite"))
-    nome_ospite = data.get("nome_ospite", booking.get("nome_ospite"))
+    # Gestione ospite
+    email_ospite = data.get("email_ospite", "").strip().lower()
+    nome_ospite = data.get("nome_ospite", booking.get("nome_ospite", ""))
+    telefono_ospite = data.get("telefono_ospite", booking.get("telefono_ospite", ""))
     
-    if email_ospite and not booking.get("guest_id"):
-        guest_email = email_ospite.lower().strip()
-        existing_guest = await db.guests.find_one({"email": guest_email}, {"_id": 0})
+    # Se l'email è valida (non placeholder)
+    is_valid_email = email_ospite and "@" in email_ospite and "temp.com" not in email_ospite and "noemail" not in email_ospite
+    
+    if is_valid_email:
+        existing_guest_id = booking.get("guest_id")
         
-        if existing_guest:
-            # Ospite esiste, collegalo alla prenotazione
-            update_data["guest_id"] = existing_guest["id"]
-            # Aggiorna il codice prenotazione dell'ospite
+        # Check if guest with this email already exists
+        existing_guest_by_email = await db.guests.find_one({"email": email_ospite}, {"_id": 0})
+        
+        if existing_guest_by_email:
+            # Guest exists with this email, link to booking
+            update_data["guest_id"] = existing_guest_by_email["id"]
+            # Update guest info
             await db.guests.update_one(
-                {"id": existing_guest["id"]},
-                {"$set": {"codice_prenotazione": booking.get("codice_prenotazione", "")}}
+                {"id": existing_guest_by_email["id"]},
+                {"$set": {
+                    "codice_prenotazione": booking.get("codice_prenotazione", ""),
+                    "telefono": telefono_ospite or existing_guest_by_email.get("telefono", "")
+                }}
             )
-        elif nome_ospite:
-            # Crea nuovo ospite
+            print(f"✅ Linked existing guest {existing_guest_by_email['id']} to booking {booking_id}")
+            
+            # Delete old temp guest if different
+            if existing_guest_id and existing_guest_id != existing_guest_by_email["id"]:
+                old_guest = await db.guests.find_one({"id": existing_guest_id}, {"_id": 0})
+                if old_guest and ("temp.com" in old_guest.get("email", "") or "noemail" in old_guest.get("email", "")):
+                    await db.guests.delete_one({"id": existing_guest_id})
+                    print(f"🗑️ Deleted temp guest {existing_guest_id}")
+                    
+        elif existing_guest_id:
+            # Update existing guest with new email
+            old_guest = await db.guests.find_one({"id": existing_guest_id}, {"_id": 0})
+            if old_guest:
+                old_email = old_guest.get("email", "")
+                # If old email was temp, update it
+                if "temp.com" in old_email or "noemail" in old_email:
+                    nome_parts = nome_ospite.strip().split(' ', 1) if nome_ospite else [""]
+                    await db.guests.update_one(
+                        {"id": existing_guest_id},
+                        {"$set": {
+                            "email": email_ospite,
+                            "nome": nome_parts[0],
+                            "cognome": nome_parts[1] if len(nome_parts) > 1 else "",
+                            "telefono": telefono_ospite,
+                            "codice_prenotazione": booking.get("codice_prenotazione", "")
+                        }}
+                    )
+                    print(f"✅ Updated guest {existing_guest_id} with real email {email_ospite}")
+        else:
+            # No guest exists, create new one
             guest_id = str(uuid.uuid4())
-            nome_parts = nome_ospite.strip().split(' ', 1)
-            nome = nome_parts[0] if nome_parts else nome_ospite
-            cognome = nome_parts[1] if len(nome_parts) > 1 else ''
+            nome_parts = nome_ospite.strip().split(' ', 1) if nome_ospite else ["Guest"]
+            nome = nome_parts[0]
+            cognome = nome_parts[1] if len(nome_parts) > 1 else ""
             codice = booking.get("codice_prenotazione", generate_booking_code())
             
             guest_doc = {
                 "id": guest_id,
                 "nome": nome,
                 "cognome": cognome,
-                "email": guest_email,
+                "email": email_ospite,
                 "password_hash": hash_password(codice),
-                "telefono": data.get("telefono_ospite", booking.get("telefono_ospite", "")),
+                "telefono": telefono_ospite,
                 "punti_fedelta": 0,
                 "is_admin": False,
                 "codice_prenotazione": codice,
@@ -3946,7 +3983,7 @@ async def admin_update_booking(booking_id: str, data: dict, admin: dict = Depend
             }
             await db.guests.insert_one(guest_doc)
             update_data["guest_id"] = guest_id
-            print(f"✅ Created guest {guest_id} for booking {booking_id}")
+            print(f"✅ Created new guest {guest_id} for booking {booking_id}")
     
     # Update booking
     await db.bookings.update_one(
