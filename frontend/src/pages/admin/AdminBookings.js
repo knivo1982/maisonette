@@ -156,7 +156,6 @@ export default function AdminBookings() {
 
   // Validate Check-in manually
   const validateCheckin = async (bookingId) => {
-    if (!window.confirm('Validare il check-in per questa prenotazione? Usare se l\'ospite ha inviato documenti via altri canali.')) return;
     try {
       await axios.post(`${API}/admin/checkins/validate/${bookingId}`, {
         note: 'Documenti ricevuti via canale esterno'
