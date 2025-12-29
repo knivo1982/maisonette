@@ -990,11 +990,29 @@ async def create_checkin(data: CheckInCreate, current_user: dict = Depends(get_c
 
 @api_router.get("/checkin", response_model=List[CheckInResponse])
 async def get_my_checkins(current_user: dict = Depends(get_current_user)):
+    # Get checkins from both collections
     checkins = await db.checkins.find(
         {"guest_id": current_user["id"]}, 
         {"_id": 0}
     ).sort("created_at", -1).to_list(100)
-    return checkins
+    
+    # Also get online checkins (including manually validated)
+    online_checkins = await db.online_checkins.find(
+        {"guest_id": current_user["id"]},
+        {"_id": 0}
+    ).sort("created_at", -1).to_list(100)
+    
+    # Merge and add source indicator
+    for c in checkins:
+        c["source"] = "form"
+    for c in online_checkins:
+        c["source"] = "online"
+    
+    # Combine and sort by created_at
+    all_checkins = checkins + online_checkins
+    all_checkins.sort(key=lambda x: x.get("created_at", ""), reverse=True)
+    
+    return all_checkins
 
 @api_router.get("/checkin/active")
 async def get_active_checkin(current_user: dict = Depends(get_current_user)):
