@@ -988,25 +988,34 @@ async def create_checkin(data: CheckInCreate, current_user: dict = Depends(get_c
     
     return CheckInResponse(**checkin_doc)
 
-@api_router.get("/checkin", response_model=List[CheckInResponse])
+@api_router.get("/checkin")
 async def get_my_checkins(current_user: dict = Depends(get_current_user)):
-    # Get checkins from both collections
+    """Get all check-ins for the current user (form + online/validated)"""
+    # Get checkins from form submissions
     checkins = await db.checkins.find(
         {"guest_id": current_user["id"]}, 
         {"_id": 0}
     ).sort("created_at", -1).to_list(100)
     
-    # Also get online checkins (including manually validated)
+    for c in checkins:
+        c["source"] = "form"
+    
+    # Get online checkins (including manually validated)
     online_checkins = await db.online_checkins.find(
         {"guest_id": current_user["id"]},
         {"_id": 0}
     ).sort("created_at", -1).to_list(100)
     
-    # Merge and add source indicator
-    for c in checkins:
-        c["source"] = "form"
+    # Enrich online checkins with booking data
     for c in online_checkins:
         c["source"] = "online"
+        booking = await db.bookings.find_one({"id": c.get("booking_id")}, {"_id": 0})
+        if booking:
+            c["data_arrivo"] = booking.get("data_arrivo", "")
+            c["data_partenza"] = booking.get("data_partenza", "")
+            c["num_ospiti"] = booking.get("num_ospiti", 1)
+            c["codice_prenotazione"] = booking.get("codice_prenotazione", "")
+            c["note"] = c.get("admin_note", "")
     
     # Combine and sort by created_at
     all_checkins = checkins + online_checkins
