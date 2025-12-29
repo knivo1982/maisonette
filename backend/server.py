@@ -3523,6 +3523,94 @@ async def admin_get_online_checkins(admin: dict = Depends(get_admin_user)):
     
     return checkins
 
+@api_router.post("/admin/checkins/validate/{booking_id}")
+async def admin_validate_checkin(booking_id: str, data: dict = None, admin: dict = Depends(get_admin_user)):
+    """
+    Valida manualmente il check-in per una prenotazione.
+    Usare quando l'ospite invia documenti via altri canali (WhatsApp, email, ecc.)
+    """
+    # Trova la prenotazione
+    booking = await db.bookings.find_one({"id": booking_id})
+    if not booking:
+        raise HTTPException(status_code=404, detail="Prenotazione non trovata")
+    
+    # Verifica che non ci sia già un check-in completato
+    existing_checkin = await db.online_checkins.find_one({
+        "booking_id": booking_id,
+        "status": "completed"
+    })
+    if existing_checkin:
+        raise HTTPException(status_code=400, detail="Check-in già completato per questa prenotazione")
+    
+    # Dati opzionali dal body
+    body = data or {}
+    note = body.get("note", "Validato manualmente dall'admin")
+    
+    # Crea o aggiorna il record di check-in
+    existing = await db.online_checkins.find_one({"booking_id": booking_id})
+    
+    if existing:
+        # Aggiorna check-in esistente
+        await db.online_checkins.update_one(
+            {"booking_id": booking_id},
+            {"$set": {
+                "status": "completed",
+                "validated_by_admin": True,
+                "admin_note": note,
+                "completed_at": datetime.now(timezone.utc).isoformat()
+            }}
+        )
+        checkin_id = existing["id"]
+    else:
+        # Crea nuovo check-in già completato
+        checkin_id = str(uuid.uuid4())
+        checkin_doc = {
+            "id": checkin_id,
+            "booking_id": booking_id,
+            "guest_id": booking.get("guest_id"),
+            "status": "completed",
+            "validated_by_admin": True,
+            "admin_note": note,
+            "ospiti": [],
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "completed_at": datetime.now(timezone.utc).isoformat()
+        }
+        await db.online_checkins.insert_one(checkin_doc)
+    
+    # Aggiorna la prenotazione
+    await db.bookings.update_one(
+        {"id": booking_id},
+        {"$set": {"checkin_online_completato": True}}
+    )
+    
+    return {
+        "message": "Check-in validato con successo",
+        "checkin_id": checkin_id,
+        "booking_id": booking_id
+    }
+
+@api_router.delete("/admin/checkins/invalidate/{booking_id}")
+async def admin_invalidate_checkin(booking_id: str, admin: dict = Depends(get_admin_user)):
+    """
+    Invalida/annulla il check-in per una prenotazione.
+    Usare se bisogna far rifare il check-in all'ospite.
+    """
+    # Trova la prenotazione
+    booking = await db.bookings.find_one({"id": booking_id})
+    if not booking:
+        raise HTTPException(status_code=404, detail="Prenotazione non trovata")
+    
+    # Elimina il check-in se esiste
+    await db.online_checkins.delete_many({"booking_id": booking_id})
+    
+    # Aggiorna la prenotazione
+    await db.bookings.update_one(
+        {"id": booking_id},
+        {"$set": {"checkin_online_completato": False}}
+    )
+    
+    return {"message": "Check-in invalidato", "booking_id": booking_id}
+
 # ==================== ADMIN NOTIFICATIONS ====================
 
 @api_router.get("/admin/notifications", response_model=List[NotificationResponse])
