@@ -117,32 +117,42 @@ export default function AdminCheckins() {
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
                       <h3 className="font-cinzel text-lg text-[#1A202C]">
-                        {checkin.guest_nome || 'Ospite'}
+                        {checkin.guest_nome || checkin.booking?.nome_ospite || 'Ospite'}
                       </h3>
                       {getStatusBadge(checkin.status)}
-                      {checkin.codice_prenotazione && (
-                        <span className="text-xs bg-[#C5A059]/10 text-[#C5A059] px-2 py-1 rounded font-mono">
-                          {checkin.codice_prenotazione}
+                      {checkin.admin_validated && (
+                        <span className="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded">
+                          ✓ Validato Admin
                         </span>
                       )}
+                      {checkin.source === 'online' && !checkin.admin_validated && (
+                        <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
+                          Online
+                        </span>
+                      )}
+                      {checkin.codice_prenotazione || checkin.booking?.codice_prenotazione ? (
+                        <span className="text-xs bg-[#C5A059]/10 text-[#C5A059] px-2 py-1 rounded font-mono">
+                          {checkin.codice_prenotazione || checkin.booking?.codice_prenotazione}
+                        </span>
+                      ) : null}
                     </div>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm text-[#4A5568]">
                       <span className="flex items-center gap-1">
                         <Calendar className="w-4 h-4 text-[#C5A059]" />
-                        Arrivo: {formatDate(checkin.data_arrivo)}
+                        Arrivo: {formatDate(checkin.data_arrivo || checkin.booking?.data_arrivo)}
                       </span>
                       <span className="flex items-center gap-1">
                         <Calendar className="w-4 h-4 text-[#C5A059]" />
-                        Partenza: {formatDate(checkin.data_partenza)}
+                        Partenza: {formatDate(checkin.data_partenza || checkin.booking?.data_partenza)}
                       </span>
                       <span className="flex items-center gap-1">
                         <Users className="w-4 h-4 text-[#C5A059]" />
-                        {checkin.num_ospiti} ospiti
+                        {checkin.num_ospiti || checkin.booking?.num_ospiti || '?'} ospiti
                       </span>
-                      {checkin.note && (
+                      {(checkin.note || checkin.admin_note) && (
                         <span className="flex items-center gap-1 text-[#718096]">
                           <FileText className="w-4 h-4" />
-                          {checkin.note}
+                          {checkin.note || checkin.admin_note}
                         </span>
                       )}
                     </div>
