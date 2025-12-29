@@ -883,6 +883,23 @@ Antonella – La Maisonette di Paestum`;
                               >
                                 <Trash2 className="w-4 h-4" />
                               </Button>
+                              {/* Validate Check-in Button */}
+                              {booking.status === 'confirmed' && !booking.checkin_online_completato && (
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => validateCheckin(booking.id)}
+                                  className="text-purple-600 border-purple-600 hover:bg-purple-50"
+                                  title="Valida check-in manualmente"
+                                >
+                                  ✓ Check-in
+                                </Button>
+                              )}
+                              {booking.checkin_online_completato && (
+                                <span className="flex items-center gap-1 px-2 py-1 bg-purple-100 text-purple-800 rounded text-xs">
+                                  ✓ Check-in fatto
+                                </span>
+                              )}
                             </div>
                           </div>
                         </CardContent>
