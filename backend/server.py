@@ -1016,12 +1016,22 @@ async def get_my_checkins(current_user: dict = Depends(get_current_user)):
 
 @api_router.get("/checkin/active")
 async def get_active_checkin(current_user: dict = Depends(get_current_user)):
+    # Check in regular checkins
     checkin = await db.checkins.find_one({
         "guest_id": current_user["id"],
         "status": {"$in": ["pending", "confirmed"]}
     }, {"_id": 0})
     if checkin:
         return {"has_active_checkin": True, "checkin": checkin}
+    
+    # Check in online checkins (including manually validated)
+    online_checkin = await db.online_checkins.find_one({
+        "guest_id": current_user["id"],
+        "status": {"$in": ["pending", "completed"]}
+    }, {"_id": 0})
+    if online_checkin:
+        return {"has_active_checkin": True, "checkin": online_checkin}
+    
     return {"has_active_checkin": False, "checkin": None}
 
 @api_router.get("/checkin/{checkin_id}", response_model=CheckInResponse)
