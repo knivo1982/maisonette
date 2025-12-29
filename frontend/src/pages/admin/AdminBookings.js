@@ -154,6 +154,22 @@ export default function AdminBookings() {
     }
   };
 
+  // Validate Check-in manually
+  const validateCheckin = async (bookingId) => {
+    if (!window.confirm('Validare il check-in per questa prenotazione? Usare se l\'ospite ha inviato documenti via altri canali.')) return;
+    try {
+      await axios.post(`${API}/admin/checkins/validate/${bookingId}`, {
+        note: 'Documenti ricevuti via canale esterno'
+      }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      toast.success('Check-in validato!');
+      fetchAll();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Errore nella validazione');
+    }
+  };
+
   // Price Period handlers
   const handlePriceSubmit = async (e) => {
     e.preventDefault();
