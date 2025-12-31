@@ -3584,38 +3584,40 @@ async def admin_get_online_checkins(admin: dict = Depends(get_admin_user)):
 async def admin_validate_checkin(booking_id: str, data: dict = None, admin: dict = Depends(get_admin_user)):
     """
     Valida manualmente il check-in per una prenotazione.
-    Usare quando l'ospite invia documenti via altri canali (WhatsApp, email, ecc.)
+    Permette di inserire i dati dell'ospite principale e accompagnatori.
     """
     # Trova la prenotazione
     booking = await db.bookings.find_one({"id": booking_id})
     if not booking:
         raise HTTPException(status_code=404, detail="Prenotazione non trovata")
     
-    # Verifica che non ci sia già un check-in completato
-    existing_checkin = await db.online_checkins.find_one({
-        "booking_id": booking_id,
-        "status": "completed"
-    })
-    if existing_checkin:
-        raise HTTPException(status_code=400, detail="Check-in già completato per questa prenotazione")
-    
-    # Dati opzionali dal body
+    # Dati dal body
     body = data or {}
     note = body.get("note", "Validato manualmente dall'admin")
+    ospite_principale = body.get("ospite_principale")
+    accompagnatori = body.get("accompagnatori", [])
     
     # Crea o aggiorna il record di check-in
     existing = await db.online_checkins.find_one({"booking_id": booking_id})
+    
+    checkin_data = {
+        "status": "completed",
+        "validated_by_admin": True,
+        "admin_note": note,
+        "completed_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    # Aggiungi dati ospite se forniti
+    if ospite_principale:
+        checkin_data["ospite_principale"] = ospite_principale
+    if accompagnatori:
+        checkin_data["accompagnatori"] = accompagnatori
     
     if existing:
         # Aggiorna check-in esistente
         await db.online_checkins.update_one(
             {"booking_id": booking_id},
-            {"$set": {
-                "status": "completed",
-                "validated_by_admin": True,
-                "admin_note": note,
-                "completed_at": datetime.now(timezone.utc).isoformat()
-            }}
+            {"$set": checkin_data}
         )
         checkin_id = existing["id"]
     else:
@@ -3625,12 +3627,9 @@ async def admin_validate_checkin(booking_id: str, data: dict = None, admin: dict
             "id": checkin_id,
             "booking_id": booking_id,
             "guest_id": booking.get("guest_id"),
-            "status": "completed",
-            "validated_by_admin": True,
-            "admin_note": note,
             "ospiti": [],
             "created_at": datetime.now(timezone.utc).isoformat(),
-            "completed_at": datetime.now(timezone.utc).isoformat()
+            **checkin_data
         }
         await db.online_checkins.insert_one(checkin_doc)
     
@@ -3644,6 +3643,122 @@ async def admin_validate_checkin(booking_id: str, data: dict = None, admin: dict
         "message": "Check-in validato con successo",
         "checkin_id": checkin_id,
         "booking_id": booking_id
+    }
+
+@api_router.put("/admin/checkins/{checkin_id}/guest-data")
+async def admin_update_checkin_guest_data(checkin_id: str, data: dict, admin: dict = Depends(get_admin_user)):
+    """
+    Aggiorna i dati degli ospiti per un check-in (sia form che online).
+    Usare per aggiungere/modificare dati dell'ospite principale e accompagnatori.
+    """
+    # Cerca in entrambe le collection
+    checkin = await db.online_checkins.find_one({"id": checkin_id})
+    collection = db.online_checkins
+    
+    if not checkin:
+        checkin = await db.checkins.find_one({"id": checkin_id})
+        collection = db.checkins
+    
+    if not checkin:
+        raise HTTPException(status_code=404, detail="Check-in non trovato")
+    
+    update_data = {}
+    
+    if "ospite_principale" in data:
+        update_data["ospite_principale"] = data["ospite_principale"]
+    
+    if "accompagnatori" in data:
+        update_data["accompagnatori"] = data["accompagnatori"]
+    
+    if not update_data:
+        raise HTTPException(status_code=400, detail="Nessun dato da aggiornare")
+    
+    await collection.update_one(
+        {"id": checkin_id},
+        {"$set": update_data}
+    )
+    
+    return {"message": "Dati ospite aggiornati", "checkin_id": checkin_id}
+
+@api_router.get("/admin/checkins/export-questura")
+async def export_questura(admin: dict = Depends(get_admin_user), data_da: str = None, data_a: str = None):
+    """
+    Esporta i dati dei check-in nel formato per Alloggiati Web (Questura).
+    Formato: file di testo con campi separati da tabulazione.
+    """
+    query = {"status": "completed"}
+    
+    if data_da:
+        query["created_at"] = {"$gte": data_da}
+    if data_a:
+        if "created_at" in query:
+            query["created_at"]["$lte"] = data_a
+        else:
+            query["created_at"] = {"$lte": data_a}
+    
+    # Get all completed check-ins from both collections
+    checkins_form = await db.checkins.find(query, {"_id": 0}).to_list(1000)
+    checkins_online = await db.online_checkins.find(query, {"_id": 0}).to_list(1000)
+    
+    all_checkins = checkins_form + checkins_online
+    
+    # Prepare export data
+    export_lines = []
+    
+    for checkin in all_checkins:
+        # Get booking data
+        booking = await db.bookings.find_one({"id": checkin.get("booking_id")}, {"_id": 0})
+        if not booking:
+            continue
+        
+        data_arrivo = checkin.get("data_arrivo") or booking.get("data_arrivo", "")
+        
+        ospite = checkin.get("ospite_principale", {})
+        if ospite:
+            # Formato Alloggiati Web (semplificato)
+            # Tipo Alloggiato (16=ospite singolo, 17=capofamiglia, 18=capogruppo, 19=familiare, 20=membro gruppo)
+            line = {
+                "tipo_alloggiato": "16",
+                "data_arrivo": data_arrivo,
+                "permanenza": "1",  # Giorni di permanenza
+                "cognome": ospite.get("cognome", ""),
+                "nome": ospite.get("nome", ""),
+                "sesso": ospite.get("sesso", "M"),
+                "data_nascita": ospite.get("data_nascita", ""),
+                "comune_nascita": ospite.get("luogo_nascita", ""),
+                "provincia_nascita": "",
+                "stato_nascita": ospite.get("nazionalita", "ITALIA"),
+                "cittadinanza": ospite.get("nazionalita", "ITALIA"),
+                "tipo_documento": ospite.get("tipo_documento", "CARTID").upper().replace("CARTA_IDENTITA", "CARTID").replace("PASSAPORTO", "PASOR").replace("PATENTE", "PATEN"),
+                "numero_documento": ospite.get("numero_documento", ""),
+                "luogo_rilascio": ospite.get("luogo_rilascio", ""),
+            }
+            export_lines.append(line)
+        
+        # Accompagnatori
+        for acc in checkin.get("accompagnatori", []):
+            line = {
+                "tipo_alloggiato": "19",  # Familiare/membro gruppo
+                "data_arrivo": data_arrivo,
+                "permanenza": "1",
+                "cognome": acc.get("cognome", ""),
+                "nome": acc.get("nome", ""),
+                "sesso": acc.get("sesso", ""),
+                "data_nascita": acc.get("data_nascita", ""),
+                "comune_nascita": acc.get("luogo_nascita", ""),
+                "provincia_nascita": "",
+                "stato_nascita": acc.get("nazionalita", "ITALIA"),
+                "cittadinanza": acc.get("nazionalita", "ITALIA"),
+                "tipo_documento": "",
+                "numero_documento": "",
+                "luogo_rilascio": "",
+            }
+            export_lines.append(line)
+    
+    return {
+        "count": len(export_lines),
+        "data": export_lines,
+        "format_info": "Formato compatibile con Alloggiati Web. Importare i dati nel portale della Questura."
     }
 
 @api_router.delete("/admin/checkins/invalidate/{booking_id}")
