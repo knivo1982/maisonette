@@ -1,0 +1,89 @@
+{
+  "summary": "Completed testing of Check-in Management features for La Maisonette di Paestum B&B app. All backend APIs and frontend UI components are working correctly.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {
+        "screen": "Edit Guest Dialog",
+        "issues": ["Minor: React console warning about missing DialogContent aria-describedby - accessibility improvement recommended"]
+      }
+    ]
+  },
+  "test_report_links": [
+    "/app/tests/test_checkin_api.py",
+    "/app/test_reports/pytest/pytest_results.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [],
+  "updated_files": [
+    "/app/tests/test_checkin_api.py"
+  ],
+  "success_rate": {
+    "backend": "100%",
+    "frontend": "100%"
+  },
+  "test_credentials": {
+    "admin_email": "admin@maisonette.it",
+    "admin_password": "admin123"
+  },
+  "seed_data_creation": "Test guest data (TEST_Mario TEST_Rossi) was added via API test to verify guest data update functionality",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Check-in management features fully tested. 3 check-ins exist in the system. One check-in (TEST_Mario TEST_Rossi) has complete guest data including document info. Export Questura returns 1 record (only completed check-ins with guest data). All dates display correctly in DD/MM/YYYY format.",
+  "features_tested": {
+    "backend_apis": [
+      {
+        "endpoint": "GET /api/admin/checkins",
+        "status": "PASS",
+        "notes": "Returns check-ins with correct dates (data_arrivo, data_partenza) from both form and online collections"
+      },
+      {
+        "endpoint": "PUT /api/admin/checkins/{id}/guest-data",
+        "status": "PASS",
+        "notes": "Successfully updates ospite_principale and accompagnatori data"
+      },
+      {
+        "endpoint": "GET /api/admin/checkins/export-questura",
+        "status": "PASS",
+        "notes": "Returns data in Alloggiati Web format with all required fields"
+      },
+      {
+        "endpoint": "PUT /api/admin/checkins/{id}/status",
+        "status": "PASS",
+        "notes": "Status update works for form checkins"
+      },
+      {
+        "endpoint": "POST /api/auth/login",
+        "status": "PASS",
+        "notes": "Admin login works correctly"
+      }
+    ],
+    "frontend_ui": [
+      {
+        "feature": "Check-in list display",
+        "status": "PASS",
+        "notes": "Dates display correctly in DD/MM/YYYY format, no 'Invalid Date' errors"
+      },
+      {
+        "feature": "Dati Ospite button and dialog",
+        "status": "PASS",
+        "notes": "Dialog opens with all fields: nome, cognome, data_nascita, luogo_nascita, nazionalita, sesso, tipo_documento, numero_documento, scadenza_documento, luogo_rilascio, foto upload areas, accompagnatori section"
+      },
+      {
+        "feature": "Export Questura button and dialog",
+        "status": "PASS",
+        "notes": "Dialog opens with date filters, generates export, shows results table, download TXT button works"
+      },
+      {
+        "feature": "Status dropdown",
+        "status": "PASS",
+        "notes": "Status can be changed via dropdown"
+      }
+    ]
+  }
+}
