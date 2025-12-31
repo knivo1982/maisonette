@@ -1125,6 +1125,8 @@ async def admin_upload_media(
     }
     await db.media.insert_one(media_doc)
     
+    # Remove MongoDB _id before returning
+    media_doc.pop("_id", None)
     return media_doc
 
 @api_router.get("/admin/media")
