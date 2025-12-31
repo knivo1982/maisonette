@@ -1,0 +1,53 @@
+{
+  "summary": "Completed testing of Admin Check-in Management features for B&B La Maisonette di Paestum. All requested features are working correctly: Edit guest modal, document photo upload, Export Questura functionality, and expanded row guest details.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/tests/test_admin_checkins.py",
+    "/app/test_reports/pytest/pytest_results.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "Fixed MongoDB ObjectId serialization issue in /admin/media/upload endpoint - was returning _id which is not JSON serializable"
+  ],
+  "updated_files": [
+    "/app/backend/server.py - Fixed media upload endpoint to exclude MongoDB _id from response"
+  ],
+  "success_rate": {
+    "backend": "100% (13/13 tests passed)",
+    "frontend": "100% (all UI features working)"
+  },
+  "test_credentials": {
+    "admin_email": "admin@maisonette.it",
+    "admin_password": "admin123"
+  },
+  "seed_data_creation": "Used existing check-in data (Blocco Airbnb, Ivan De Rosa, Mario Rossi)",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "All admin check-in management features tested and working. Backend tests in /app/tests/test_admin_checkins.py cover: admin auth, get checkins, update guest data, export questura, media upload. Frontend tested via Playwright: edit guest modal, export questura modal, expanded row details.",
+  "features_tested": {
+    "edit_guest_modal": {
+      "status": "PASS",
+      "details": "Modal opens with all fields (nome, cognome, data_nascita, luogo_nascita, nazionalita, sesso, tipo_documento, numero_documento, scadenza_documento, luogo_rilascio). Photo upload sections for front and back document. Save button works and shows success toast."
+    },
+    "document_photo_upload": {
+      "status": "PASS",
+      "details": "Upload inputs present for front and back document photos. Backend /admin/media/upload endpoint works correctly after fix."
+    },
+    "export_questura": {
+      "status": "PASS",
+      "details": "Modal opens with date range selection. Search finds records and displays preview table. Download button generates file in Alloggiati Web format."
+    },
+    "expanded_row_details": {
+      "status": "PASS",
+      "details": "Clicking chevron expands row to show Ospite Principale section with all guest details (name, birth date, birthplace, nationality, document info)."
+    }
+  }
+}
