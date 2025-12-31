@@ -2324,15 +2324,27 @@ async def admin_get_checkins(admin: dict = Depends(get_admin_user)):
         guest = await db.guests.find_one({"id": checkin.get("guest_id")}, {"_id": 0, "nome": 1, "cognome": 1})
         if guest:
             checkin["guest_nome"] = f"{guest.get('nome', '')} {guest.get('cognome', '')}"
+        # Get booking info for dates if not present
+        if not checkin.get("data_arrivo") or not checkin.get("data_partenza"):
+            booking = await db.bookings.find_one({"id": checkin.get("booking_id")}, {"_id": 0})
+            if booking:
+                checkin["data_arrivo"] = checkin.get("data_arrivo") or booking.get("data_arrivo", "")
+                checkin["data_partenza"] = checkin.get("data_partenza") or booking.get("data_partenza", "")
+                checkin["num_ospiti"] = checkin.get("num_ospiti") or booking.get("num_ospiti", 1)
+                checkin["codice_prenotazione"] = checkin.get("codice_prenotazione") or booking.get("codice_prenotazione", "")
     
     # Get online check-ins (including manually validated)
     online_checkins = await db.online_checkins.find({}, {"_id": 0}).sort("created_at", -1).to_list(500)
     for checkin in online_checkins:
         checkin["source"] = "online"
-        # Get booking info for guest name
+        # Get booking info for guest name and dates
         booking = await db.bookings.find_one({"id": checkin.get("booking_id")}, {"_id": 0})
         if booking:
             checkin["guest_nome"] = booking.get("nome_ospite", "")
+            checkin["data_arrivo"] = booking.get("data_arrivo", "")
+            checkin["data_partenza"] = booking.get("data_partenza", "")
+            checkin["num_ospiti"] = booking.get("num_ospiti", 1)
+            checkin["codice_prenotazione"] = booking.get("codice_prenotazione", "")
             checkin["booking"] = booking
         # Map status for consistency
         if checkin.get("validated_by_admin"):
