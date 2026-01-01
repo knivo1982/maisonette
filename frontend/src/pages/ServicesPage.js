@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { useLanguage } from '../contexts/LanguageContext';
 import Layout from '../components/Layout';
 import { Card, CardContent } from '../components/ui/card';
 import { Badge } from '../components/ui/badge';
@@ -13,7 +14,7 @@ import { Calendar } from '../components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '../components/ui/popover';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
 import { format } from 'date-fns';
-import { it } from 'date-fns/locale';
+import { it, enUS } from 'date-fns/locale';
 import axios from 'axios';
 import { toast } from 'sonner';
 import { 
@@ -55,21 +56,34 @@ const iconMap = {
 };
 
 const categoryLabels = {
-  spiaggia: { label: 'Spiaggia', color: 'bg-blue-100 text-blue-700' },
-  comfort: { label: 'Comfort', color: 'bg-purple-100 text-purple-700' },
-  trasporti: { label: 'Trasporti', color: 'bg-green-100 text-green-700' },
-  esperienze: { label: 'Esperienze', color: 'bg-amber-100 text-amber-700' },
-  shop: { label: 'Shop', color: 'bg-pink-100 text-pink-700' }
+  it: {
+    spiaggia: { label: 'Spiaggia', color: 'bg-blue-100 text-blue-700' },
+    comfort: { label: 'Comfort', color: 'bg-purple-100 text-purple-700' },
+    trasporti: { label: 'Trasporti', color: 'bg-green-100 text-green-700' },
+    esperienze: { label: 'Esperienze', color: 'bg-amber-100 text-amber-700' },
+    shop: { label: 'Shop', color: 'bg-pink-100 text-pink-700' }
+  },
+  en: {
+    spiaggia: { label: 'Beach', color: 'bg-blue-100 text-blue-700' },
+    comfort: { label: 'Comfort', color: 'bg-purple-100 text-purple-700' },
+    trasporti: { label: 'Transport', color: 'bg-green-100 text-green-700' },
+    esperienze: { label: 'Experiences', color: 'bg-amber-100 text-amber-700' },
+    shop: { label: 'Shop', color: 'bg-pink-100 text-pink-700' }
+  }
 };
 
 export default function ServicesPage() {
   const { user, token, loading: authLoading } = useAuth();
+  const { language, t } = useLanguage();
   const navigate = useNavigate();
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState('all');
   const [hasActiveCheckin, setHasActiveCheckin] = useState(false);
   const [checkingStatus, setCheckingStatus] = useState(true);
+  
+  // Date locale
+  const dateLocale = language === 'it' ? it : enUS;
   
   // Booking dialog state
   const [bookingDialogOpen, setBookingDialogOpen] = useState(false);
@@ -83,6 +97,14 @@ export default function ServicesPage() {
   // Info dialog (for WiFi password etc)
   const [infoDialogOpen, setInfoDialogOpen] = useState(false);
   const [infoService, setInfoService] = useState(null);
+
+  // Helper to get translated content
+  const getLocalizedText = (item, field) => {
+    if (language === 'en' && item[`${field}_en`]) {
+      return item[`${field}_en`];
+    }
+    return item[field] || item[`${field}_it`] || '';
+  };
 
   useEffect(() => {
     if (!authLoading && !user) {
