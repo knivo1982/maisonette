@@ -112,11 +112,14 @@ export default function HomePage() {
             className="h-24 md:h-32 mx-auto mb-6 brightness-0 invert"
           />
           <p className="font-cormorant text-2xl md:text-3xl italic mb-4 text-[#C5A059]">
-            A 20 passi dalle mura dell'Antica Città di Paestum
+            {language === 'en' 
+              ? '20 steps from the walls of the Ancient City of Paestum'
+              : 'A 20 passi dalle mura dell\'Antica Città di Paestum'}
           </p>
           <p className="font-manrope text-base md:text-lg text-gray-300 max-w-2xl mx-auto mb-10 leading-relaxed">
-            Immersa nella magia dei templi greci e della maestosità dell'antica città, 
-            vi offriamo un soggiorno indimenticabile tra comfort moderni e fascino storico.
+            {language === 'en'
+              ? 'Immersed in the magic of Greek temples and the majesty of the ancient city, we offer you an unforgettable stay between modern comfort and historic charm.'
+              : 'Immersa nella magia dei templi greci e della maestosità dell\'antica città, vi offriamo un soggiorno indimenticabile tra comfort moderni e fascino storico.'}
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -124,7 +127,7 @@ export default function HomePage() {
               <Button 
                 className="bg-[#C5A059] hover:bg-[#B08D45] text-white font-cinzel tracking-widest uppercase px-8 py-6 text-sm"
               >
-                Prenota Ora
+                {t('home.bookNow')}
                 <CalendarCheck className="ml-2 w-5 h-5" />
               </Button>
             </Link>
@@ -134,7 +137,7 @@ export default function HomePage() {
                   variant="outline"
                   className="border-2 border-white text-white hover:bg-white hover:text-[#1A202C] font-cinzel tracking-widest uppercase px-8 py-6 text-sm"
                 >
-                  La Tua Dashboard
+                  {language === 'en' ? 'Your Dashboard' : 'La Tua Dashboard'}
                   <LayoutDashboard className="ml-2 w-5 h-5" />
                 </Button>
               </Link>
@@ -144,7 +147,7 @@ export default function HomePage() {
                   variant="outline"
                   className="border-2 border-white text-white hover:bg-white hover:text-[#1A202C] font-cinzel tracking-widest uppercase px-8 py-6 text-sm"
                 >
-                  Check-in Online
+                  {language === 'en' ? 'Online Check-in' : 'Check-in Online'}
                   <ClipboardCheck className="ml-2 w-5 h-5" />
                 </Button>
               </Link>
