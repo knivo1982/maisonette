@@ -113,7 +113,8 @@ Applicazione di gestione B&B per "La Maisonette di Paestum" importata da GitHub 
 - [ ] Visibilità foto documenti (codice presente, dipende da upload)
 
 ### P2 - Media Priorità
-- [ ] Multilingue completo per contenuti dinamici (Servizi, Eventi, Amenità)
+- [x] Multilingue UI (navigazione, pulsanti) ✅
+- [ ] Multilingue contenuti database (richiede inserimento traduzioni admin)
 - [ ] Notifiche push (richiede VAPID keys)
 
 ### P3 - Bassa Priorità
