@@ -4,6 +4,7 @@ import { Toaster } from "./components/ui/sonner";
 import { AuthProvider } from "./contexts/AuthContext";
 import { LanguageProvider } from "./contexts/LanguageContext";
 import SplashScreen from "./components/SplashScreen";
+import InstallPrompt from "./components/InstallPrompt";
 
 // Pages
 import HomePage from "./pages/HomePage";
