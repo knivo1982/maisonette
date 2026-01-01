@@ -342,6 +342,28 @@ export default function AdminCheckins() {
                     {!checkin.ospite_principale && (!checkin.accompagnatori || checkin.accompagnatori.length === 0) && (
                       <p className="text-[#718096] text-sm italic">Nessun dettaglio aggiuntivo disponibile</p>
                     )}
+
+                    {/* PayTourist Button */}
+                    <div className="mt-4 pt-4 border-t border-[#E2E8F0] flex gap-2">
+                      <Button
+                        size="sm"
+                        onClick={() => openPaytouristDialog(checkin.id)}
+                        className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white"
+                        data-testid={`paytourist-btn-${checkin.id}`}
+                      >
+                        <Copy className="w-4 h-4 mr-2" />
+                        Copia per PayTourist
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={openPaytourist}
+                        className="border-blue-600 text-blue-600 hover:bg-blue-50"
+                      >
+                        <ExternalLink className="w-4 h-4 mr-2" />
+                        Apri PayTourist
+                      </Button>
+                    </div>
                   </div>
                 )}
               </CardContent>
@@ -349,6 +371,101 @@ export default function AdminCheckins() {
           ))}
         </div>
       )}
+
+      {/* PayTourist Dialog */}
+      <Dialog open={paytouristDialogOpen} onOpenChange={setPaytouristDialogOpen}>
+        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Copy className="w-5 h-5 text-blue-600" />
+              Dati per PayTourist
+            </DialogTitle>
+          </DialogHeader>
+          
+          {paytouristLoading ? (
+            <div className="flex justify-center py-8">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            </div>
+          ) : paytouristData ? (
+            <div className="space-y-4">
+              {/* Instructions */}
+              <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                <p className="text-sm text-blue-800">
+                  <strong>Istruzioni:</strong> Copia i dati qui sotto e incollali manualmente su PayTourist.
+                </p>
+              </div>
+
+              {/* Structured Data View */}
+              <div className="space-y-3">
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  <h4 className="font-semibold text-gray-800 mb-2">Prenotazione</h4>
+                  <div className="grid grid-cols-2 gap-2 text-sm">
+                    <div><span className="text-gray-500">Check-in:</span> {paytouristData.structured_data?.prenotazione?.check_in}</div>
+                    <div><span className="text-gray-500">Check-out:</span> {paytouristData.structured_data?.prenotazione?.check_out}</div>
+                    <div><span className="text-gray-500">Notti:</span> {paytouristData.structured_data?.prenotazione?.notti}</div>
+                    <div><span className="text-gray-500">Ospiti:</span> {paytouristData.structured_data?.prenotazione?.num_ospiti}</div>
+                  </div>
+                </div>
+
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  <h4 className="font-semibold text-gray-800 mb-2">Ospite Principale</h4>
+                  <div className="grid grid-cols-2 gap-2 text-sm">
+                    <div><span className="text-gray-500">Nome:</span> {paytouristData.structured_data?.ospite_principale?.nome}</div>
+                    <div><span className="text-gray-500">Cognome:</span> {paytouristData.structured_data?.ospite_principale?.cognome}</div>
+                    <div><span className="text-gray-500">Tipo:</span> {paytouristData.structured_data?.ospite_principale?.tipo_ospite_desc}</div>
+                    <div><span className="text-gray-500">Sesso:</span> {paytouristData.structured_data?.ospite_principale?.sesso}</div>
+                    <div><span className="text-gray-500">Data nascita:</span> {paytouristData.structured_data?.ospite_principale?.data_nascita}</div>
+                    <div><span className="text-gray-500">Luogo nascita:</span> {paytouristData.structured_data?.ospite_principale?.luogo_nascita}</div>
+                    <div><span className="text-gray-500">Nazionalità:</span> {paytouristData.structured_data?.ospite_principale?.nazionalita}</div>
+                    <div><span className="text-gray-500">Documento:</span> {paytouristData.structured_data?.ospite_principale?.documento?.tipo} - {paytouristData.structured_data?.ospite_principale?.documento?.numero}</div>
+                  </div>
+                </div>
+
+                {paytouristData.structured_data?.accompagnatori?.length > 0 && (
+                  <div className="bg-gray-50 p-4 rounded-lg">
+                    <h4 className="font-semibold text-gray-800 mb-2">Accompagnatori ({paytouristData.structured_data.accompagnatori.length})</h4>
+                    {paytouristData.structured_data.accompagnatori.map((acc, idx) => (
+                      <div key={idx} className="text-sm border-b last:border-b-0 pb-2 mb-2 last:pb-0 last:mb-0">
+                        <span className="font-medium">{acc.nome} {acc.cognome}</span>
+                        <span className="text-gray-500 ml-2">({acc.sesso}, {acc.data_nascita}, {acc.nazionalita})</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Copyable Text */}
+              <div className="mt-4">
+                <label className="block text-sm font-medium text-gray-700 mb-2">Testo da copiare:</label>
+                <pre className="bg-gray-900 text-gray-100 p-4 rounded-lg text-xs overflow-x-auto whitespace-pre-wrap max-h-60">
+                  {paytouristData.text_format}
+                </pre>
+              </div>
+
+              {/* Actions */}
+              <div className="flex gap-3 pt-4">
+                <Button
+                  onClick={() => copyToClipboard(paytouristData.text_format)}
+                  className="flex-1 bg-blue-600 hover:bg-blue-700"
+                >
+                  <Copy className="w-4 h-4 mr-2" />
+                  Copia Testo
+                </Button>
+                <Button
+                  onClick={openPaytourist}
+                  variant="outline"
+                  className="flex-1 border-blue-600 text-blue-600 hover:bg-blue-50"
+                >
+                  <ExternalLink className="w-4 h-4 mr-2" />
+                  Apri PayTourist
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <p className="text-center text-gray-500 py-4">Nessun dato disponibile</p>
+          )}
+        </DialogContent>
+      </Dialog>
     </AdminLayout>
   );
 }
