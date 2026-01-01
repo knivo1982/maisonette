@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { useLanguage } from '../contexts/LanguageContext';
 import Layout from '../components/Layout';
 import { Button } from '../components/ui/button';
 import { ArrowRight, Calendar, MapPin, Gift, Star, Sparkles, Sun, Cloud, CloudRain, Snowflake, Wind, Droplets, ThermometerSun, Navigation, ClipboardCheck, FileText, CalendarCheck, LayoutDashboard } from 'lucide-react';
@@ -9,11 +10,20 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 export default function HomePage() {
   const { isAuthenticated, token, user } = useAuth();
+  const { language, t } = useLanguage();
   const [weather, setWeather] = useState(null);
   const [itineraries, setItineraries] = useState([]);
   const [events, setEvents] = useState([]);
   const [loadingWeather, setLoadingWeather] = useState(true);
   const [hasActiveCheckin, setHasActiveCheckin] = useState(false);
+
+  // Helper to get translated content
+  const getLocalizedText = (item, field) => {
+    if (language === 'en' && item[`${field}_en`]) {
+      return item[`${field}_en`];
+    }
+    return item[field] || item[`${field}_it`] || '';
+  };
 
   useEffect(() => {
     fetchData();
