@@ -121,6 +121,73 @@ export default function AdminCheckins() {
     }
   };
 
+  // Guest form functions
+  const openGuestForm = (checkin) => {
+    setEditingCheckinId(checkin.id);
+    // Pre-fill form if data exists
+    if (checkin.ospite_principale) {
+      setGuestForm({
+        nome: checkin.ospite_principale.nome || '',
+        cognome: checkin.ospite_principale.cognome || '',
+        sesso: checkin.ospite_principale.sesso || 'M',
+        data_nascita: checkin.ospite_principale.data_nascita || '',
+        luogo_nascita: checkin.ospite_principale.luogo_nascita || '',
+        nazionalita: checkin.ospite_principale.nazionalita || 'Italia',
+        residenza_citta: checkin.ospite_principale.residenza_citta || '',
+        tipo_documento: checkin.ospite_principale.tipo_documento || 'carta_identita',
+        numero_documento: checkin.ospite_principale.numero_documento || '',
+        luogo_rilascio: checkin.ospite_principale.luogo_rilascio || '',
+        scadenza_documento: checkin.ospite_principale.scadenza_documento || ''
+      });
+    } else {
+      // Reset form
+      setGuestForm({
+        nome: '',
+        cognome: '',
+        sesso: 'M',
+        data_nascita: '',
+        luogo_nascita: '',
+        nazionalita: 'Italia',
+        residenza_citta: '',
+        tipo_documento: 'carta_identita',
+        numero_documento: '',
+        luogo_rilascio: '',
+        scadenza_documento: ''
+      });
+    }
+    setGuestFormOpen(true);
+  };
+
+  const saveGuestData = async () => {
+    if (!guestForm.nome || !guestForm.cognome) {
+      toast.error('Nome e cognome sono obbligatori');
+      return;
+    }
+    
+    setGuestFormLoading(true);
+    try {
+      await axios.put(
+        `${API}/admin/checkins/${editingCheckinId}/guest-data`,
+        { ospite_principale: guestForm },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      toast.success('Dati ospite salvati!');
+      setGuestFormOpen(false);
+      fetchCheckins();
+    } catch (error) {
+      console.error('Error saving guest data:', error);
+      toast.error('Errore nel salvataggio');
+    } finally {
+      setGuestFormLoading(false);
+    }
+  };
+
+  // Photo viewer
+  const openPhotoViewer = (photoUrl) => {
+    setCurrentPhoto(photoUrl);
+    setPhotoViewerOpen(true);
+  };
+
   // PayTourist functions
   const openPaytouristDialog = async (checkinId) => {
     setPaytouristLoading(true);
