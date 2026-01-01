@@ -435,13 +435,39 @@ export default function AdminCheckins() {
                       </div>
                     )}
 
-                    {/* No details */}
+                    {/* No details - Show add button */}
                     {!checkin.ospite_principale && (!checkin.accompagnatori || checkin.accompagnatori.length === 0) && (
-                      <p className="text-[#718096] text-sm italic">Nessun dettaglio aggiuntivo disponibile</p>
+                      <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 text-center">
+                        <UserPlus className="w-8 h-8 text-amber-500 mx-auto mb-2" />
+                        <p className="text-[#718096] text-sm mb-3">Nessun dato ospite disponibile</p>
+                        <Button
+                          size="sm"
+                          onClick={() => openGuestForm(checkin)}
+                          className="bg-[#C5A059] hover:bg-[#B08D45] text-white"
+                        >
+                          <UserPlus className="w-4 h-4 mr-2" />
+                          Aggiungi Dati Ospite
+                        </Button>
+                      </div>
+                    )}
+
+                    {/* Edit guest button if data exists */}
+                    {checkin.ospite_principale && (
+                      <div className="mt-3">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => openGuestForm(checkin)}
+                          className="border-[#C5A059] text-[#C5A059] hover:bg-[#C5A059]/10"
+                        >
+                          <User className="w-4 h-4 mr-2" />
+                          Modifica Dati Ospite
+                        </Button>
+                      </div>
                     )}
 
                     {/* PayTourist Button */}
-                    <div className="mt-4 pt-4 border-t border-[#E2E8F0] flex gap-2">
+                    <div className="mt-4 pt-4 border-t border-[#E2E8F0] flex flex-wrap gap-2">
                       <Button
                         size="sm"
                         onClick={() => openPaytouristDialog(checkin.id)}
@@ -468,6 +494,208 @@ export default function AdminCheckins() {
           ))}
         </div>
       )}
+
+      {/* Guest Data Form Dialog */}
+      <Dialog open={guestFormOpen} onOpenChange={setGuestFormOpen}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <User className="w-5 h-5 text-[#C5A059]" />
+              Dati Ospite Principale
+            </DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-4">
+            {/* Nome e Cognome */}
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="nome">Nome *</Label>
+                <Input
+                  id="nome"
+                  value={guestForm.nome}
+                  onChange={(e) => setGuestForm({...guestForm, nome: e.target.value})}
+                  placeholder="Mario"
+                />
+              </div>
+              <div>
+                <Label htmlFor="cognome">Cognome *</Label>
+                <Input
+                  id="cognome"
+                  value={guestForm.cognome}
+                  onChange={(e) => setGuestForm({...guestForm, cognome: e.target.value})}
+                  placeholder="Rossi"
+                />
+              </div>
+            </div>
+
+            {/* Sesso e Data nascita */}
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="sesso">Sesso</Label>
+                <Select 
+                  value={guestForm.sesso} 
+                  onValueChange={(v) => setGuestForm({...guestForm, sesso: v})}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="M">Maschio</SelectItem>
+                    <SelectItem value="F">Femmina</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label htmlFor="data_nascita">Data di Nascita</Label>
+                <Input
+                  id="data_nascita"
+                  type="date"
+                  value={guestForm.data_nascita}
+                  onChange={(e) => setGuestForm({...guestForm, data_nascita: e.target.value})}
+                />
+              </div>
+            </div>
+
+            {/* Luogo nascita e Nazionalità */}
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="luogo_nascita">Luogo di Nascita</Label>
+                <Input
+                  id="luogo_nascita"
+                  value={guestForm.luogo_nascita}
+                  onChange={(e) => setGuestForm({...guestForm, luogo_nascita: e.target.value})}
+                  placeholder="Roma"
+                />
+              </div>
+              <div>
+                <Label htmlFor="nazionalita">Nazionalità</Label>
+                <Input
+                  id="nazionalita"
+                  value={guestForm.nazionalita}
+                  onChange={(e) => setGuestForm({...guestForm, nazionalita: e.target.value})}
+                  placeholder="Italia"
+                />
+              </div>
+            </div>
+
+            {/* Residenza */}
+            <div>
+              <Label htmlFor="residenza_citta">Città di Residenza</Label>
+              <Input
+                id="residenza_citta"
+                value={guestForm.residenza_citta}
+                onChange={(e) => setGuestForm({...guestForm, residenza_citta: e.target.value})}
+                placeholder="Milano"
+              />
+            </div>
+
+            {/* Documento */}
+            <div className="border-t pt-4 mt-4">
+              <h4 className="font-medium text-[#1A202C] mb-3 flex items-center gap-2">
+                <CreditCard className="w-4 h-4" />
+                Documento di Identità
+              </h4>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="tipo_documento">Tipo Documento</Label>
+                  <Select 
+                    value={guestForm.tipo_documento} 
+                    onValueChange={(v) => setGuestForm({...guestForm, tipo_documento: v})}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {DOCUMENT_TYPES.map((d) => (
+                        <SelectItem key={d.value} value={d.value}>{d.label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label htmlFor="numero_documento">Numero Documento</Label>
+                  <Input
+                    id="numero_documento"
+                    value={guestForm.numero_documento}
+                    onChange={(e) => setGuestForm({...guestForm, numero_documento: e.target.value})}
+                    placeholder="AB1234567"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4 mt-4">
+                <div>
+                  <Label htmlFor="luogo_rilascio">Rilasciato da</Label>
+                  <Input
+                    id="luogo_rilascio"
+                    value={guestForm.luogo_rilascio}
+                    onChange={(e) => setGuestForm({...guestForm, luogo_rilascio: e.target.value})}
+                    placeholder="Comune di Roma"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="scadenza_documento">Scadenza</Label>
+                  <Input
+                    id="scadenza_documento"
+                    type="date"
+                    value={guestForm.scadenza_documento}
+                    onChange={(e) => setGuestForm({...guestForm, scadenza_documento: e.target.value})}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Actions */}
+            <div className="flex justify-end gap-3 pt-4 border-t">
+              <Button
+                variant="outline"
+                onClick={() => setGuestFormOpen(false)}
+              >
+                Annulla
+              </Button>
+              <Button
+                onClick={saveGuestData}
+                disabled={guestFormLoading}
+                className="bg-[#C5A059] hover:bg-[#B08D45]"
+              >
+                {guestFormLoading ? (
+                  <span className="flex items-center gap-2">
+                    <span className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></span>
+                    Salvataggio...
+                  </span>
+                ) : (
+                  <>
+                    <Save className="w-4 h-4 mr-2" />
+                    Salva Dati
+                  </>
+                )}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Photo Viewer Dialog */}
+      <Dialog open={photoViewerOpen} onOpenChange={setPhotoViewerOpen}>
+        <DialogContent className="max-w-4xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Image className="w-5 h-5" />
+              Foto Documento
+            </DialogTitle>
+          </DialogHeader>
+          {currentPhoto && (
+            <div className="flex justify-center">
+              <img 
+                src={currentPhoto} 
+                alt="Documento" 
+                className="max-w-full max-h-[70vh] object-contain rounded-lg"
+              />
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
 
       {/* PayTourist Dialog */}
       <Dialog open={paytouristDialogOpen} onOpenChange={setPaytouristDialogOpen}>
