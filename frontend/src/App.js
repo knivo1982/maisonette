@@ -112,6 +112,7 @@ function App() {
           </Routes>
         </BrowserRouter>
         <Toaster position="top-right" richColors offset="60px" />
+        <InstallPrompt />
       </div>
     </LanguageProvider>
     </AuthProvider>
