@@ -8,6 +8,7 @@ Applicazione di gestione B&B per "La Maisonette di Paestum" importata da GitHub 
 - **Frontend:** React, React Router, Tailwind CSS, Shadcn/UI
 - **Database:** MongoDB
 - **Deploy:** Emergent Platform
+- **PWA:** Service Worker, Manifest, Offline Support
 
 ## Credenziali Admin
 - Email: `admin@maisonette.it`
@@ -43,19 +44,34 @@ Applicazione di gestione B&B per "La Maisonette di Paestum" importata da GitHub 
 
 ### Integrazioni
 - [x] **PayTourist** - Copia dati formattati per inserimento manuale (01/2026)
-- [x] **PWA** - Progressive Web App base
+- [x] **PWA Completa** - Installabile su iOS/Android (01/2026)
 - [x] **Multilingue** - Fondamenta IT/EN (parziale)
+
+### PWA (Progressive Web App) - COMPLETATA
+- [x] Manifest.json ottimizzato con 8 icone PNG
+- [x] Service Worker con cache strategies
+- [x] Offline page dedicata
+- [x] Install prompt per Android/Desktop
+- [x] Istruzioni installazione iOS Safari
+- [x] Meta tag iOS completi (apple-touch-icon, status-bar)
+- [x] Shortcuts per accesso rapido (Prenotazioni, Check-in, Servizi)
 
 ---
 
 ## Changelog
 
 ### 2026-01-01
+- **PWA Migliorata** per installazione su iOS/Android
+  - Convertito icone SVG → PNG (iOS richiede PNG)
+  - Service Worker v2 con strategie cache ottimizzate
+  - Pagina offline dedicata `/offline.html`
+  - Componente `InstallPrompt.jsx` con supporto iOS/Android
+  - Manifest aggiornato con shortcuts e screenshots
+  
 - **Aggiunta integrazione PayTourist** per tassa di soggiorno
   - Endpoint `GET /api/admin/checkins/{id}/paytourist-format`
   - Dialog UI con dati formattati e pulsante copia
   - Link diretto a PayTourist Capaccio
-  - Salvate credenziali in .env (token, structure_id)
 
 ### Sessioni precedenti
 - Fix URL API produzione (api.js con path relativi)
@@ -66,10 +82,30 @@ Applicazione di gestione B&B per "La Maisonette di Paestum" importata da GitHub 
 
 ---
 
+## Come Installare la PWA
+
+### iOS (Safari)
+1. Apri il sito in Safari
+2. Tocca il pulsante "Condividi" (freccia in alto)
+3. Scorri e tocca "Aggiungi a Home"
+4. Conferma il nome e tocca "Aggiungi"
+
+### Android (Chrome)
+1. Apri il sito in Chrome
+2. Apparirà il banner "Installa app" in basso
+3. Tocca "Installa"
+
+### Desktop (Chrome/Edge)
+1. Apri il sito
+2. Clicca l'icona di installazione nella barra degli indirizzi
+3. Conferma l'installazione
+
+---
+
 ## Backlog Prioritizzato
 
 ### P0 - Bloccanti
-- [ ] **DEPLOY:** Utente deve fare "Save to GitHub" + "Redeploy" per applicare fix URL produzione
+- [ ] **DEPLOY:** Utente deve fare "Save to GitHub" + "Redeploy" per applicare modifiche
 
 ### P1 - Alta Priorità
 - [ ] Completare visibilità foto documenti check-in
@@ -77,11 +113,11 @@ Applicazione di gestione B&B per "La Maisonette di Paestum" importata da GitHub 
 
 ### P2 - Media Priorità
 - [ ] Multilingue completo per contenuti dinamici (Servizi, Eventi, Amenità)
-- [ ] Audit PWA con Lighthouse
+- [ ] Notifiche push (richiede VAPID keys)
 
 ### P3 - Bassa Priorità
 - [ ] Integrazione automatica PayTourist (richiede software_id)
-- [ ] App mobile con Capacitor
+- [ ] Background sync per check-in offline
 
 ---
 
@@ -90,31 +126,24 @@ Applicazione di gestione B&B per "La Maisonette di Paestum" importata da GitHub 
 ```
 /app
 ├── backend/
-│   ├── server.py          # API FastAPI (~4000 righe, da refactorare)
-│   ├── .env               # Credenziali (PayTourist, SMTP, etc.)
+│   ├── server.py          # API FastAPI (~4000 righe)
+│   ├── .env               # Credenziali
 │   └── requirements.txt
 ├── frontend/
+│   ├── public/
+│   │   ├── manifest.json     # PWA manifest
+│   │   ├── service-worker.js # Cache & offline
+│   │   ├── offline.html      # Pagina offline
+│   │   └── icons/            # PNG icons
 │   ├── src/
-│   │   ├── lib/api.js     # URL API centralizzato
-│   │   ├── contexts/      # AuthContext, LanguageContext
-│   │   ├── pages/admin/   # AdminCheckins, AdminBookings, AdminStructure
-│   │   └── i18n/          # Traduzioni
-│   └── public/
-│       ├── manifest.json  # PWA
-│       └── service-worker.js
+│   │   ├── App.js
+│   │   ├── components/
+│   │   │   └── InstallPrompt.jsx  # PWA install prompt
+│   │   ├── lib/api.js
+│   │   ├── contexts/
+│   │   └── pages/
+│   └── package.json
 └── memory/
     └── PRD.md
 ```
 
-## Note per Sviluppo Futuro
-
-### Refactoring Consigliato
-- Dividere `server.py` in router modulari (`routers/admin.py`, `routers/public.py`)
-- Estrarre modelli Pydantic in `models.py`
-- Centralizzare gestione errori
-
-### PayTourist Integrazione Automatica
-Per abilitare l'invio automatico alla Questura/tassa di soggiorno:
-1. Richiedere software_id a `sviluppo@paytourist.com`
-2. Implementare endpoint POST con i dati strutturati
-3. Gestire mapping nazioni/città con API PayTourist
