@@ -3761,6 +3761,146 @@ async def export_questura(admin: dict = Depends(get_admin_user), data_da: str = 
         "format_info": "Formato compatibile con Alloggiati Web. Importare i dati nel portale della Questura."
     }
 
+@api_router.get("/admin/checkins/{checkin_id}/paytourist-format")
+async def get_paytourist_format(checkin_id: str, admin: dict = Depends(get_admin_user)):
+    """
+    Restituisce i dati del check-in formattati per PayTourist.
+    L'utente può copiare questi dati e incollarli manualmente su PayTourist.
+    """
+    # Try to find in checkins collection first
+    checkin = await db.checkins.find_one({"id": checkin_id}, {"_id": 0})
+    source = "form"
+    
+    if not checkin:
+        # Try online_checkins
+        checkin = await db.online_checkins.find_one({"id": checkin_id}, {"_id": 0})
+        source = "online"
+    
+    if not checkin:
+        raise HTTPException(status_code=404, detail="Check-in non trovato")
+    
+    # Get booking data
+    booking = await db.bookings.find_one({"id": checkin.get("booking_id")}, {"_id": 0})
+    
+    data_arrivo = checkin.get("data_arrivo") or (booking.get("data_arrivo") if booking else "")
+    data_partenza = checkin.get("data_partenza") or (booking.get("data_partenza") if booking else "")
+    
+    ospite = checkin.get("ospite_principale", {})
+    
+    # Calculate nights
+    nights = 1
+    try:
+        if data_arrivo and data_partenza:
+            d1 = datetime.strptime(data_arrivo, "%Y-%m-%d")
+            d2 = datetime.strptime(data_partenza, "%Y-%m-%d")
+            nights = max(1, (d2 - d1).days)
+    except:
+        pass
+    
+    # Map guest type
+    # 16=Ospite singolo, 17=Capofamiglia, 18=Capogruppo, 19=Familiare, 20=Membro gruppo
+    num_ospiti = checkin.get("num_ospiti", 1) or (booking.get("num_ospiti") if booking else 1)
+    tipo_ospite = "16" if num_ospiti == 1 else "17"  # Singolo o Capofamiglia
+    
+    # Map document type
+    doc_type_map = {
+        "carta_identita": "Carta d'identità",
+        "passaporto": "Passaporto", 
+        "patente": "Patente di guida",
+        "CARTID": "Carta d'identità",
+        "PASOR": "Passaporto",
+        "PATEN": "Patente di guida"
+    }
+    
+    doc_type = ospite.get("tipo_documento", "")
+    doc_type_display = doc_type_map.get(doc_type, doc_type)
+    
+    # Map sex
+    sesso = ospite.get("sesso", "")
+    sesso_display = "Maschio" if sesso in ["M", "1"] else "Femmina" if sesso in ["F", "2"] else sesso
+    
+    # Build PayTourist formatted data
+    paytourist_data = {
+        "prenotazione": {
+            "check_in": data_arrivo,
+            "check_out": data_partenza,
+            "notti": nights,
+            "num_ospiti": num_ospiti,
+            "codice_prenotazione": checkin.get("codice_prenotazione") or (booking.get("codice_prenotazione") if booking else ""),
+        },
+        "ospite_principale": {
+            "nome": ospite.get("nome", ""),
+            "cognome": ospite.get("cognome", ""),
+            "tipo_ospite": tipo_ospite,
+            "tipo_ospite_desc": "Ospite singolo" if tipo_ospite == "16" else "Capofamiglia",
+            "sesso": sesso_display,
+            "data_nascita": ospite.get("data_nascita", ""),
+            "luogo_nascita": ospite.get("luogo_nascita", ""),
+            "nazionalita": ospite.get("nazionalita", "Italia"),
+            "residenza_stato": ospite.get("residenza_stato", "Italia"),
+            "residenza_citta": ospite.get("residenza_citta", ""),
+            "documento": {
+                "tipo": doc_type_display,
+                "numero": ospite.get("numero_documento", ""),
+                "rilasciato_da": ospite.get("luogo_rilascio", ""),
+                "scadenza": ospite.get("scadenza_documento", "")
+            }
+        },
+        "accompagnatori": []
+    }
+    
+    # Add accompanying guests
+    for i, acc in enumerate(checkin.get("accompagnatori", [])):
+        acc_sesso = acc.get("sesso", "")
+        acc_sesso_display = "Maschio" if acc_sesso in ["M", "1"] else "Femmina" if acc_sesso in ["F", "2"] else acc_sesso
+        
+        paytourist_data["accompagnatori"].append({
+            "nome": acc.get("nome", ""),
+            "cognome": acc.get("cognome", ""),
+            "tipo_ospite": "19",  # Familiare
+            "tipo_ospite_desc": "Familiare",
+            "sesso": acc_sesso_display,
+            "data_nascita": acc.get("data_nascita", ""),
+            "luogo_nascita": acc.get("luogo_nascita", ""),
+            "nazionalita": acc.get("nazionalita", "Italia"),
+        })
+    
+    # Generate copyable text format
+    text_format = f"""=== DATI PER PAYTOURIST ===
+PRENOTAZIONE:
+- Check-in: {data_arrivo}
+- Check-out: {data_partenza}
+- Notti: {nights}
+- Ospiti: {num_ospiti}
+
+OSPITE PRINCIPALE:
+- Nome: {ospite.get('nome', '')}
+- Cognome: {ospite.get('cognome', '')}
+- Tipo: {paytourist_data['ospite_principale']['tipo_ospite_desc']}
+- Sesso: {sesso_display}
+- Data nascita: {ospite.get('data_nascita', '')}
+- Luogo nascita: {ospite.get('luogo_nascita', '')}
+- Nazionalità: {ospite.get('nazionalita', 'Italia')}
+- Documento: {doc_type_display} - {ospite.get('numero_documento', '')}
+"""
+    
+    for i, acc in enumerate(paytourist_data["accompagnatori"]):
+        text_format += f"""
+ACCOMPAGNATORE {i+1}:
+- Nome: {acc['nome']}
+- Cognome: {acc['cognome']}
+- Sesso: {acc['sesso']}
+- Data nascita: {acc['data_nascita']}
+- Nazionalità: {acc['nazionalita']}
+"""
+    
+    return {
+        "checkin_id": checkin_id,
+        "structured_data": paytourist_data,
+        "text_format": text_format,
+        "paytourist_url": "https://capaccio.paytourist.com"
+    }
+
 @api_router.delete("/admin/checkins/invalidate/{booking_id}")
 async def admin_invalidate_checkin(booking_id: str, admin: dict = Depends(get_admin_user)):
     """
