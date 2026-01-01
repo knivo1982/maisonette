@@ -3,11 +3,13 @@ import { useAuth } from '../../contexts/AuthContext';
 import AdminLayout from './AdminLayout';
 import { Card, CardContent } from '../../components/ui/card';
 import { Button } from '../../components/ui/button';
+import { Input } from '../../components/ui/input';
+import { Label } from '../../components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../../components/ui/dialog';
 import axios from 'axios';
 import { toast } from 'sonner';
-import { ClipboardCheck, Calendar, Users, Eye, User, FileText, Phone, Mail, MapPin, CreditCard, ChevronDown, ChevronUp, Copy, ExternalLink } from 'lucide-react';
+import { ClipboardCheck, Calendar, Users, Eye, User, FileText, Phone, Mail, MapPin, CreditCard, ChevronDown, ChevronUp, Copy, ExternalLink, UserPlus, Image, Save } from 'lucide-react';
 
 import { API } from '../../lib/api';
 
@@ -16,6 +18,12 @@ const STATUSES = [
   { value: 'confirmed', label: 'Confermato', class: 'bg-green-100 text-green-800' },
   { value: 'completed', label: 'Completato', class: 'bg-blue-100 text-blue-800' },
   { value: 'cancelled', label: 'Annullato', class: 'bg-red-100 text-red-800' }
+];
+
+const DOCUMENT_TYPES = [
+  { value: 'carta_identita', label: 'Carta d\'Identità' },
+  { value: 'passaporto', label: 'Passaporto' },
+  { value: 'patente', label: 'Patente di Guida' }
 ];
 
 export default function AdminCheckins() {
@@ -28,6 +36,28 @@ export default function AdminCheckins() {
   const [paytouristDialogOpen, setPaytouristDialogOpen] = useState(false);
   const [paytouristData, setPaytouristData] = useState(null);
   const [paytouristLoading, setPaytouristLoading] = useState(false);
+  
+  // Guest data form
+  const [guestFormOpen, setGuestFormOpen] = useState(false);
+  const [editingCheckinId, setEditingCheckinId] = useState(null);
+  const [guestFormLoading, setGuestFormLoading] = useState(false);
+  const [guestForm, setGuestForm] = useState({
+    nome: '',
+    cognome: '',
+    sesso: 'M',
+    data_nascita: '',
+    luogo_nascita: '',
+    nazionalita: 'Italia',
+    residenza_citta: '',
+    tipo_documento: 'carta_identita',
+    numero_documento: '',
+    luogo_rilascio: '',
+    scadenza_documento: ''
+  });
+  
+  // Photo viewer
+  const [photoViewerOpen, setPhotoViewerOpen] = useState(false);
+  const [currentPhoto, setCurrentPhoto] = useState(null);
 
   useEffect(() => {
     fetchCheckins();
