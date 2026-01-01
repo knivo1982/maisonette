@@ -91,6 +91,33 @@ export default function AdminCheckins() {
     }
   };
 
+  // PayTourist functions
+  const openPaytouristDialog = async (checkinId) => {
+    setPaytouristLoading(true);
+    setPaytouristDialogOpen(true);
+    try {
+      const response = await axios.get(`${API}/admin/checkins/${checkinId}/paytourist-format`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setPaytouristData(response.data);
+    } catch (error) {
+      console.error('Error fetching PayTourist data:', error);
+      toast.error('Errore nel recupero dei dati');
+      setPaytouristDialogOpen(false);
+    } finally {
+      setPaytouristLoading(false);
+    }
+  };
+
+  const copyToClipboard = (text) => {
+    navigator.clipboard.writeText(text);
+    toast.success('Dati copiati negli appunti!');
+  };
+
+  const openPaytourist = () => {
+    window.open('https://capaccio.paytourist.com', '_blank');
+  };
+
   return (
     <AdminLayout title="Gestione Check-in">
       <div className="flex justify-between items-center mb-6">
