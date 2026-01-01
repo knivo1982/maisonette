@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../../components/ui/dialog';
 import axios from 'axios';
 import { toast } from 'sonner';
-import { ClipboardCheck, Calendar, Users, Eye, User, FileText, Phone, Mail, MapPin, CreditCard, ChevronDown, ChevronUp } from 'lucide-react';
+import { ClipboardCheck, Calendar, Users, Eye, User, FileText, Phone, Mail, MapPin, CreditCard, ChevronDown, ChevronUp, Copy, ExternalLink } from 'lucide-react';
 
 import { API } from '../../lib/api';
 
@@ -25,6 +25,9 @@ export default function AdminCheckins() {
   const [selectedCheckin, setSelectedCheckin] = useState(null);
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [expandedRows, setExpandedRows] = useState({});
+  const [paytouristDialogOpen, setPaytouristDialogOpen] = useState(false);
+  const [paytouristData, setPaytouristData] = useState(null);
+  const [paytouristLoading, setPaytouristLoading] = useState(false);
 
   useEffect(() => {
     fetchCheckins();
