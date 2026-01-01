@@ -1,7 +1,7 @@
 {
   "name": "La Maisonette di Paestum",
   "short_name": "Maisonette",
-  "description": "Prenota il tuo soggiorno a La Maisonette di Paestum",
+  "description": "Prenota il tuo soggiorno a La Maisonette di Paestum - B&B con vista sui Templi",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#1A202C",
@@ -9,41 +9,88 @@
   "orientation": "portrait-primary",
   "scope": "/",
   "lang": "it",
+  "id": "maisonette-paestum-pwa",
   "icons": [
     {
-      "src": "/icons/icon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
-      "purpose": "maskable any"
+      "src": "/icons/icon-72x72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "any"
     },
     {
-      "src": "/icons/icon-192x192.svg",
+      "src": "/icons/icon-96x96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-128x128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-144x144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-152x152.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-192x192.png",
       "sizes": "192x192",
-      "type": "image/svg+xml",
+      "type": "image/png",
       "purpose": "maskable any"
     },
     {
-      "src": "/icons/icon-512x512.svg",
+      "src": "/icons/icon-384x384.png",
+      "sizes": "384x384",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
       "sizes": "512x512",
-      "type": "image/svg+xml",
+      "type": "image/png",
       "purpose": "maskable any"
     }
   ],
   "shortcuts": [
     {
-      "name": "Prenota Ora",
-      "short_name": "Prenota",
-      "description": "Prenota il tuo soggiorno",
-      "url": "/book",
-      "icons": [{ "src": "/icons/icon.svg", "sizes": "any" }]
+      "name": "Le mie prenotazioni",
+      "short_name": "Prenotazioni",
+      "description": "Visualizza le tue prenotazioni",
+      "url": "/dashboard",
+      "icons": [{ "src": "/icons/icon-96x96.png", "sizes": "96x96" }]
     },
     {
-      "name": "Le Nostre Casette",
-      "short_name": "Casette",
-      "description": "Scopri le nostre casette",
-      "url": "/about",
-      "icons": [{ "src": "/icons/icon.svg", "sizes": "any" }]
+      "name": "Check-in Online",
+      "short_name": "Check-in",
+      "description": "Effettua il check-in online",
+      "url": "/checkin",
+      "icons": [{ "src": "/icons/icon-96x96.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Servizi",
+      "short_name": "Servizi",
+      "description": "Scopri i servizi disponibili",
+      "url": "/services",
+      "icons": [{ "src": "/icons/icon-96x96.png", "sizes": "96x96" }]
     }
   ],
-  "categories": ["travel", "lifestyle"]
+  "screenshots": [
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "form_factor": "narrow"
+    }
+  ],
+  "categories": ["travel", "lifestyle", "entertainment"],
+  "prefer_related_applications": false
 }

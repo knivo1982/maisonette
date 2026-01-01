@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#C5A059">
+  <title>Offline - La Maisonette di Paestum</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #1A202C 0%, #2D3748 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      padding: 20px;
+    }
+    .container {
+      text-align: center;
+      max-width: 400px;
+    }
+    .icon {
+      width: 120px;
+      height: 120px;
+      margin: 0 auto 30px;
+      background: #C5A059;
+      border-radius: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .icon svg {
+      width: 60px;
+      height: 60px;
+      fill: white;
+    }
+    h1 {
+      font-size: 28px;
+      margin-bottom: 16px;
+      color: #C5A059;
+    }
+    p {
+      font-size: 16px;
+      color: #A0AEC0;
+      margin-bottom: 30px;
+      line-height: 1.6;
+    }
+    .retry-btn {
+      background: #C5A059;
+      color: #1A202C;
+      border: none;
+      padding: 14px 32px;
+      font-size: 16px;
+      font-weight: 600;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .retry-btn:hover {
+      background: #D4AF61;
+      transform: translateY(-2px);
+    }
+    .retry-btn:active {
+      transform: translateY(0);
+    }
+    .tips {
+      margin-top: 40px;
+      padding-top: 30px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+    .tips h3 {
+      font-size: 14px;
+      color: #718096;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .tips ul {
+      list-style: none;
+      text-align: left;
+    }
+    .tips li {
+      font-size: 14px;
+      color: #A0AEC0;
+      padding: 8px 0;
+      padding-left: 24px;
+      position: relative;
+    }
+    .tips li::before {
+      content: "•";
+      position: absolute;
+      left: 8px;
+      color: #C5A059;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="icon">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+      </svg>
+    </div>
+    <h1>Sei offline</h1>
+    <p>Non c'è connessione a Internet. Controlla la tua connessione e riprova.</p>
+    <button class="retry-btn" onclick="window.location.reload()">
+      Riprova
+    </button>
+    
+    <div class="tips">
+      <h3>Suggerimenti</h3>
+      <ul>
+        <li>Verifica la connessione WiFi o dati mobili</li>
+        <li>Prova a disattivare e riattivare la modalità aereo</li>
+        <li>Le prenotazioni salvate sono visibili offline</li>
+      </ul>
+    </div>
+  </div>
+  
+  <script>
+    // Auto-reload when connection is restored
+    window.addEventListener('online', () => {
+      window.location.reload();
+    });
+  </script>
+</body>
+</html>
