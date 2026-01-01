@@ -108,8 +108,9 @@ Applicazione di gestione B&B per "La Maisonette di Paestum" importata da GitHub 
 - [ ] **DEPLOY:** Utente deve fare "Save to GitHub" + "Redeploy" per applicare modifiche
 
 ### P1 - Alta Priorità
-- [ ] Completare visibilità foto documenti check-in
-- [ ] Form per inserire dati ospite su check-in validati manualmente
+- [x] Form per inserire dati ospite su check-in validati manualmente ✅
+- [x] Visibilità dati ospite nei check-in ✅
+- [ ] Visibilità foto documenti (codice presente, dipende da upload)
 
 ### P2 - Media Priorità
 - [ ] Multilingue completo per contenuti dinamici (Servizi, Eventi, Amenità)
