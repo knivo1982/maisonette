@@ -276,15 +276,17 @@ export default function ServicesPage() {
             <AlertCircle className="w-10 h-10 text-amber-600" />
           </div>
           <h1 className="font-cinzel text-3xl text-[#1A202C] mb-4">
-            Check-in Richiesto
+            {language === 'en' ? 'Check-in Required' : 'Check-in Richiesto'}
           </h1>
           <p className="font-manrope text-[#4A5568] mb-8">
-            Per accedere ai servizi esclusivi devi prima effettuare il check-in per il tuo soggiorno.
+            {language === 'en' 
+              ? 'To access exclusive services you must first complete check-in for your stay.'
+              : 'Per accedere ai servizi esclusivi devi prima effettuare il check-in per il tuo soggiorno.'}
           </p>
           <Link to="/checkin">
             <Button className="bg-[#C5A059] hover:bg-[#B08D45] text-white font-cinzel tracking-widest uppercase px-8 py-4">
               <ClipboardCheck className="w-5 h-5 mr-2" />
-              Effettua Check-in
+              {language === 'en' ? 'Complete Check-in' : 'Effettua Check-in'}
             </Button>
           </Link>
         </div>
@@ -298,13 +300,15 @@ export default function ServicesPage() {
         {/* Header */}
         <div className="mb-12 text-center">
           <p className="font-cormorant text-[#C5A059] tracking-[0.2em] uppercase text-sm mb-2">
-            Per il Tuo Soggiorno
+            {language === 'en' ? 'For Your Stay' : 'Per il Tuo Soggiorno'}
           </p>
           <h1 className="font-cinzel text-4xl md:text-5xl text-[#1A202C] mb-4">
-            I Nostri Servizi
+            {t('services.title')}
           </h1>
           <p className="font-manrope text-[#4A5568] max-w-2xl mx-auto">
-            Prenota i servizi per rendere il tuo soggiorno indimenticabile
+            {language === 'en' 
+              ? 'Book services to make your stay unforgettable'
+              : 'Prenota i servizi per rendere il tuo soggiorno indimenticabile'}
           </p>
         </div>
 
@@ -321,7 +325,7 @@ export default function ServicesPage() {
               }`}
               data-testid={`filter-${cat}`}
             >
-              {cat === 'all' ? 'Tutti' : categoryLabels[cat]?.label || cat}
+              {cat === 'all' ? (language === 'en' ? 'All' : 'Tutti') : catLabels[cat]?.label || cat}
             </button>
           ))}
         </div>
@@ -334,7 +338,9 @@ export default function ServicesPage() {
         ) : filteredServices.length === 0 ? (
           <div className="text-center py-16">
             <Sparkles className="w-16 h-16 text-[#E2E8F0] mx-auto mb-4" />
-            <p className="font-cinzel text-xl text-[#1A202C] mb-2">Nessun servizio disponibile</p>
+            <p className="font-cinzel text-xl text-[#1A202C] mb-2">
+              {language === 'en' ? 'No services available' : 'Nessun servizio disponibile'}
+            </p>
           </div>
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -351,13 +357,13 @@ export default function ServicesPage() {
                       {getIcon(service.icona)}
                     </div>
                     <div className="flex flex-col items-end gap-2">
-                      <Badge className={`${categoryLabels[service.categoria]?.color || 'bg-gray-100 text-gray-700'} border-0`}>
-                        {categoryLabels[service.categoria]?.label || service.categoria}
+                      <Badge className={`${catLabels[service.categoria]?.color || 'bg-gray-100 text-gray-700'} border-0`}>
+                        {catLabels[service.categoria]?.label || service.categoria}
                       </Badge>
                       {service.gratuito ? (
                         <span className="flex items-center gap-1 text-green-600 text-sm font-medium">
                           <Check className="w-4 h-4" />
-                          Gratuito
+                          {language === 'en' ? 'Free' : 'Gratuito'}
                         </span>
                       ) : service.prezzo ? (
                         <span className="flex items-center gap-1 text-[#C5A059] font-cinzel text-lg">
@@ -365,17 +371,19 @@ export default function ServicesPage() {
                           {service.prezzo.toFixed(2)}
                         </span>
                       ) : (
-                        <span className="text-[#4A5568] text-sm">Su richiesta</span>
+                        <span className="text-[#4A5568] text-sm">
+                          {language === 'en' ? 'On request' : 'Su richiesta'}
+                        </span>
                       )}
                     </div>
                   </div>
                   
                   <h3 className="font-cinzel text-xl text-[#1A202C] mb-3 group-hover:text-[#C5A059] transition-colors">
-                    {service.nome}
+                    {getLocalizedText(service, 'nome')}
                   </h3>
                   
                   <p className="font-manrope text-sm text-[#4A5568] leading-relaxed mb-4">
-                    {service.descrizione}
+                    {getLocalizedText(service, 'descrizione')}
                   </p>
 
                   {/* Action buttons */}
@@ -400,19 +408,23 @@ export default function ServicesPage() {
         <div className="mt-16 bg-green-600 rounded-sm p-8 md:p-12 text-center">
           <MessageCircle className="w-12 h-12 text-white mx-auto mb-4" />
           <h2 className="font-cinzel text-2xl md:text-3xl text-white mb-4">
-            Preferisci WhatsApp?
+            {language === 'en' ? 'Prefer WhatsApp?' : 'Preferisci WhatsApp?'}
           </h2>
           <p className="font-manrope text-green-100 mb-6 max-w-xl mx-auto">
-            Contattaci direttamente su WhatsApp per prenotare servizi o chiedere informazioni.
+            {language === 'en' 
+              ? 'Contact us directly on WhatsApp to book services or ask for information.'
+              : 'Contattaci direttamente su WhatsApp per prenotare servizi o chiedere informazioni.'}
           </p>
           <a 
-            href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(`Ciao! Sono ${user?.nome}, ospite de La Maisonette (${user?.codice_prenotazione}). Vorrei informazioni sui servizi.`)}`}
+            href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(language === 'en' 
+              ? `Hello! I'm ${user?.nome}, guest at La Maisonette (${user?.codice_prenotazione}). I'd like information about services.`
+              : `Ciao! Sono ${user?.nome}, ospite de La Maisonette (${user?.codice_prenotazione}). Vorrei informazioni sui servizi.`)}`}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center justify-center gap-2 bg-white text-green-600 font-cinzel tracking-widest uppercase px-8 py-4 hover:bg-green-50 transition-colors"
           >
             <MessageCircle className="w-5 h-5" />
-            Chatta su WhatsApp
+            {language === 'en' ? 'Chat on WhatsApp' : 'Chatta su WhatsApp'}
           </a>
         </div>
       </div>
