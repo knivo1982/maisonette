@@ -212,6 +212,7 @@ export default function ServicesPage() {
     : services.filter(s => s.categoria === activeCategory);
 
   const categories = ['all', ...new Set(services.map(s => s.categoria))];
+  const catLabels = categoryLabels[language] || categoryLabels.it;
 
   const getIcon = (iconName) => {
     const IconComponent = iconMap[iconName] || iconMap.default;
@@ -229,7 +230,7 @@ export default function ServicesPage() {
           data-testid={`info-service-${service.id}`}
         >
           <Eye className="w-4 h-4 mr-1" />
-          Visualizza
+          {language === 'en' ? 'View' : 'Visualizza'}
         </Button>
       );
     } else if (tipo === 'shop') {
@@ -240,7 +241,7 @@ export default function ServicesPage() {
           data-testid={`shop-service-${service.id}`}
         >
           <ShoppingBag className="w-4 h-4 mr-1" />
-          Vai allo Shop
+          {language === 'en' ? 'Go to Shop' : 'Vai allo Shop'}
         </Button>
       );
     } else {
@@ -250,7 +251,7 @@ export default function ServicesPage() {
           className="flex-1 bg-[#C5A059] hover:bg-[#B08D45] text-white text-sm"
           data-testid={`book-service-${service.id}`}
         >
-          Prenota
+          {language === 'en' ? 'Book' : 'Prenota'}
         </Button>
       );
     }
