@@ -487,7 +487,7 @@ export default function ServicesPage() {
                     data-testid="booking-date-picker"
                   >
                     <CalendarIcon className="mr-2 h-4 w-4 text-[#C5A059]" />
-                    {bookingDate ? format(bookingDate, 'dd MMMM yyyy', { locale: it }) : 'Seleziona data'}
+                    {bookingDate ? format(bookingDate, 'dd MMMM yyyy', { locale: dateLocale }) : (language === 'en' ? 'Select date' : 'Seleziona data')}
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0" align="start">
