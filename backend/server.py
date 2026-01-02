@@ -607,7 +607,9 @@ class OrderResponse(BaseModel):
 # House Rules
 class HouseRuleCreate(BaseModel):
     titolo: str
+    titolo_en: Optional[str] = None
     contenuto: str
+    contenuto_en: Optional[str] = None
     categoria: str  # checkin, checkout, soggiorno, sicurezza
     ordine: int = 0
     attivo: bool = True
@@ -615,7 +617,9 @@ class HouseRuleCreate(BaseModel):
 class HouseRuleResponse(BaseModel):
     id: str
     titolo: str
+    titolo_en: Optional[str] = None
     contenuto: str
+    contenuto_en: Optional[str] = None
     categoria: str
     ordine: int = 0
     attivo: bool = True
