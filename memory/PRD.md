@@ -114,12 +114,13 @@ Applicazione di gestione B&B per "La Maisonette di Paestum" importata da GitHub 
 
 ### P2 - Media Priorità
 - [x] Multilingue UI (navigazione, pulsanti) ✅
-- [ ] Multilingue contenuti database (richiede inserimento traduzioni admin)
-- [ ] Notifiche push (richiede VAPID keys)
+- [x] Form traduzioni admin per Servizi/Eventi ✅
+- [x] Notifiche Push (VAPID keys configurate) ✅
+- [x] Icona PWA personalizzata ✅
 
 ### P3 - Bassa Priorità
-- [ ] Integrazione automatica PayTourist (richiede software_id)
 - [ ] Background sync per check-in offline
+- [ ] Integrazione automatica PayTourist (richiede software_id)
 
 ---
 
