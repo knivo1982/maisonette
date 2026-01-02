@@ -54,6 +54,7 @@ export default function AdminCheckins() {
     luogo_rilascio: '',
     scadenza_documento: ''
   });
+  const [accompagnatori, setAccompagnatori] = useState([]);
   
   // Photo viewer
   const [photoViewerOpen, setPhotoViewerOpen] = useState(false);
