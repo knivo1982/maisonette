@@ -156,7 +156,32 @@ export default function AdminCheckins() {
         scadenza_documento: ''
       });
     }
+    // Load existing accompagnatori
+    setAccompagnatori(checkin.accompagnatori || []);
     setGuestFormOpen(true);
+  };
+
+  const addAccompagnatore = () => {
+    setAccompagnatori([...accompagnatori, {
+      nome: '',
+      cognome: '',
+      sesso: 'M',
+      data_nascita: '',
+      luogo_nascita: '',
+      nazionalita: 'Italia',
+      tipo_documento: 'carta_identita',
+      numero_documento: ''
+    }]);
+  };
+
+  const updateAccompagnatore = (index, field, value) => {
+    const updated = [...accompagnatori];
+    updated[index] = { ...updated[index], [field]: value };
+    setAccompagnatori(updated);
+  };
+
+  const removeAccompagnatore = (index) => {
+    setAccompagnatori(accompagnatori.filter((_, i) => i !== index));
   };
 
   const saveGuestData = async () => {
@@ -169,10 +194,13 @@ export default function AdminCheckins() {
     try {
       await axios.put(
         `${API}/admin/checkins/${editingCheckinId}/guest-data`,
-        { ospite_principale: guestForm },
+        { 
+          ospite_principale: guestForm,
+          accompagnatori: accompagnatori.filter(a => a.nome && a.cognome)
+        },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      toast.success('Dati ospite salvati!');
+      toast.success('Dati ospiti salvati!');
       setGuestFormOpen(false);
       fetchCheckins();
     } catch (error) {
