@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../../components/ui/dialog';
 import axios from 'axios';
 import { toast } from 'sonner';
-import { ClipboardCheck, Calendar, Users, Eye, User, FileText, Phone, Mail, MapPin, CreditCard, ChevronDown, ChevronUp, Copy, ExternalLink, UserPlus, Image, Save } from 'lucide-react';
+import { ClipboardCheck, Calendar, Users, Eye, User, FileText, Phone, Mail, MapPin, CreditCard, ChevronDown, ChevronUp, Copy, ExternalLink, UserPlus, Image, Save, Trash2, Plus } from 'lucide-react';
 
 import { API } from '../../lib/api';
 
