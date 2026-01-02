@@ -31,12 +31,15 @@ export default function AdminEvents() {
   const [editingEvent, setEditingEvent] = useState(null);
   const [formData, setFormData] = useState({
     titolo: '',
+    titolo_en: '',
     descrizione: '',
+    descrizione_en: '',
     data: '',
     data_fine: '',
     ora: '',
     ora_fine: '',
     luogo: '',
+    luogo_en: '',
     indirizzo: '',
     immagine_url: '',
     categoria: ''
