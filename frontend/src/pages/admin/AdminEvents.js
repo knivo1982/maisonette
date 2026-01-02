@@ -359,6 +359,7 @@ export default function AdminEvents() {
             </form>
           </DialogContent>
         </Dialog>
+        </div>
       </div>
 
       {loading ? (
