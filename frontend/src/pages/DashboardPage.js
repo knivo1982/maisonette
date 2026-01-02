@@ -1,17 +1,20 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { useLanguage } from '../contexts/LanguageContext';
 import Layout from '../components/Layout';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
+import PushNotificationToggle from '../components/PushNotificationToggle';
 import axios from 'axios';
 import { toast } from 'sonner';
-import { Calendar, MapPin, Gift, ClipboardCheck, ArrowRight, Star, Copy } from 'lucide-react';
+import { Calendar, MapPin, Gift, ClipboardCheck, ArrowRight, Star, Copy, Bell } from 'lucide-react';
 
 import { API } from '../lib/api';
 
 export default function DashboardPage() {
   const { user, token, loading: authLoading } = useAuth();
+  const { language } = useLanguage();
   const navigate = useNavigate();
   const [checkins, setCheckins] = useState([]);
   const [loading, setLoading] = useState(true);
