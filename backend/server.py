@@ -4832,6 +4832,181 @@ async def seed_data(admin: dict = Depends(get_admin_user)):
     
     return {"message": "Dati di esempio inseriti"}
 
+# ==================== EVENT SCRAPER ====================
+
+class ScrapedEvent(BaseModel):
+    titolo: str
+    descrizione: Optional[str] = None
+    data: str
+    data_fine: Optional[str] = None
+    luogo: str
+    indirizzo: Optional[str] = None
+    categoria: Optional[str] = None
+    url_fonte: Optional[str] = None
+
+@api_router.post("/admin/scrape-events")
+async def scrape_events(admin: dict = Depends(get_admin_user)):
+    """Scrape events from Virgilio.it for Capaccio/Paestum area"""
+    
+    url = "https://www.virgilio.it/italia/capaccio/eventi/"
+    scraped_events = []
+    imported_count = 0
+    duplicate_count = 0
+    
+    try:
+        async with httpx.AsyncClient(timeout=30.0, follow_redirects=True) as client_http:
+            # Add headers to mimic a browser
+            headers = {
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+                "Accept-Language": "it-IT,it;q=0.9,en-US;q=0.8,en;q=0.7",
+            }
+            
+            response = await client_http.get(url, headers=headers)
+            response.raise_for_status()
+            
+            soup = BeautifulSoup(response.text, 'lxml')
+            
+            # Find all event articles with schema.org Event markup
+            event_articles = soup.find_all('article', {'itemtype': 'http://schema.org/Event'})
+            
+            for article in event_articles:
+                try:
+                    # Extract title
+                    title_elem = article.find('h2', itemprop='name')
+                    if not title_elem:
+                        continue
+                    titolo = title_elem.get_text(strip=True)
+                    
+                    # Extract description
+                    desc_elem = article.find('p', itemprop='description')
+                    descrizione = desc_elem.get_text(strip=True) if desc_elem else None
+                    
+                    # Extract dates
+                    start_date_elem = article.find('time', itemprop='startDate')
+                    end_date_elem = article.find('time', itemprop='endDate')
+                    
+                    # Parse dates from datetime attribute
+                    data = None
+                    data_fine = None
+                    
+                    if start_date_elem and start_date_elem.get('datetime'):
+                        dt_str = start_date_elem['datetime']
+                        try:
+                            # Format: 2026-01-02T00:00:00Z
+                            data = dt_str.split('T')[0]
+                        except:
+                            pass
+                    
+                    if end_date_elem and end_date_elem.get('datetime'):
+                        dt_str = end_date_elem['datetime']
+                        try:
+                            data_fine = dt_str.split('T')[0]
+                        except:
+                            pass
+                    
+                    if not data:
+                        continue
+                    
+                    # Extract location
+                    location_elem = article.find('a', itemprop='location')
+                    luogo = "Capaccio Paestum"
+                    if location_elem:
+                        loc_text = location_elem.get_text(strip=True)
+                        if loc_text:
+                            luogo = loc_text
+                    
+                    # Extract category from tag
+                    cat_elem = article.find('div', class_='categoria_ev')
+                    categoria = None
+                    if cat_elem:
+                        cat_link = cat_elem.find('a')
+                        if cat_link:
+                            cat_text = cat_link.get_text(strip=True).lower()
+                            # Map to our categories
+                            cat_map = {
+                                'rassegne': 'cultura',
+                                'spettacoli': 'musica',
+                                'concerti': 'musica',
+                                'mercatini': 'mercato',
+                                'mostre': 'cultura',
+                                'sagre e feste': 'festa',
+                                'sagre_e_feste': 'festa',
+                                'visti in rete': 'altro'
+                            }
+                            categoria = cat_map.get(cat_text, 'altro')
+                    
+                    # Extract URL
+                    url_fonte = None
+                    link_elem = title_elem.find('a') if title_elem else None
+                    if link_elem and link_elem.get('href'):
+                        url_fonte = link_elem['href']
+                    
+                    scraped_events.append({
+                        "titolo": titolo,
+                        "descrizione": descrizione,
+                        "data": data,
+                        "data_fine": data_fine if data_fine and data_fine != data else None,
+                        "luogo": luogo,
+                        "categoria": categoria,
+                        "url_fonte": url_fonte
+                    })
+                    
+                except Exception as e:
+                    print(f"Error parsing event: {e}")
+                    continue
+            
+            # Now save events to database, avoiding duplicates
+            for event in scraped_events:
+                # Check for duplicate by title and date
+                existing = await db.events.find_one({
+                    "titolo": event["titolo"],
+                    "data": event["data"]
+                })
+                
+                if existing:
+                    duplicate_count += 1
+                    continue
+                
+                # Create new event
+                event_id = str(uuid.uuid4())
+                event_doc = {
+                    "id": event_id,
+                    "titolo": event["titolo"],
+                    "titolo_en": None,
+                    "descrizione": event["descrizione"],
+                    "descrizione_en": None,
+                    "data": event["data"],
+                    "data_fine": event["data_fine"] or event["data"],
+                    "ora": None,
+                    "ora_fine": None,
+                    "luogo": event["luogo"],
+                    "luogo_en": None,
+                    "indirizzo": None,
+                    "immagine_url": None,
+                    "categoria": event["categoria"],
+                    "url_fonte": event["url_fonte"],
+                    "importato_da": "virgilio.it",
+                    "created_at": datetime.now(timezone.utc).isoformat()
+                }
+                
+                await db.events.insert_one(event_doc)
+                imported_count += 1
+            
+            return {
+                "success": True,
+                "message": f"Scraping completato",
+                "eventi_trovati": len(scraped_events),
+                "eventi_importati": imported_count,
+                "eventi_duplicati": duplicate_count,
+                "eventi": scraped_events[:10]  # Return first 10 for preview
+            }
+            
+    except httpx.HTTPError as e:
+        raise HTTPException(status_code=502, detail=f"Errore nel contattare virgilio.it: {str(e)}")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Errore durante lo scraping: {str(e)}")
+
 # Create admin user endpoint (for initial setup)
 @api_router.post("/setup/admin")
 async def create_admin():
