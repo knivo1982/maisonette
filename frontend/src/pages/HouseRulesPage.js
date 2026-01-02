@@ -122,14 +122,15 @@ export default function HouseRulesPage() {
             <FileText className="w-8 h-8 text-[#C5A059]" />
           </div>
           <p className="font-cormorant text-[#C5A059] tracking-[0.2em] uppercase text-sm mb-2">
-            Informazioni Utili
+            {language === 'en' ? 'Useful Information' : 'Informazioni Utili'}
           </p>
           <h1 className="font-cinzel text-4xl md:text-5xl text-[#1A202C] mb-4">
-            Regole della Casa
+            {language === 'en' ? 'House Rules' : 'Regole della Casa'}
           </h1>
           <p className="font-manrope text-[#4A5568] max-w-2xl mx-auto">
-            Per garantire un soggiorno piacevole a tutti i nostri ospiti, 
-            vi preghiamo di prendere visione delle seguenti regole.
+            {language === 'en' 
+              ? 'To ensure a pleasant stay for all our guests, please read the following rules.'
+              : 'Per garantire un soggiorno piacevole a tutti i nostri ospiti, vi preghiamo di prendere visione delle seguenti regole.'}
           </p>
         </div>
 
@@ -148,7 +149,7 @@ export default function HouseRulesPage() {
                     <div className="flex items-center gap-3">
                       <IconComponent className="w-5 h-5" />
                       <h2 className="font-cinzel text-lg">
-                        {categoryLabels[categoria] || categoria}
+                        {catLabels[categoria] || categoria}
                       </h2>
                     </div>
                   </div>
