@@ -161,10 +161,10 @@ export default function HouseRulesPage() {
                           className="p-6 hover:bg-[#F9F9F7] transition-colors"
                         >
                           <h3 className="font-manrope font-semibold text-[#1A202C] mb-2">
-                            {rule.titolo}
+                            {getLocalizedText(rule, 'titolo')}
                           </h3>
                           <p className="font-manrope text-sm text-[#4A5568] leading-relaxed">
-                            {rule.contenuto}
+                            {getLocalizedText(rule, 'contenuto')}
                           </p>
                         </div>
                       ))}
