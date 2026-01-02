@@ -3995,6 +3995,102 @@ async def admin_delete_notification(notification_id: str, admin: dict = Depends(
     await db.notification_reads.delete_many({"notification_id": notification_id})
     return {"message": "Notifica eliminata"}
 
+# ==================== PUSH NOTIFICATIONS ====================
+
+class PushSubscription(BaseModel):
+    endpoint: str
+    keys: dict
+
+@api_router.get("/push/vapid-public-key")
+async def get_vapid_public_key():
+    """Get the VAPID public key for push notification subscription"""
+    if not VAPID_PUBLIC_KEY:
+        raise HTTPException(status_code=503, detail="Push notifications not configured")
+    return {"public_key": VAPID_PUBLIC_KEY}
+
+@api_router.post("/push/subscribe")
+async def subscribe_push(subscription: PushSubscription, user: dict = Depends(get_current_user)):
+    """Subscribe to push notifications"""
+    subscription_doc = {
+        "user_id": user["id"],
+        "endpoint": subscription.endpoint,
+        "keys": subscription.keys,
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    # Update or insert subscription
+    await db.push_subscriptions.update_one(
+        {"user_id": user["id"], "endpoint": subscription.endpoint},
+        {"$set": subscription_doc},
+        upsert=True
+    )
+    
+    return {"message": "Iscrizione alle notifiche push completata"}
+
+@api_router.delete("/push/unsubscribe")
+async def unsubscribe_push(user: dict = Depends(get_current_user)):
+    """Unsubscribe from push notifications"""
+    await db.push_subscriptions.delete_many({"user_id": user["id"]})
+    return {"message": "Disiscrizione completata"}
+
+@api_router.post("/admin/push/send")
+async def admin_send_push(data: dict, admin: dict = Depends(get_admin_user)):
+    """Send push notification to users (admin only)"""
+    if not WEBPUSH_AVAILABLE:
+        raise HTTPException(status_code=503, detail="pywebpush not installed")
+    
+    if not VAPID_PUBLIC_KEY or not VAPID_PRIVATE_KEY:
+        raise HTTPException(status_code=503, detail="VAPID keys not configured")
+    
+    title = data.get("title", "La Maisonette di Paestum")
+    body = data.get("body", "")
+    url = data.get("url", "/")
+    user_id = data.get("user_id")  # None = broadcast to all
+    
+    # Get subscriptions
+    query = {"user_id": user_id} if user_id else {}
+    subscriptions = await db.push_subscriptions.find(query, {"_id": 0}).to_list(1000)
+    
+    if not subscriptions:
+        return {"message": "Nessuna iscrizione push trovata", "sent": 0}
+    
+    sent_count = 0
+    failed_count = 0
+    
+    for sub in subscriptions:
+        try:
+            webpush(
+                subscription_info={
+                    "endpoint": sub["endpoint"],
+                    "keys": sub["keys"]
+                },
+                data=json.dumps({
+                    "title": title,
+                    "body": body,
+                    "url": url,
+                    "icon": "/icons/icon-192x192.png"
+                }),
+                vapid_private_key=VAPID_PRIVATE_KEY,
+                vapid_claims={
+                    "sub": f"mailto:{VAPID_EMAIL}"
+                }
+            )
+            sent_count += 1
+        except WebPushException as e:
+            failed_count += 1
+            # Remove invalid subscription
+            if e.response and e.response.status_code in [404, 410]:
+                await db.push_subscriptions.delete_one({"endpoint": sub["endpoint"]})
+        except Exception as e:
+            failed_count += 1
+            logging.error(f"Push notification error: {e}")
+    
+    return {
+        "message": f"Notifiche inviate: {sent_count}, fallite: {failed_count}",
+        "sent": sent_count,
+        "failed": failed_count
+    }
+
 # ==================== ADMIN LOYALTY REWARDS ====================
 
 @api_router.get("/admin/loyalty/transactions")
