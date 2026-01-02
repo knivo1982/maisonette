@@ -99,7 +99,9 @@ export default function AdminHouseRules() {
     setEditingRule(rule);
     setFormData({
       titolo: rule.titolo,
+      titolo_en: rule.titolo_en || '',
       contenuto: rule.contenuto,
+      contenuto_en: rule.contenuto_en || '',
       categoria: rule.categoria,
       ordine: rule.ordine,
       attivo: rule.attivo
@@ -111,7 +113,9 @@ export default function AdminHouseRules() {
     setEditingRule(null);
     setFormData({
       titolo: '',
+      titolo_en: '',
       contenuto: '',
+      contenuto_en: '',
       categoria: '',
       ordine: 0,
       attivo: true
