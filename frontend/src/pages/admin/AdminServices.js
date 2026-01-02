@@ -49,7 +49,9 @@ export default function AdminServices() {
   const [editingService, setEditingService] = useState(null);
   const [formData, setFormData] = useState({
     nome: '',
+    nome_en: '',
     descrizione: '',
+    descrizione_en: '',
     categoria: '',
     prezzo: '',
     gratuito: false,
