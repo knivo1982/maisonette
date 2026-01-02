@@ -515,6 +515,16 @@ export default function AdminCheckins() {
                         <ExternalLink className="w-4 h-4 mr-2" />
                         Apri PayTourist
                       </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => exportQuestura(checkin.id)}
+                        className="border-purple-600 text-purple-600 hover:bg-purple-50"
+                        data-testid={`questura-btn-${checkin.id}`}
+                      >
+                        <FileText className="w-4 h-4 mr-2" />
+                        Esporta Questura
+                      </Button>
                     </div>
                   </div>
                 )}
