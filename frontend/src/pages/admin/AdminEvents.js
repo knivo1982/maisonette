@@ -9,7 +9,7 @@ import { Textarea } from '../../components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../../components/ui/dialog';
 import axios from 'axios';
 import { toast } from 'sonner';
-import { Plus, Edit, Trash2, Calendar, MapPin, Clock } from 'lucide-react';
+import { Plus, Edit, Trash2, Calendar, MapPin, Clock, Download, Loader2 } from 'lucide-react';
 
 import { API } from '../../lib/api';
 
@@ -27,6 +27,7 @@ export default function AdminEvents() {
   const { token } = useAuth();
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [scraping, setScraping] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingEvent, setEditingEvent] = useState(null);
   const [formData, setFormData] = useState({
