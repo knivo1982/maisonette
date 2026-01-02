@@ -159,6 +159,33 @@ export default function AdminEvents() {
     return new Date(endDate) < new Date(new Date().toDateString());
   };
 
+  const handleScrapeEvents = async () => {
+    if (!window.confirm('Vuoi importare gli eventi da Virgilio.it? Gli eventi duplicati saranno ignorati.')) return;
+    
+    setScraping(true);
+    try {
+      const response = await axios.post(`${API}/admin/scrape-events`, {}, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      const { eventi_trovati, eventi_importati, eventi_duplicati } = response.data;
+      
+      if (eventi_importati > 0) {
+        toast.success(`Importati ${eventi_importati} nuovi eventi!`);
+        fetchEvents();
+      } else if (eventi_duplicati > 0) {
+        toast.info(`Nessun nuovo evento. ${eventi_duplicati} eventi già presenti.`);
+      } else {
+        toast.info('Nessun evento trovato da importare.');
+      }
+    } catch (error) {
+      console.error('Scraping error:', error);
+      toast.error(error.response?.data?.detail || 'Errore durante l\'importazione');
+    } finally {
+      setScraping(false);
+    }
+  };
+
   return (
     <AdminLayout title="Gestione Eventi">
       <div className="flex justify-between items-center mb-6">
