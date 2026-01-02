@@ -18,6 +18,8 @@ import bcrypt
 import httpx
 import shutil
 import json
+from bs4 import BeautifulSoup
+import re
 
 # Web Push
 try:
