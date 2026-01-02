@@ -123,7 +123,9 @@ export default function AdminServices() {
     setEditingService(service);
     setFormData({
       nome: service.nome,
+      nome_en: service.nome_en || '',
       descrizione: service.descrizione,
+      descrizione_en: service.descrizione_en || '',
       categoria: service.categoria,
       prezzo: service.prezzo?.toString() || '',
       gratuito: service.gratuito,
@@ -140,7 +142,9 @@ export default function AdminServices() {
     setEditingService(null);
     setFormData({
       nome: '',
+      nome_en: '',
       descrizione: '',
+      descrizione_en: '',
       categoria: '',
       prezzo: '',
       gratuito: false,
