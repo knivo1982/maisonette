@@ -80,16 +80,23 @@ export default function DashboardPage() {
     <Layout>
       <div className="max-w-7xl mx-auto px-4 py-12">
         {/* Welcome Section */}
-        <div className="mb-12">
-          <p className="font-cormorant text-[#C5A059] tracking-[0.2em] uppercase text-sm mb-2">
-            Benvenuto
-          </p>
-          <h1 className="font-cinzel text-4xl md:text-5xl text-[#1A202C] mb-4">
-            Ciao, {user.nome}!
-          </h1>
-          <p className="font-manrope text-[#4A5568]">
-            Gestisci il tuo soggiorno e scopri i vantaggi esclusivi
-          </p>
+        <div className="mb-12 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div>
+            <p className="font-cormorant text-[#C5A059] tracking-[0.2em] uppercase text-sm mb-2">
+              {language === 'en' ? 'Welcome' : 'Benvenuto'}
+            </p>
+            <h1 className="font-cinzel text-4xl md:text-5xl text-[#1A202C] mb-4">
+              {language === 'en' ? 'Hello' : 'Ciao'}, {user.nome}!
+            </h1>
+            <p className="font-manrope text-[#4A5568]">
+              {language === 'en' 
+                ? 'Manage your stay and discover exclusive benefits'
+                : 'Gestisci il tuo soggiorno e scopri i vantaggi esclusivi'}
+            </p>
+          </div>
+          <div className="flex items-center gap-3">
+            <PushNotificationToggle token={token} language={language} />
+          </div>
         </div>
 
         {/* Booking Code Card */}
