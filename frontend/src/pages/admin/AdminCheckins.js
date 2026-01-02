@@ -675,6 +675,128 @@ export default function AdminCheckins() {
               </div>
             </div>
 
+            {/* Accompagnatori Section */}
+            <div className="border-t pt-4 mt-4">
+              <div className="flex items-center justify-between mb-4">
+                <h4 className="font-medium text-[#1A202C] flex items-center gap-2">
+                  <Users className="w-4 h-4" />
+                  Accompagnatori ({accompagnatori.length})
+                </h4>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  onClick={addAccompagnatore}
+                  className="border-[#C5A059] text-[#C5A059] hover:bg-[#C5A059]/10"
+                >
+                  <Plus className="w-4 h-4 mr-1" />
+                  Aggiungi
+                </Button>
+              </div>
+
+              {accompagnatori.length === 0 ? (
+                <p className="text-sm text-gray-500 text-center py-4 bg-gray-50 rounded-lg">
+                  Nessun accompagnatore. Clicca "Aggiungi" per inserirne uno.
+                </p>
+              ) : (
+                <div className="space-y-4">
+                  {accompagnatori.map((acc, idx) => (
+                    <div key={idx} className="p-4 bg-[#F9F9F7] rounded-lg relative">
+                      <button
+                        type="button"
+                        onClick={() => removeAccompagnatore(idx)}
+                        className="absolute top-2 right-2 text-red-500 hover:text-red-700"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                      
+                      <p className="text-sm font-medium text-[#C5A059] mb-3">
+                        Accompagnatore {idx + 1}
+                      </p>
+                      
+                      <div className="grid grid-cols-2 gap-3 mb-3">
+                        <div>
+                          <Label className="text-xs">Nome *</Label>
+                          <Input
+                            value={acc.nome}
+                            onChange={(e) => updateAccompagnatore(idx, 'nome', e.target.value)}
+                            placeholder="Nome"
+                            className="h-9"
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-xs">Cognome *</Label>
+                          <Input
+                            value={acc.cognome}
+                            onChange={(e) => updateAccompagnatore(idx, 'cognome', e.target.value)}
+                            placeholder="Cognome"
+                            className="h-9"
+                          />
+                        </div>
+                      </div>
+                      
+                      <div className="grid grid-cols-3 gap-3">
+                        <div>
+                          <Label className="text-xs">Sesso</Label>
+                          <Select 
+                            value={acc.sesso || 'M'} 
+                            onValueChange={(v) => updateAccompagnatore(idx, 'sesso', v)}
+                          >
+                            <SelectTrigger className="h-9">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="M">M</SelectItem>
+                              <SelectItem value="F">F</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div>
+                          <Label className="text-xs">Data Nascita</Label>
+                          <Input
+                            type="date"
+                            value={acc.data_nascita || ''}
+                            onChange={(e) => updateAccompagnatore(idx, 'data_nascita', e.target.value)}
+                            className="h-9"
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-xs">Nazionalità</Label>
+                          <Input
+                            value={acc.nazionalita || 'Italia'}
+                            onChange={(e) => updateAccompagnatore(idx, 'nazionalita', e.target.value)}
+                            placeholder="Italia"
+                            className="h-9"
+                          />
+                        </div>
+                      </div>
+                      
+                      <div className="grid grid-cols-2 gap-3 mt-3">
+                        <div>
+                          <Label className="text-xs">Luogo Nascita</Label>
+                          <Input
+                            value={acc.luogo_nascita || ''}
+                            onChange={(e) => updateAccompagnatore(idx, 'luogo_nascita', e.target.value)}
+                            placeholder="Città"
+                            className="h-9"
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-xs">Num. Documento</Label>
+                          <Input
+                            value={acc.numero_documento || ''}
+                            onChange={(e) => updateAccompagnatore(idx, 'numero_documento', e.target.value)}
+                            placeholder="AB123456"
+                            className="h-9"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
             {/* Actions */}
             <div className="flex justify-end gap-3 pt-4 border-t">
               <Button
