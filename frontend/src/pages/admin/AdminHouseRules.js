@@ -145,7 +145,7 @@ export default function AdminHouseRules() {
               Nuova Regola
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-lg">
+          <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle className="font-cinzel">
                 {editingRule ? 'Modifica Regola' : 'Nuova Regola'}
@@ -161,12 +161,29 @@ export default function AdminHouseRules() {
                 />
               </div>
               <div>
+                <Label className="font-manrope">Titolo (Inglese) 🇬🇧</Label>
+                <Input
+                  value={formData.titolo_en}
+                  onChange={(e) => setFormData({...formData, titolo_en: e.target.value})}
+                  placeholder="Title in English"
+                />
+              </div>
+              <div>
                 <Label className="font-manrope">Contenuto</Label>
                 <Textarea
                   value={formData.contenuto}
                   onChange={(e) => setFormData({...formData, contenuto: e.target.value})}
                   required
                   className="min-h-[100px]"
+                />
+              </div>
+              <div>
+                <Label className="font-manrope">Contenuto (Inglese) 🇬🇧</Label>
+                <Textarea
+                  value={formData.contenuto_en}
+                  onChange={(e) => setFormData({...formData, contenuto_en: e.target.value})}
+                  className="min-h-[100px]"
+                  placeholder="Content in English"
                 />
               </div>
               <div className="grid grid-cols-2 gap-4">
