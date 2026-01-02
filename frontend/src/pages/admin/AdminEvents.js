@@ -264,6 +264,14 @@ export default function AdminEvents() {
                   placeholder="Es. Piazza del Tempio"
                 />
               </div>
+              <div>
+                <Label>Luogo (Inglese) 🇬🇧</Label>
+                <Input
+                  value={formData.luogo_en}
+                  onChange={(e) => setFormData({...formData, luogo_en: e.target.value})}
+                  placeholder="E.g. Temple Square"
+                />
+              </div>
 
               <div>
                 <Label>Indirizzo</Label>
