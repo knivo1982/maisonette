@@ -187,6 +187,14 @@ export default function AdminEvents() {
                   placeholder="Nome dell'evento"
                 />
               </div>
+              <div>
+                <Label>Titolo (Inglese) 🇬🇧</Label>
+                <Input
+                  value={formData.titolo_en}
+                  onChange={(e) => setFormData({...formData, titolo_en: e.target.value})}
+                  placeholder="Event name in English"
+                />
+              </div>
               
               <div>
                 <Label>Descrizione</Label>
@@ -194,6 +202,15 @@ export default function AdminEvents() {
                   value={formData.descrizione}
                   onChange={(e) => setFormData({...formData, descrizione: e.target.value})}
                   rows={3}
+                />
+              </div>
+              <div>
+                <Label>Descrizione (Inglese) 🇬🇧</Label>
+                <Textarea
+                  value={formData.descrizione_en}
+                  onChange={(e) => setFormData({...formData, descrizione_en: e.target.value})}
+                  rows={3}
+                  placeholder="Description in English"
                 />
               </div>
 
