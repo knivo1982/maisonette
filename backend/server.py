@@ -17,6 +17,14 @@ import jwt
 import bcrypt
 import httpx
 import shutil
+import json
+
+# Web Push
+try:
+    from pywebpush import webpush, WebPushException
+    WEBPUSH_AVAILABLE = True
+except ImportError:
+    WEBPUSH_AVAILABLE = False
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
