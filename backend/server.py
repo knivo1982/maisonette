@@ -3782,6 +3782,7 @@ async def export_questura(admin: dict = Depends(get_admin_user), data_da: str = 
 async def export_single_checkin_questura(checkin_id: str, admin: dict = Depends(get_admin_user)):
     """
     Esporta i dati di un singolo check-in nel formato per Alloggiati Web (Questura).
+    Formato: record fisso 168 caratteri per riga come da specifiche ufficiali.
     """
     # Try to find in checkins collection first
     checkin = await db.checkins.find_one({"id": checkin_id}, {"_id": 0})
@@ -3802,39 +3803,128 @@ async def export_single_checkin_questura(checkin_id: str, admin: dict = Depends(
     data_partenza = checkin.get("data_partenza") or (booking.get("data_partenza") if booking else "")
     
     # Calculate nights
-    permanenza = "1"
+    permanenza = 1
     try:
         if data_arrivo and data_partenza:
-            from datetime import datetime
             d1 = datetime.strptime(data_arrivo, "%Y-%m-%d")
             d2 = datetime.strptime(data_partenza, "%Y-%m-%d")
-            permanenza = str(max(1, (d2 - d1).days))
+            permanenza = max(1, (d2 - d1).days)
     except:
         pass
+    
+    def format_date_questura(date_str):
+        """Convert YYYY-MM-DD to DD/MM/YYYY"""
+        if not date_str:
+            return "          "  # 10 spaces
+        try:
+            d = datetime.strptime(date_str, "%Y-%m-%d")
+            return d.strftime("%d/%m/%Y")
+        except:
+            return date_str.ljust(10)[:10]
+    
+    def build_record_168(tipo_alloggiato, permanenza, cognome, nome, sesso, data_nascita, 
+                         comune_nascita, provincia_nascita, stato_nascita, cittadinanza,
+                         tipo_doc, numero_doc, luogo_rilascio_doc):
+        """
+        Costruisce un record di 168 caratteri per Alloggiati Web.
+        Tracciato semplificato basato sulle specifiche ufficiali.
+        """
+        # Pos 1-2: Tipo alloggiato (16=singolo, 17=capofam, 18=capogruppo, 19=familiare, 20=membro)
+        rec = str(tipo_alloggiato).zfill(2)[:2]
+        
+        # Pos 3-12: Data arrivo (DD/MM/YYYY)
+        rec += format_date_questura(data_arrivo)
+        
+        # Pos 13-14: Giorni permanenza
+        rec += str(min(permanenza, 99)).zfill(2)[:2]
+        
+        # Pos 15-64: Cognome (50 chars)
+        rec += cognome.upper().ljust(50)[:50]
+        
+        # Pos 65-94: Nome (30 chars)
+        rec += nome.upper().ljust(30)[:30]
+        
+        # Pos 95: Sesso (1=M, 2=F)
+        sesso_code = "1" if sesso.upper() in ["M", "1", "MASCHIO"] else "2"
+        rec += sesso_code
+        
+        # Pos 96-105: Data nascita (DD/MM/YYYY)
+        rec += format_date_questura(data_nascita)
+        
+        # Pos 106-114: Comune nascita (9 chars) - codice catastale o nome
+        rec += comune_nascita.upper().ljust(9)[:9]
+        
+        # Pos 115-116: Provincia nascita (2 chars)
+        rec += provincia_nascita.upper().ljust(2)[:2]
+        
+        # Pos 117-125: Stato nascita (9 chars) - codice o nome
+        stato_code = "100000100" if stato_nascita.upper() in ["ITALIA", "IT", "ITA", "ITALIANO"] else stato_nascita.upper().ljust(9)[:9]
+        rec += stato_code
+        
+        # Pos 126-134: Cittadinanza (9 chars)
+        citt_code = "100000100" if cittadinanza.upper() in ["ITALIA", "IT", "ITA", "ITALIANO", "ITALIANA"] else cittadinanza.upper().ljust(9)[:9]
+        rec += citt_code
+        
+        # Pos 135-139: Tipo documento (5 chars) - IDENT, PATEN, PASOR, PAIDP, etc.
+        doc_codes = {
+            "CARTA_IDENTITA": "IDENT",
+            "CARTID": "IDENT", 
+            "IDENTITA": "IDENT",
+            "PASSAPORTO": "PASOR",
+            "PASOR": "PASOR",
+            "PATENTE": "PATEN",
+            "PATEN": "PATEN"
+        }
+        tipo_doc_code = doc_codes.get(tipo_doc.upper().replace(" ", "_").replace("'", ""), "IDENT")
+        rec += tipo_doc_code.ljust(5)[:5]
+        
+        # Pos 140-159: Numero documento (20 chars)
+        rec += numero_doc.upper().ljust(20)[:20]
+        
+        # Pos 160-168: Luogo rilascio (9 chars)
+        rec += luogo_rilascio_doc.upper().ljust(9)[:9]
+        
+        return rec
     
     export_lines = []
     
     ospite = checkin.get("ospite_principale", {})
     if ospite and ospite.get("cognome"):
-        # Map document type
-        tipo_doc = ospite.get("tipo_documento", "").upper()
-        if "CARTA" in tipo_doc or "IDENTITA" in tipo_doc:
-            tipo_doc = "CARTID"
-        elif "PASSAPORTO" in tipo_doc:
-            tipo_doc = "PASOR"
-        elif "PATENTE" in tipo_doc:
-            tipo_doc = "PATEN"
-        else:
-            tipo_doc = "ALTRO"
-        
-        # Formato tabulato per Alloggiati Web
-        line = f"16\t{data_arrivo}\t{permanenza}\t{ospite.get('cognome', '')}\t{ospite.get('nome', '')}\t{ospite.get('sesso', 'M')}\t{ospite.get('data_nascita', '')}\t{ospite.get('luogo_nascita', '')}\t\t{ospite.get('nazionalita', 'ITALIA')}\t{ospite.get('nazionalita', 'ITALIA')}\t{tipo_doc}\t{ospite.get('numero_documento', '')}\t{ospite.get('luogo_rilascio', '')}"
+        line = build_record_168(
+            tipo_alloggiato=16,  # Ospite singolo o capofamiglia se ci sono accompagnatori
+            permanenza=permanenza,
+            cognome=ospite.get("cognome", ""),
+            nome=ospite.get("nome", ""),
+            sesso=ospite.get("sesso", "M"),
+            data_nascita=ospite.get("data_nascita", ""),
+            comune_nascita=ospite.get("luogo_nascita", ""),
+            provincia_nascita="",
+            stato_nascita=ospite.get("nazionalita", "Italia"),
+            cittadinanza=ospite.get("nazionalita", "Italia"),
+            tipo_doc=ospite.get("tipo_documento", "carta_identita"),
+            numero_doc=ospite.get("numero_documento", ""),
+            luogo_rilascio_doc=ospite.get("luogo_rilascio", "")
+        )
         export_lines.append(line)
     
     # Accompagnatori
     for acc in checkin.get("accompagnatori", []):
         if acc.get("cognome"):
-            line = f"19\t{data_arrivo}\t{permanenza}\t{acc.get('cognome', '')}\t{acc.get('nome', '')}\t{acc.get('sesso', '')}\t{acc.get('data_nascita', '')}\t{acc.get('luogo_nascita', '')}\t\t{acc.get('nazionalita', 'ITALIA')}\t{acc.get('nazionalita', 'ITALIA')}\t\t\t"
+            line = build_record_168(
+                tipo_alloggiato=19,  # Familiare
+                permanenza=permanenza,
+                cognome=acc.get("cognome", ""),
+                nome=acc.get("nome", ""),
+                sesso=acc.get("sesso", "M"),
+                data_nascita=acc.get("data_nascita", ""),
+                comune_nascita=acc.get("luogo_nascita", ""),
+                provincia_nascita="",
+                stato_nascita=acc.get("nazionalita", "Italia"),
+                cittadinanza=acc.get("nazionalita", "Italia"),
+                tipo_doc=acc.get("tipo_documento", ""),
+                numero_doc=acc.get("numero_documento", ""),
+                luogo_rilascio_doc=""
+            )
             export_lines.append(line)
     
     if not export_lines:
@@ -3844,7 +3934,7 @@ async def export_single_checkin_questura(checkin_id: str, admin: dict = Depends(
         "checkin_id": checkin_id,
         "count": len(export_lines),
         "data": export_lines,
-        "format_info": "Formato tabulato per Alloggiati Web. Copia e incolla nel portale della Questura."
+        "format_info": "Formato 168 caratteri per Alloggiati Web. Salva come file .txt e carica sul portale della Questura."
     }
 
 @api_router.get("/admin/checkins/{checkin_id}/paytourist-format")
