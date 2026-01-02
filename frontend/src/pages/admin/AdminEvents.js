@@ -105,12 +105,15 @@ export default function AdminEvents() {
     setEditingEvent(event);
     setFormData({
       titolo: event.titolo,
+      titolo_en: event.titolo_en || '',
       descrizione: event.descrizione,
+      descrizione_en: event.descrizione_en || '',
       data: event.data,
       data_fine: event.data_fine || '',
       ora: event.ora || '',
       ora_fine: event.ora_fine || '',
       luogo: event.luogo,
+      luogo_en: event.luogo_en || '',
       indirizzo: event.indirizzo || '',
       immagine_url: event.immagine_url || '',
       categoria: event.categoria || ''
@@ -122,12 +125,15 @@ export default function AdminEvents() {
     setEditingEvent(null);
     setFormData({
       titolo: '',
+      titolo_en: '',
       descrizione: '',
+      descrizione_en: '',
       data: '',
       data_fine: '',
       ora: '',
       ora_fine: '',
       luogo: '',
+      luogo_en: '',
       indirizzo: '',
       immagine_url: '',
       categoria: ''
