@@ -186,12 +186,30 @@ export default function AdminServices() {
                 />
               </div>
               <div>
+                <Label className="font-manrope">Nome (Inglese) 🇬🇧</Label>
+                <Input
+                  value={formData.nome_en}
+                  onChange={(e) => setFormData({...formData, nome_en: e.target.value})}
+                  placeholder="Service name in English"
+                  data-testid="service-nome-en"
+                />
+              </div>
+              <div>
                 <Label className="font-manrope">Descrizione</Label>
                 <Textarea
                   value={formData.descrizione}
                   onChange={(e) => setFormData({...formData, descrizione: e.target.value})}
                   required
                   data-testid="service-descrizione"
+                />
+              </div>
+              <div>
+                <Label className="font-manrope">Descrizione (Inglese) 🇬🇧</Label>
+                <Textarea
+                  value={formData.descrizione_en}
+                  onChange={(e) => setFormData({...formData, descrizione_en: e.target.value})}
+                  placeholder="Description in English"
+                  data-testid="service-descrizione-en"
                 />
               </div>
               <div className="grid grid-cols-2 gap-4">
