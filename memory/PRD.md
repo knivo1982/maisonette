@@ -60,6 +60,14 @@ Applicazione di gestione B&B per "La Maisonette di Paestum" importata da GitHub 
 
 ## Changelog
 
+### 2026-01-02
+- **Scraper Eventi Locali** da Virgilio.it
+  - Endpoint `POST /api/admin/scrape-events` per importare eventi automaticamente
+  - Parser HTML con BeautifulSoup per estrarre titolo, date, luogo, categoria
+  - Gestione duplicati (evita reimportazione)
+  - Pulsante "Importa da Virgilio.it" in Admin Eventi
+  - Mappatura categorie (rassegne→cultura, concerti→musica, mercatini→mercato, ecc.)
+
 ### 2026-01-01
 - **PWA Migliorata** per installazione su iOS/Android
   - Convertito icone SVG → PNG (iOS richiede PNG)
@@ -110,6 +118,7 @@ Applicazione di gestione B&B per "La Maisonette di Paestum" importata da GitHub 
 ### P1 - Alta Priorità
 - [x] Form per inserire dati ospite su check-in validati manualmente ✅
 - [x] Visibilità dati ospite nei check-in ✅
+- [x] **Scraper Eventi Locali** - Importazione automatica da Virgilio.it ✅ (01/2026)
 - [ ] Visibilità foto documenti (codice presente, dipende da upload)
 
 ### P2 - Media Priorità
