@@ -217,6 +217,31 @@ export default function AdminCheckins() {
     setPhotoViewerOpen(true);
   };
 
+  // Export Questura
+  const exportQuestura = async (checkinId) => {
+    try {
+      const response = await axios.get(`${API}/admin/checkins/${checkinId}/export-questura`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      // Download as text file
+      const blob = new Blob([response.data.data.join('\n')], { type: 'text/plain' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `questura_${checkinId}.txt`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+      
+      toast.success('File esportato per la Questura!');
+    } catch (error) {
+      console.error('Error exporting for Questura:', error);
+      toast.error('Errore nell\'esportazione. Verifica che i dati ospite siano completi.');
+    }
+  };
+
   // PayTourist functions
   const openPaytouristDialog = async (checkinId) => {
     setPaytouristLoading(true);
