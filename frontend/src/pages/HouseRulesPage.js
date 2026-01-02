@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { useLanguage } from '../contexts/LanguageContext';
 import Layout from '../components/Layout';
 import { Card, CardContent } from '../components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
@@ -30,10 +31,18 @@ const categoryIcons = {
 };
 
 const categoryLabels = {
-  checkin: 'Check-in',
-  checkout: 'Check-out',
-  soggiorno: 'Durante il Soggiorno',
-  sicurezza: 'Sicurezza'
+  it: {
+    checkin: 'Check-in',
+    checkout: 'Check-out',
+    soggiorno: 'Durante il Soggiorno',
+    sicurezza: 'Sicurezza'
+  },
+  en: {
+    checkin: 'Check-in',
+    checkout: 'Check-out',
+    soggiorno: 'During Your Stay',
+    sicurezza: 'Safety'
+  }
 };
 
 const categoryColors = {
@@ -45,10 +54,21 @@ const categoryColors = {
 
 export default function HouseRulesPage() {
   const { user, loading: authLoading } = useAuth();
+  const { language, t } = useLanguage();
   const navigate = useNavigate();
   const [rules, setRules] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('all');
+
+  // Helper to get translated content
+  const getLocalizedText = (item, field) => {
+    if (language === 'en' && item[`${field}_en`]) {
+      return item[`${field}_en`];
+    }
+    return item[field] || '';
+  };
+
+  const catLabels = categoryLabels[language] || categoryLabels.it;
 
   useEffect(() => {
     if (!authLoading && !user) {
