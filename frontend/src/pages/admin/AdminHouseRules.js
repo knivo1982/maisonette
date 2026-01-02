@@ -30,7 +30,9 @@ export default function AdminHouseRules() {
   const [editingRule, setEditingRule] = useState(null);
   const [formData, setFormData] = useState({
     titolo: '',
+    titolo_en: '',
     contenuto: '',
+    contenuto_en: '',
     categoria: '',
     ordine: 0,
     attivo: true
