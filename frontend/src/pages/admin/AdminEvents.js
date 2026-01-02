@@ -192,13 +192,33 @@ export default function AdminEvents() {
         <p className="font-manrope text-[#4A5568]">
           {events.length} eventi totali
         </p>
-        <Dialog open={dialogOpen} onOpenChange={(open) => { setDialogOpen(open); if (!open) resetForm(); }}>
-          <DialogTrigger asChild>
-            <Button className="bg-[#C5A059] hover:bg-[#B08D45] text-white">
-              <Plus className="w-4 h-4 mr-2" />
-              Nuovo Evento
-            </Button>
-          </DialogTrigger>
+        <div className="flex gap-2">
+          <Button 
+            onClick={handleScrapeEvents}
+            disabled={scraping}
+            variant="outline"
+            className="border-[#C5A059] text-[#C5A059] hover:bg-[#C5A059]/10"
+            data-testid="scrape-events-btn"
+          >
+            {scraping ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                Importando...
+              </>
+            ) : (
+              <>
+                <Download className="w-4 h-4 mr-2" />
+                Importa da Virgilio.it
+              </>
+            )}
+          </Button>
+          <Dialog open={dialogOpen} onOpenChange={(open) => { setDialogOpen(open); if (!open) resetForm(); }}>
+            <DialogTrigger asChild>
+              <Button className="bg-[#C5A059] hover:bg-[#B08D45] text-white" data-testid="new-event-btn">
+                <Plus className="w-4 h-4 mr-2" />
+                Nuovo Evento
+              </Button>
+            </DialogTrigger>
           <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle className="font-cinzel">
