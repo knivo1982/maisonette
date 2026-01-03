@@ -75,7 +75,8 @@ from email.mime.multipart import MIMEMultipart
 async def send_notification_email(subject: str, body: str, to_email: str = None):
     """Send notification email"""
     if not SMTP_HOST or not SMTP_USER or not SMTP_PASSWORD:
-        print("⚠️ SMTP not configured, skipping email")
+        target_email = to_email or NOTIFY_EMAIL
+        logger.info(f"[EMAIL NOT SENT - SMTP not configured] To: {target_email}, Subject: {subject}")
         return False
     
     to_email = to_email or NOTIFY_EMAIL
