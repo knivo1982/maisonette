@@ -495,6 +495,24 @@ Antonella – La Maisonette di Paestum`;
     );
   };
 
+  // Formatta data in italiano (es. "Ven 3 Gen 2026")
+  const formatDateItalian = (dateStr) => {
+    if (!dateStr) return '';
+    try {
+      const date = new Date(dateStr);
+      const days = ['Dom', 'Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab'];
+      const months = ['Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu', 'Lug', 'Ago', 'Set', 'Ott', 'Nov', 'Dic'];
+      return `${days[date.getDay()]} ${date.getDate()} ${months[date.getMonth()]}`;
+    } catch {
+      return dateStr;
+    }
+  };
+
+  // Ordina prenotazioni per data arrivo (più vicine prima)
+  const sortedBookings = [...bookings].sort((a, b) => {
+    return new Date(a.data_arrivo) - new Date(b.data_arrivo);
+  });
+
   return (
     <AdminLayout title="Gestione Prenotazioni">
       <div className="space-y-6">
