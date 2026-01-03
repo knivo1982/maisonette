@@ -72,53 +72,6 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
-async def send_notification_email(subject: str, body: str, to_email: str = None):
-    """Send notification email"""
-    if not SMTP_HOST or not SMTP_USER or not SMTP_PASSWORD:
-        target_email = to_email or NOTIFY_EMAIL
-        logger.info(f"[EMAIL NOT SENT - SMTP not configured] To: {target_email}, Subject: {subject}")
-        return False
-    
-    to_email = to_email or NOTIFY_EMAIL
-    
-    try:
-        msg = MIMEMultipart('alternative')
-        msg['Subject'] = subject
-        msg['From'] = SMTP_FROM
-        msg['To'] = to_email
-        
-        # HTML version
-        html_body = f"""
-        <html>
-        <body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-            <div style="background: linear-gradient(135deg, #C5A059, #8B7355); padding: 20px; text-align: center;">
-                <h1 style="color: white; margin: 0;">La Maisonette di Paestum</h1>
-            </div>
-            <div style="padding: 20px; background: #f9f9f9;">
-                {body}
-            </div>
-            <div style="padding: 15px; text-align: center; background: #333; color: #999; font-size: 12px;">
-                La Maisonette di Paestum - Via delle Rose, Capaccio Paestum<br>
-                +39 393 4957532 - info@lamaisonettepaestum.com
-            </div>
-        </body>
-        </html>
-        """
-        
-        msg.attach(MIMEText(html_body, 'html'))
-        
-        # Send email
-        with smtplib.SMTP(SMTP_HOST, SMTP_PORT) as server:
-            server.starttls()
-            server.login(SMTP_USER, SMTP_PASSWORD)
-            server.sendmail(SMTP_FROM, to_email, msg.as_string())
-        
-        print(f"✅ Email sent to {to_email}")
-        return True
-    except Exception as e:
-        print(f"❌ Email error: {e}")
-        return False
-
 async def send_booking_notification(booking: dict, unit_name: str = "La Maisonette"):
     """Send booking notification to admin"""
     subject = f"🏠 Nuova Prenotazione - {booking.get('nome_ospite', 'Ospite')}"
