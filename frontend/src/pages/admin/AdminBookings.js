@@ -510,7 +510,20 @@ Antonella – La Maisonette di Paestum`;
 
   // Ordina prenotazioni per data arrivo (più vicine prima)
   const sortedBookings = [...bookings].sort((a, b) => {
-    return new Date(a.data_arrivo) - new Date(b.data_arrivo);
+    const dateA = new Date(a.data_arrivo);
+    const dateB = new Date(b.data_arrivo);
+    const now = new Date();
+    
+    // Se entrambe sono passate o entrambe future, ordina per data
+    const aIsPast = dateA < now;
+    const bIsPast = dateB < now;
+    
+    // Metti le future prima delle passate
+    if (aIsPast && !bIsPast) return 1;
+    if (!aIsPast && bIsPast) return -1;
+    
+    // Se stesso stato (entrambe passate o entrambe future), ordina per data
+    return dateA - dateB;
   });
 
   return (
