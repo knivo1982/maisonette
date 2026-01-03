@@ -881,7 +881,37 @@ Antonella – La Maisonette di Paestum`;
                                 </a>
                               </div>
                               {booking.note && (
-                                <p className="text-sm text-[#4A5568] mt-2 italic">"{booking.note}"</p>
+                                <div className="flex items-center gap-2 mt-2">
+                                  {/* Logo Booking.com */}
+                                  {booking.note.toLowerCase().includes('[booking') && (
+                                    <div className="flex items-center gap-2 bg-[#003580] text-white px-3 py-1 rounded">
+                                      <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M2.27 0v24h5.06V9.41h3.52c3.52 0 5.2-2.06 5.2-5.2C16.05 1.5 13.86 0 10.34 0H2.27zm5.06 4.05h2.64c1.54 0 2.64.55 2.64 1.93 0 1.38-1.1 1.93-2.64 1.93H7.33V4.05z"/>
+                                        <path d="M19.73 7.27c-2.48 0-4.2 1.72-4.2 4.5v7.73c0 2.77 1.72 4.5 4.2 4.5s4.2-1.72 4.2-4.5v-7.73c0-2.78-1.72-4.5-4.2-4.5zm1.1 12.23c0 .83-.42 1.38-1.1 1.38-.69 0-1.1-.55-1.1-1.38v-7.73c0-.83.41-1.38 1.1-1.38.68 0 1.1.55 1.1 1.38v7.73z"/>
+                                      </svg>
+                                      <span className="text-xs font-semibold">Booking.com</span>
+                                    </div>
+                                  )}
+                                  {/* Logo Airbnb */}
+                                  {booking.note.toLowerCase().includes('[airbnb') && (
+                                    <div className="flex items-center gap-2 bg-[#FF5A5F] text-white px-3 py-1 rounded">
+                                      <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.6 0 12 0zm5.1 16.2c-.3.6-.9 1.2-1.8 1.2-.6 0-1.2-.3-1.8-.6-.6-.6-1.2-1.2-1.8-1.8-.6.6-1.2 1.5-1.8 1.8-.6.3-1.2.6-1.8.6-.9 0-1.5-.6-1.8-1.2-.3-.9-.3-1.8.3-3 .6-1.2 1.5-2.4 2.7-3.6-1.2-1.5-2.1-2.7-2.7-3.9-.6-1.2-.6-2.1-.3-3 .3-.6.9-1.2 1.8-1.2.6 0 1.2.3 1.8.6.6.6 1.2 1.2 1.8 1.8.6-.6 1.2-1.5 1.8-1.8.6-.3 1.2-.6 1.8-.6.9 0 1.5.6 1.8 1.2.3.9.3 1.8-.3 3-.6 1.2-1.5 2.4-2.7 3.6 1.2 1.5 2.1 2.7 2.7 3.9.6 1.2.6 2.1.3 3z"/>
+                                      </svg>
+                                      <span className="text-xs font-semibold">Airbnb</span>
+                                    </div>
+                                  )}
+                                  {/* Testo nota (senza i tag) */}
+                                  {!booking.note.toLowerCase().includes('[booking') && !booking.note.toLowerCase().includes('[airbnb') && (
+                                    <p className="text-sm text-[#4A5568] italic">"{booking.note}"</p>
+                                  )}
+                                  {/* Mostra resto nota se contiene altri dettagli */}
+                                  {(booking.note.toLowerCase().includes('[booking') || booking.note.toLowerCase().includes('[airbnb')) && (
+                                    <span className="text-xs text-[#4A5568]">
+                                      {booking.note.replace(/\[booking[^\]]*\]/gi, '').replace(/\[airbnb[^\]]*\]/gi, '').trim()}
+                                    </span>
+                                  )}
+                                </div>
                               )}
                             </div>
                             <div className="flex gap-2">
