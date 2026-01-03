@@ -810,7 +810,7 @@ Antonella – La Maisonette di Paestum`;
                   </Card>
                 ) : (
                   <div className="space-y-4">
-                    {bookings.map((booking) => (
+                    {sortedBookings.map((booking) => (
                       <Card key={booking.id}>
                         <CardContent className="py-4">
                           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -830,14 +830,23 @@ Antonella – La Maisonette di Paestum`;
                                   </button>
                                 )}
                               </div>
-                              <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm text-[#4A5568]">
+                              
+                              {/* Data in evidenza */}
+                              <div className="flex items-center gap-2 mb-3 bg-[#C5A059]/10 rounded-lg px-3 py-2 w-fit">
+                                <Calendar className="w-5 h-5 text-[#C5A059]" />
+                                <span className="font-semibold text-[#C5A059] text-lg">
+                                  {formatDateItalian(booking.data_arrivo)}
+                                </span>
+                                <span className="text-[#4A5568]">→</span>
+                                <span className="font-semibold text-[#C5A059] text-lg">
+                                  {formatDateItalian(booking.data_partenza)}
+                                </span>
+                              </div>
+                              
+                              <div className="grid grid-cols-2 md:grid-cols-3 gap-2 text-sm text-[#4A5568]">
                                 <span className="flex items-center gap-1">
                                   <Home className="w-4 h-4" />
                                   {booking.unit_nome}
-                                </span>
-                                <span className="flex items-center gap-1">
-                                  <Calendar className="w-4 h-4" />
-                                  {booking.data_arrivo} → {booking.data_partenza}
                                 </span>
                                 <span className="flex items-center gap-1">
                                   <Users className="w-4 h-4" />
