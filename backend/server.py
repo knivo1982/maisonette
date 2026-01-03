@@ -838,6 +838,45 @@ async def register(data: GuestCreate):
     await db.guests.insert_one(guest_doc)
     token = create_token(guest_id)
     
+    # Send notification email to admin for new registration
+    try:
+        registration_body = f"""
+        <h2 style="color: #C5A059;">🎉 Nuovo Utente Registrato!</h2>
+        
+        <table style="width: 100%; border-collapse: collapse;">
+            <tr>
+                <td style="padding: 10px; border-bottom: 1px solid #eee;"><strong>Nome:</strong></td>
+                <td style="padding: 10px; border-bottom: 1px solid #eee;">{data.nome} {data.cognome}</td>
+            </tr>
+            <tr>
+                <td style="padding: 10px; border-bottom: 1px solid #eee;"><strong>Email:</strong></td>
+                <td style="padding: 10px; border-bottom: 1px solid #eee;">{data.email}</td>
+            </tr>
+            <tr>
+                <td style="padding: 10px; border-bottom: 1px solid #eee;"><strong>Telefono:</strong></td>
+                <td style="padding: 10px; border-bottom: 1px solid #eee;">{data.telefono or 'Non fornito'}</td>
+            </tr>
+            <tr>
+                <td style="padding: 10px; border-bottom: 1px solid #eee;"><strong>Codice:</strong></td>
+                <td style="padding: 10px; border-bottom: 1px solid #eee;">{codice}</td>
+            </tr>
+            <tr>
+                <td style="padding: 10px;"><strong>Data:</strong></td>
+                <td style="padding: 10px;">{datetime.now(timezone.utc).strftime('%d/%m/%Y %H:%M')}</td>
+            </tr>
+        </table>
+        
+        <p style="margin-top: 20px; color: #666;">
+            Puoi visualizzare tutti gli ospiti nel <a href="https://lamaisonettepaestum.com/admin/guests" style="color: #C5A059;">pannello admin</a>.
+        </p>
+        """
+        await send_notification_email(
+            subject=f"👤 Nuovo utente: {data.nome} {data.cognome}",
+            body=registration_body
+        )
+    except Exception as e:
+        print(f"⚠️ Failed to send registration notification: {e}")
+    
     return {
         "token": token,
         "guest": GuestResponse(
