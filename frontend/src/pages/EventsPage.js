@@ -185,7 +185,7 @@ export default function EventsPage() {
                   <div className="md:w-1/3 h-48 md:h-auto relative overflow-hidden bg-gray-100">
                     {event.immagine_url ? (
                       <img 
-                        src={event.immagine_url}
+                        src={getImageUrl(event.immagine_url)}
                         alt={event.titolo}
                         className="w-full h-full object-cover"
                         onError={(e) => {
