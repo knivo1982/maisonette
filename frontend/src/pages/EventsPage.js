@@ -7,7 +7,14 @@ import axios from 'axios';
 import { Calendar, MapPin, Clock, Search, Tag, Navigation, ExternalLink } from 'lucide-react';
 import { Button } from '../components/ui/button';
 
-import { API } from '../lib/api';
+import { API, BASE_URL } from '../lib/api';
+
+// Helper to get full image URL
+const getImageUrl = (url) => {
+  if (!url) return null;
+  if (url.startsWith('http')) return url;
+  return `${BASE_URL}${url}`;
+};
 
 export default function EventsPage() {
   const [events, setEvents] = useState([]);
