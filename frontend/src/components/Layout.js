@@ -39,7 +39,9 @@ export function Navbar() {
 
   return (
     <>
-    <nav className="bg-white/90 backdrop-blur-md border-b border-[#E2E8F0] sticky top-0 z-50" style={{ paddingTop: 'max(env(safe-area-inset-top), 0px)' }}>
+    {/* Safe area spacer for iOS notch */}
+    <div className="bg-white w-full" style={{ height: 'env(safe-area-inset-top, 0px)', position: 'fixed', top: 0, left: 0, right: 0, zIndex: 51 }} />
+    <nav className="bg-white/95 backdrop-blur-md border-b border-[#E2E8F0] fixed top-0 left-0 right-0 z-50" style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-14 md:h-16">
           {/* Logo */}
