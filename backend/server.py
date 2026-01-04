@@ -4957,6 +4957,24 @@ async def scrape_events(admin: dict = Depends(get_admin_user)):
                         # Make sure it's a full URL
                         if immagine_url and not immagine_url.startswith('http'):
                             immagine_url = f"https://www.virgilio.it{immagine_url}"
+                        
+                        # Download and save image locally if available
+                        if immagine_url:
+                            try:
+                                img_response = await client_http.get(immagine_url, timeout=10.0)
+                                if img_response.status_code == 200:
+                                    # Save to uploads folder
+                                    img_ext = immagine_url.split('.')[-1].split('?')[0] or 'jpg'
+                                    img_filename = f"event_{uuid.uuid4()}.{img_ext}"
+                                    img_path = UPLOADS_DIR / img_filename
+                                    with open(img_path, 'wb') as f:
+                                        f.write(img_response.content)
+                                    immagine_url = f"/api/uploads/{img_filename}"
+                                else:
+                                    immagine_url = None
+                            except Exception as img_err:
+                                print(f"Failed to download image: {img_err}")
+                                immagine_url = None
                     
                     scraped_events.append({
                         "titolo": titolo,
