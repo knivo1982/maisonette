@@ -9,6 +9,7 @@ Applicazione di gestione B&B per "La Maisonette di Paestum" importata da GitHub 
 - **Database:** MongoDB
 - **Deploy:** Emergent Platform
 - **PWA:** Service Worker, Manifest, Offline Support
+- **App Native:** Capacitor (iOS + Android)
 
 ## Credenziali Admin
 - Email: `admin@maisonette.it`
