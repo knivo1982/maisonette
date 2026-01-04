@@ -175,12 +175,22 @@ export default function EventsPage() {
               >
                 <div className="flex flex-col md:flex-row">
                   {/* Event Image */}
-                  <div className="md:w-1/3 h-48 md:h-auto">
-                    <img 
-                      src={event.immagine_url || 'https://images.unsplash.com/photo-1504644708628-9c1dd99f497f?auto=format&fit=crop&q=80&w=800'}
-                      alt={event.titolo}
-                      className="w-full h-full object-cover"
-                    />
+                  <div className="md:w-1/3 h-48 md:h-auto relative overflow-hidden bg-gray-100">
+                    {event.immagine_url ? (
+                      <img 
+                        src={event.immagine_url}
+                        alt={event.titolo}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = 'https://images.unsplash.com/photo-1504644708628-9c1dd99f497f?auto=format&fit=crop&q=80&w=800';
+                        }}
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#C5A059]/20 to-[#C5A059]/5">
+                        <Calendar className="w-12 h-12 text-[#C5A059]/40" />
+                      </div>
+                    )}
                   </div>
                   
                   {/* Event Details */}
