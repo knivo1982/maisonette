@@ -1,0 +1,8 @@
+{
+  "appId": "com.lamaisonettepaestum.app",
+  "appName": "La Maisonette",
+  "webDir": "build",
+  "server": {
+    "androidScheme": "https"
+  }
+}
