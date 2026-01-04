@@ -8,16 +8,17 @@
     "hostname": "lamaisonettepaestum.com"
   },
   "ios": {
-    "contentInset": "automatic",
-    "backgroundColor": "#1A202C",
-    "preferredContentMode": "mobile"
+    "contentInset": "always",
+    "backgroundColor": "#FFFFFF",
+    "preferredContentMode": "mobile",
+    "scrollEnabled": true
   },
   "android": {
-    "backgroundColor": "#1A202C"
+    "backgroundColor": "#FFFFFF"
   },
   "plugins": {
     "SplashScreen": {
-      "launchShowDuration": 2000,
+      "launchShowDuration": 1500,
       "launchAutoHide": true,
       "backgroundColor": "#1A202C",
       "androidScaleType": "CENTER_CROP",
@@ -27,7 +28,8 @@
     },
     "StatusBar": {
       "style": "DARK",
-      "backgroundColor": "#1A202C"
+      "backgroundColor": "#FFFFFF",
+      "overlaysWebView": false
     }
   }
 }
