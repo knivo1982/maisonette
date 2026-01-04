@@ -4992,7 +4992,7 @@ async def scrape_events(admin: dict = Depends(get_admin_user)):
                     "luogo": event["luogo"],
                     "luogo_en": None,
                     "indirizzo": None,
-                    "immagine_url": None,
+                    "immagine_url": event.get("immagine_url"),
                     "categoria": event["categoria"],
                     "url_fonte": event["url_fonte"],
                     "importato_da": "virgilio.it",
