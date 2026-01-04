@@ -5001,12 +5001,19 @@ async def scrape_events(admin: dict = Depends(get_admin_user)):
                 })
                 
                 if existing:
-                    # Update image if missing and we have one now
-                    if event.get("immagine_url") and not existing.get("immagine_url"):
+                    # Update image if missing OR if current image is external (not /api/uploads/)
+                    current_img = existing.get("immagine_url", "")
+                    new_img = event.get("immagine_url")
+                    should_update = (
+                        new_img and 
+                        (not current_img or not current_img.startswith("/api/uploads/"))
+                    )
+                    
+                    if should_update:
                         await db.events.update_one(
                             {"id": existing["id"]},
                             {"$set": {
-                                "immagine_url": event["immagine_url"],
+                                "immagine_url": new_img,
                                 "importato_da": "virgilio.it",
                                 "url_fonte": event["url_fonte"]
                             }}
