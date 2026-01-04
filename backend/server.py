@@ -5027,7 +5027,8 @@ async def scrape_events(admin: dict = Depends(get_admin_user)):
                 "message": f"Scraping completato",
                 "eventi_trovati": len(scraped_events),
                 "eventi_importati": imported_count,
-                "eventi_duplicati": duplicate_count,
+                "eventi_aggiornati": updated_count,
+                "eventi_duplicati": duplicate_count - updated_count,
                 "eventi": scraped_events[:10]  # Return first 10 for preview
             }
             
