@@ -5001,12 +5001,14 @@ async def scrape_events(admin: dict = Depends(get_admin_user)):
                 })
                 
                 if existing:
-                    # Update image if missing OR if current image is external (not /api/uploads/)
-                    current_img = existing.get("immagine_url", "")
+                    # Update image if:
+                    # - Current image is missing, OR
+                    # - Current image is external (not local /api/uploads/)
+                    current_img = existing.get("immagine_url") or ""
                     new_img = event.get("immagine_url")
-                    should_update = (
-                        new_img and 
-                        (not current_img or not current_img.startswith("/api/uploads/"))
+                    should_update = new_img and (
+                        not current_img or 
+                        not current_img.startswith("/api/uploads/")
                     )
                     
                     if should_update:
