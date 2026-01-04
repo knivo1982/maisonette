@@ -1113,17 +1113,20 @@ async def admin_upload_media(
     if file.content_type not in allowed_types:
         raise HTTPException(status_code=400, detail="Tipo file non supportato. Usa JPG, PNG, WEBP o GIF")
     
-    ext = file.filename.split(".")[-1] if "." in file.filename else "jpg"
+    ext = file.filename.split(".")[-1].lower() if "." in file.filename else "jpg"
     unique_filename = f"{uuid.uuid4()}.{ext}"
     file_path = UPLOADS_DIR / unique_filename
     
     try:
+        # Use chunked reading for larger files
+        contents = await file.read()
         with open(file_path, "wb") as buffer:
-            shutil.copyfileobj(file.file, buffer)
+            buffer.write(contents)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Errore durante il salvataggio: {str(e)}")
     
-    file_url = f"/uploads/{unique_filename}"
+    # Use /api/uploads/ path for correct routing through ingress
+    file_url = f"/api/uploads/{unique_filename}"
     
     # Save to database
     media_doc = {
@@ -1132,11 +1135,13 @@ async def admin_upload_media(
         "filename": unique_filename,
         "url": file_url,
         "content_type": file.content_type,
-        "size": file.size if hasattr(file, 'size') else 0,
+        "size": len(contents),
         "created_at": datetime.now(timezone.utc).isoformat()
     }
     await db.media.insert_one(media_doc)
     
+    # Return without _id
+    del media_doc["_id"] if "_id" in media_doc else None
     return media_doc
 
 @api_router.get("/admin/media")
