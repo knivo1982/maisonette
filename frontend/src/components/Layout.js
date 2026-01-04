@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { Button } from './ui/button';
 import NotificationBell from './NotificationBell';
 import LanguageSwitch from './LanguageSwitch';
+import BottomNav from './BottomNav';
 
 export function Navbar() {
   const { user, logout, isAuthenticated, isAdmin } = useAuth();
