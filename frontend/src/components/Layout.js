@@ -301,6 +301,8 @@ export default function Layout({ children }) {
   return (
     <div className="min-h-screen flex flex-col bg-[#F9F9F7]">
       <Navbar />
+      {/* Spacer for fixed navbar + safe area */}
+      <div style={{ height: 'calc(56px + env(safe-area-inset-top, 0px))' }} className="md:h-16" />
       <main className="flex-1">
         {children}
       </main>
