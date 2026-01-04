@@ -89,6 +89,12 @@ export default function AdminMedia() {
   };
 
   const getImageUrl = (url) => {
+    // Handle both old (/uploads/) and new (/api/uploads/) formats
+    if (!url) return '';
+    if (url.startsWith('/api/uploads/')) {
+      return `${BASE_URL}${url}`;
+    }
+    // Convert old format to new format
     const apiUrl = url.replace('/uploads/', '/api/uploads/');
     return `${BASE_URL}${apiUrl}`;
   };
