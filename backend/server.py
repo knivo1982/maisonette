@@ -4940,6 +4940,16 @@ async def scrape_events(admin: dict = Depends(get_admin_user)):
                     if link_elem and link_elem.get('href'):
                         url_fonte = link_elem['href']
                     
+                    # Extract image
+                    immagine_url = None
+                    img_elem = article.find('img')
+                    if img_elem:
+                        # Try different attributes for image URL
+                        immagine_url = img_elem.get('data-src') or img_elem.get('src') or img_elem.get('data-lazy-src')
+                        # Make sure it's a full URL
+                        if immagine_url and not immagine_url.startswith('http'):
+                            immagine_url = f"https://www.virgilio.it{immagine_url}"
+                    
                     scraped_events.append({
                         "titolo": titolo,
                         "descrizione": descrizione,
@@ -4947,7 +4957,8 @@ async def scrape_events(admin: dict = Depends(get_admin_user)):
                         "data_fine": data_fine if data_fine and data_fine != data else None,
                         "luogo": luogo,
                         "categoria": categoria,
-                        "url_fonte": url_fonte
+                        "url_fonte": url_fonte,
+                        "immagine_url": immagine_url
                     })
                     
                 except Exception as e:
