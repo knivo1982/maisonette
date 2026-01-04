@@ -28,7 +28,56 @@
         <link rel="manifest" href="/manifest.json">
         
         <title>La Maisonette di Paestum</title>
-        <script src="https://assets.emergent.sh/scripts/emergent-main.js"></script>
+        
+        <!-- Hide Emergent badge in native app -->
+        <style>
+            /* Force hide Emergent badge */
+            #emergent-badge, 
+            [href*="emergent.sh"],
+            a[href*="emergent-badge"],
+            div[style*="Made with Emergent"] {
+                display: none !important;
+                visibility: hidden !important;
+                opacity: 0 !important;
+                pointer-events: none !important;
+                height: 0 !important;
+                width: 0 !important;
+                position: absolute !important;
+                left: -9999px !important;
+            }
+        </style>
+        
+        <script>
+            // Detect if running in Capacitor native app
+            var isNativeApp = window.Capacitor !== undefined || 
+                              navigator.userAgent.includes('Capacitor') ||
+                              window.location.protocol === 'capacitor:' ||
+                              window.location.hostname === 'localhost';
+            
+            // Only load Emergent script on web, not in native app
+            if (!isNativeApp && window.location.hostname.includes('lamaisonettepaestum.com')) {
+                var emergentScript = document.createElement('script');
+                emergentScript.src = 'https://assets.emergent.sh/scripts/emergent-main.js';
+                document.head.appendChild(emergentScript);
+            }
+            
+            // Remove any Emergent badge that might be injected
+            document.addEventListener('DOMContentLoaded', function() {
+                setTimeout(function() {
+                    var badges = document.querySelectorAll('[href*="emergent"], #emergent-badge');
+                    badges.forEach(function(el) { el.remove(); });
+                }, 100);
+                setTimeout(function() {
+                    var badges = document.querySelectorAll('[href*="emergent"], #emergent-badge');
+                    badges.forEach(function(el) { el.remove(); });
+                }, 500);
+                setTimeout(function() {
+                    var badges = document.querySelectorAll('[href*="emergent"], #emergent-badge');
+                    badges.forEach(function(el) { el.remove(); });
+                }, 1000);
+            });
+        </script>
+        
         <!--
         These two scripts have been added for the Visual Edits, please do not edit or remove them
         -->
