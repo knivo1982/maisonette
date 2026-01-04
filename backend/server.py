@@ -4974,6 +4974,7 @@ async def scrape_events(admin: dict = Depends(get_admin_user)):
                     continue
             
             # Now save events to database, avoiding duplicates
+            updated_count = 0
             for event in scraped_events:
                 # Check for duplicate by title and date
                 existing = await db.events.find_one({
@@ -4982,6 +4983,17 @@ async def scrape_events(admin: dict = Depends(get_admin_user)):
                 })
                 
                 if existing:
+                    # Update image if missing and we have one now
+                    if event.get("immagine_url") and not existing.get("immagine_url"):
+                        await db.events.update_one(
+                            {"id": existing["id"]},
+                            {"$set": {
+                                "immagine_url": event["immagine_url"],
+                                "importato_da": "virgilio.it",
+                                "url_fonte": event["url_fonte"]
+                            }}
+                        )
+                        updated_count += 1
                     duplicate_count += 1
                     continue
                 
