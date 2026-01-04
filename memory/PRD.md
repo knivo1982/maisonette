@@ -49,6 +49,17 @@ Applicazione di gestione B&B per "La Maisonette di Paestum" importata da GitHub 
 - [x] **Multilingue** - Fondamenta IT/EN (parziale)
 
 ### PWA (Progressive Web App) - COMPLETATA
+
+### App Native iOS & Android (Capacitor) - CONFIGURATA (01/2026)
+- [x] Capacitor v5 configurato
+- [x] Progetto iOS generato (`/frontend/ios/`)
+- [x] Progetto Android generato (`/frontend/android/`)
+- [x] Icone per tutte le risoluzioni (iPhone, iPad, Android)
+- [x] Splash screen personalizzato
+- [x] Bundle ID: `com.lamaisonettepaestum.app`
+- [x] Guida compilazione: `/frontend/NATIVE_APP_GUIDE.md`
+- [ ] Pubblicazione App Store (richiede Mac + Account Developer)
+- [ ] Pubblicazione Google Play (richiede Account Developer)
 - [x] Manifest.json ottimizzato con 8 icone PNG
 - [x] Service Worker con cache strategies
 - [x] Offline page dedicata
