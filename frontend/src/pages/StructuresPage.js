@@ -3,8 +3,8 @@ import Layout from '../components/Layout';
 import { Card, CardContent } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { MapPin, Navigation, List, Map, Phone, Clock, X, Filter } from 'lucide-react';
+import { API, BASE_URL } from '../lib/api';
 
-const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 const GOOGLE_MAPS_API_KEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
 
 // Coordinate di Paestum (centro mappa)
