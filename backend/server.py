@@ -1141,7 +1141,7 @@ async def admin_upload_media(
     await db.media.insert_one(media_doc)
     
     # Return without _id
-    del media_doc["_id"] if "_id" in media_doc else None
+    media_doc.pop("_id", None)
     return media_doc
 
 @api_router.get("/admin/media")
