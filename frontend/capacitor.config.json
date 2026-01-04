@@ -3,6 +3,31 @@
   "appName": "La Maisonette",
   "webDir": "build",
   "server": {
-    "androidScheme": "https"
+    "androidScheme": "https",
+    "iosScheme": "https",
+    "hostname": "lamaisonettepaestum.com"
+  },
+  "ios": {
+    "contentInset": "automatic",
+    "backgroundColor": "#1A202C",
+    "preferredContentMode": "mobile"
+  },
+  "android": {
+    "backgroundColor": "#1A202C"
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 2000,
+      "launchAutoHide": true,
+      "backgroundColor": "#1A202C",
+      "androidScaleType": "CENTER_CROP",
+      "showSpinner": false,
+      "splashFullScreen": true,
+      "splashImmersive": true
+    },
+    "StatusBar": {
+      "style": "DARK",
+      "backgroundColor": "#1A202C"
+    }
   }
 }
