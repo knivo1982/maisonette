@@ -4942,10 +4942,18 @@ async def scrape_events(admin: dict = Depends(get_admin_user)):
                     
                     # Extract image
                     immagine_url = None
-                    img_elem = article.find('img')
+                    img_elem = article.find('img', itemprop='image')
                     if img_elem:
-                        # Try different attributes for image URL
-                        immagine_url = img_elem.get('data-src') or img_elem.get('src') or img_elem.get('data-lazy-src')
+                        # Virgilio uses data-src-a or data-src-b for lazy loading
+                        immagine_url = (
+                            img_elem.get('data-src-a') or 
+                            img_elem.get('data-src-b') or 
+                            img_elem.get('data-src') or 
+                            img_elem.get('data-lazy-src')
+                        )
+                        # Skip placeholder images
+                        if immagine_url and 'imgld.gif' in immagine_url:
+                            immagine_url = None
                         # Make sure it's a full URL
                         if immagine_url and not immagine_url.startswith('http'):
                             immagine_url = f"https://www.virgilio.it{immagine_url}"
