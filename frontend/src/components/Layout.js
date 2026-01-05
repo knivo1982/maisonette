@@ -134,10 +134,10 @@ export function Navbar() {
 
       {/* Mobile Menu */}
       {mobileMenuOpen && (
-        <div className="mobile-menu md:hidden fixed inset-0 z-[100] bg-[#1A202C]" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
+        <div className="mobile-menu md:hidden fixed inset-0 z-[100] bg-[#1A202C]" style={{ paddingTop: 'env(safe-area-inset-top)', paddingBottom: 'env(safe-area-inset-bottom)' }}>
           <div className="flex flex-col h-full">
             {/* Header */}
-            <div className="flex items-center justify-between p-6 border-b border-gray-700">
+            <div className="flex items-center justify-between p-4 border-b border-gray-700">
               <Link to="/" onClick={() => setMobileMenuOpen(false)}>
                 <img 
                   src="https://customer-assets.emergentagent.com/job_9e63d10a-d9aa-4e49-9076-0c5c1ecf4133/artifacts/vr9w9ixp_P%C3%86STUM__5_-removebg-preview.png" 
@@ -154,12 +154,12 @@ export function Navbar() {
             </div>
             
             {/* Links - Full Page Simple Menu */}
-            <div className="flex-1 overflow-y-auto py-8">
+            <div className="flex-1 overflow-y-auto py-4">
               <nav className="flex flex-col gap-1 px-4">
                 <Link
                   to="/"
                   onClick={() => setMobileMenuOpen(false)}
-                  className={`flex items-center gap-4 px-6 py-5 text-lg text-white hover:bg-[#C5A059]/20 transition-colors ${
+                  className={`flex items-center gap-4 px-6 py-4 text-lg text-white hover:bg-[#C5A059]/20 transition-colors ${
                     location.pathname === '/' ? 'bg-[#C5A059]/20 text-[#C5A059] border-l-4 border-[#C5A059]' : 'border-l-4 border-transparent'
                   }`}
                 >
@@ -171,7 +171,7 @@ export function Navbar() {
                     key={link.to}
                     to={link.to}
                     onClick={() => setMobileMenuOpen(false)}
-                    className={`flex items-center gap-4 px-6 py-5 text-lg text-white hover:bg-[#C5A059]/20 transition-colors ${
+                    className={`flex items-center gap-4 px-6 py-4 text-lg text-white hover:bg-[#C5A059]/20 transition-colors ${
                       location.pathname === link.to ? 'bg-[#C5A059]/20 text-[#C5A059] border-l-4 border-[#C5A059]' : 'border-l-4 border-transparent'
                     }`}
                   >
@@ -183,14 +183,14 @@ export function Navbar() {
             </div>
             
             {/* Footer */}
-            <div className="p-6 border-t border-gray-700 bg-[#151820]">
+            <div className="p-4 border-t border-gray-700 bg-[#1A202C]">
               {isAuthenticated ? (
-                <div className="space-y-4">
+                <div className="space-y-3">
                   {isAdmin && (
                     <Link 
                       to="/admin" 
                       onClick={() => setMobileMenuOpen(false)}
-                      className="flex items-center justify-center gap-3 px-6 py-4 bg-[#C5A059] text-white rounded-lg font-manrope font-medium"
+                      className="flex items-center justify-center gap-3 px-6 py-3 bg-[#C5A059] text-white rounded-lg font-manrope font-medium"
                     >
                       <Settings className="w-5 h-5" />
                       <span>Pannello Admin</span>
@@ -218,14 +218,14 @@ export function Navbar() {
                   <Link 
                     to="/login" 
                     onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center justify-center gap-2 px-6 py-4 border-2 border-white text-white rounded-lg font-manrope font-medium hover:bg-white hover:text-[#1A202C] transition-colors"
+                    className="flex items-center justify-center gap-2 px-6 py-3 border-2 border-white text-white rounded-lg font-manrope font-medium hover:bg-white hover:text-[#1A202C] transition-colors"
                   >
                     Accedi
                   </Link>
                   <Link 
                     to="/register" 
                     onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center justify-center gap-2 px-6 py-4 bg-[#C5A059] text-white rounded-lg font-manrope font-medium hover:bg-[#B08D45] transition-colors"
+                    className="flex items-center justify-center gap-2 px-6 py-3 bg-[#C5A059] text-white rounded-lg font-manrope font-medium hover:bg-[#B08D45] transition-colors"
                   >
                     Registrati
                   </Link>
