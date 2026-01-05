@@ -108,8 +108,8 @@ export default function BottomNav() {
             })}
           </div>
         </nav>
-        {/* Safe area padding - 50px to cover all iPhone models */}
-        <div style={{ height: '50px', backgroundColor: '#FFFFFF' }}></div>
+        {/* Safe area padding - 60px to cover all iPhone models */}
+        <div style={{ height: '60px', backgroundColor: '#FFFFFF' }}></div>
       </div>
     </>
   );
