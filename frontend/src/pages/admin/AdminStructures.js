@@ -68,6 +68,18 @@ export default function AdminStructures() {
     }
   };
 
+  const populateCoordinates = async () => {
+    try {
+      const response = await axios.post(`${API}/admin/structures/populate-coordinates`, {}, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      toast.success(`${response.data.message}`);
+      fetchStructures();
+    } catch (error) {
+      toast.error('Errore durante il popolamento delle coordinate');
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
