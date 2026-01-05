@@ -97,5 +97,4 @@ export default function BottomNav() {
       <div style={{ height: '80px', backgroundColor: '#FFFFFF' }} />
     </div>
   );
-  );
 }
