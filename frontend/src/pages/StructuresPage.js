@@ -5,10 +5,18 @@ import { Button } from '../components/ui/button';
 import { MapPin, Navigation, List, Map, Phone, Clock, X, Filter } from 'lucide-react';
 import { API, BASE_URL } from '../lib/api';
 
-const GOOGLE_MAPS_API_KEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
+// Google Maps API Key - hardcoded for native app compatibility
+const GOOGLE_MAPS_API_KEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY || 'AIzaSyAz6yCJ1xH8DkzJ4N1bJfvKiX3k7CR4ohg';
 
 // Coordinate di Paestum (centro mappa)
 const PAESTUM_CENTER = { lat: 40.4219, lng: 15.0067 };
+
+// Default structures as fallback
+const defaultStructures = [
+  { nome: 'Templi di Paestum', tipo: 'cultura', latitudine: 40.4219, longitudine: 15.0067, descrizione: 'Sito archeologico UNESCO' },
+  { nome: 'Museo Archeologico Nazionale', tipo: 'cultura', latitudine: 40.4230, longitudine: 15.0050, descrizione: 'Museo con reperti greci' },
+  { nome: 'Spiaggia di Paestum', tipo: 'natura', latitudine: 40.4180, longitudine: 14.9950, descrizione: 'Spiaggia bandiera blu' },
+];
 
 export default function StructuresPage() {
   const [structures, setStructures] = useState([]);
