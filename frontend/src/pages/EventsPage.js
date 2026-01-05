@@ -120,22 +120,22 @@ export default function EventsPage() {
 
   return (
     <Layout>
-      <div className="max-w-7xl mx-auto px-4 py-12">
+      <div className="max-w-7xl mx-auto px-4 py-8 md:py-12">
         {/* Header */}
-        <div className="mb-12">
+        <div className="mb-8 md:mb-12">
           <p className="font-cormorant text-[#C5A059] tracking-[0.2em] uppercase text-sm mb-2">
             Scopri
           </p>
-          <h1 className="font-cinzel text-4xl md:text-5xl text-[#1A202C] mb-4">
+          <h1 className="font-cinzel text-3xl md:text-5xl text-[#1A202C] mb-3">
             Eventi sul Territorio
           </h1>
-          <p className="font-manrope text-[#4A5568] max-w-2xl">
-            Scopri gli eventi culturali, gastronomici e artistici nella zona di Paestum e provincia di Salerno
+          <p className="font-manrope text-[#4A5568] text-sm md:text-base max-w-2xl">
+            Scopri gli eventi culturali, gastronomici e artistici nella zona di Paestum
           </p>
         </div>
 
         {/* Filters */}
-        <div className="flex flex-col md:flex-row gap-4 mb-8">
+        <div className="flex flex-col md:flex-row gap-3 mb-6 md:mb-8">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#C5A059]" />
             <Input
