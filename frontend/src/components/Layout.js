@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { Button } from './ui/button';
 import NotificationBell from './NotificationBell';
 import LanguageSwitch from './LanguageSwitch';
+import BottomNav from './BottomNav';
 export function Navbar() {
   const { user, logout, isAuthenticated, isAdmin } = useAuth();
   const { t, language } = useLanguage();
@@ -300,10 +301,11 @@ export default function Layout({ children }) {
       <Navbar />
       {/* Spacer for fixed navbar */}
       <div className="h-14 md:h-16" />
-      <main className="flex-1">
+      <main className="flex-1 pb-16 md:pb-0">
         {children}
       </main>
       <Footer className="hidden md:block" />
+      <BottomNav />
     </div>
   );
 }
