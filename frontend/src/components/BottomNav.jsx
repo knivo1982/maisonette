@@ -64,39 +64,53 @@ export default function BottomNav() {
   };
 
   return (
-    <div 
-      className="md:hidden fixed bottom-0 left-0 right-0 z-50"
-      style={{ 
-        backgroundColor: '#FFFFFF',
-        paddingBottom: '34px'  // Fixed height for iPhone safe area
-      }}
-    >
-      <nav className="border-t border-gray-200 bg-white">
-        <div className="flex justify-around items-center" style={{ height: '56px' }}>
-          {navItems.map((item) => {
-            const isActive = location.pathname === item.to || 
-              (item.to !== '/' && location.pathname.startsWith(item.to));
-            return (
-              <Link
-                key={item.to}
-                to={item.to}
-                className="flex flex-col items-center justify-center flex-1 h-full bg-white"
-                style={{ WebkitTapHighlightColor: 'transparent' }}
-              >
-                {getIcon(item.icon, isActive)}
-                <span style={{ 
-                  fontSize: '10px', 
-                  marginTop: '2px', 
-                  fontWeight: isActive ? '600' : '400',
-                  color: isActive ? '#C5A059' : '#6B7280'
-                }}>
-                  {item.label}
-                </span>
-              </Link>
-            );
-          })}
-        </div>
-      </nav>
-    </div>
+    <>
+      {/* White background that fills entire bottom area */}
+      <div 
+        className="md:hidden fixed left-0 right-0 z-40"
+        style={{ 
+          bottom: 0,
+          height: '100px',
+          backgroundColor: '#FFFFFF'
+        }}
+      />
+      {/* Navigation bar */}
+      <div 
+        className="md:hidden fixed left-0 right-0 z-50"
+        style={{ 
+          bottom: 0,
+          backgroundColor: '#FFFFFF'
+        }}
+      >
+        <nav className="border-t border-gray-200">
+          <div className="flex justify-around items-center" style={{ height: '56px' }}>
+            {navItems.map((item) => {
+              const isActive = location.pathname === item.to || 
+                (item.to !== '/' && location.pathname.startsWith(item.to));
+              return (
+                <Link
+                  key={item.to}
+                  to={item.to}
+                  className="flex flex-col items-center justify-center flex-1 h-full"
+                  style={{ WebkitTapHighlightColor: 'transparent', backgroundColor: '#FFFFFF' }}
+                >
+                  {getIcon(item.icon, isActive)}
+                  <span style={{ 
+                    fontSize: '10px', 
+                    marginTop: '2px', 
+                    fontWeight: isActive ? '600' : '400',
+                    color: isActive ? '#C5A059' : '#6B7280'
+                  }}>
+                    {item.label}
+                  </span>
+                </Link>
+              );
+            })}
+          </div>
+        </nav>
+        {/* Safe area padding */}
+        <div style={{ height: '34px', backgroundColor: '#FFFFFF' }}></div>
+      </div>
+    </>
   );
 }
