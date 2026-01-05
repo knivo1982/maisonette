@@ -1215,6 +1215,69 @@ async def get_structure(structure_id: str):
         raise HTTPException(status_code=404, detail="Struttura non trovata")
     return structure
 
+@api_router.post("/admin/structures/populate-coordinates")
+async def populate_structure_coordinates(admin: dict = Depends(get_admin_user)):
+    """Popola automaticamente le coordinate per le strutture che non le hanno"""
+    import random
+    
+    # Centro di Paestum
+    PAESTUM_CENTER = (40.4219, 15.0067)
+    
+    # Luoghi conosciuti con coordinate precise
+    known_locations = {
+        "parco archeologico": (40.4205, 15.0055),
+        "museo archeologico": (40.4230, 15.0050),
+        "museo narrante": (40.4080, 15.0380),
+        "templi": (40.4219, 15.0067),
+        "spiaggia": (40.4180, 14.9950),
+        "torre": (40.4200, 15.0100),
+    }
+    
+    # Trova tutte le strutture senza coordinate
+    structures = await db.structures.find({
+        "$or": [
+            {"latitudine": None},
+            {"latitudine": {"$exists": False}},
+            {"longitudine": None},
+            {"longitudine": {"$exists": False}}
+        ]
+    }).to_list(500)
+    
+    updated_count = 0
+    
+    for i, structure in enumerate(structures):
+        nome = structure.get("nome", "").lower()
+        
+        # Cerca coordinate conosciute
+        lat, lng = None, None
+        for key, coords in known_locations.items():
+            if key in nome:
+                lat, lng = coords
+                break
+        
+        # Se non trovato, genera coordinate casuali intorno a Paestum
+        if lat is None:
+            # Genera coordinate in un raggio di ~5km da Paestum
+            angle = (i * 37 + random.randint(0, 360)) % 360
+            distance = 0.01 + random.random() * 0.03  # ~1-4km
+            lat = PAESTUM_CENTER[0] + distance * math.cos(math.radians(angle))
+            lng = PAESTUM_CENTER[1] + distance * math.sin(math.radians(angle))
+        
+        # Aggiorna la struttura
+        result = await db.structures.update_one(
+            {"id": structure.get("id")},
+            {"$set": {"latitudine": lat, "longitudine": lng}}
+        )
+        
+        if result.modified_count > 0:
+            updated_count += 1
+    
+    return {
+        "message": f"Coordinate aggiornate per {updated_count} strutture",
+        "updated": updated_count,
+        "total_without_coords": len(structures)
+    }
+
 # ==================== GOOGLE PLACES SCRAPING ====================
 
 import math
