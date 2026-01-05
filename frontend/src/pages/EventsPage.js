@@ -168,6 +168,14 @@ export default function EventsPage() {
           <div className="flex justify-center py-12">
             <div className="spinner" />
           </div>
+        ) : error ? (
+          <div className="text-center py-16">
+            <Calendar className="w-16 h-16 text-red-300 mx-auto mb-4" />
+            <p className="font-cinzel text-xl text-red-600 mb-2">{error}</p>
+            <Button onClick={fetchEvents} className="mt-4 bg-[#C5A059]">
+              Riprova
+            </Button>
+          </div>
         ) : filteredEvents.length === 0 ? (
           <div className="text-center py-16">
             <Calendar className="w-16 h-16 text-[#E2E8F0] mx-auto mb-4" />
