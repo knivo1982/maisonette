@@ -114,18 +114,22 @@ export default function StructuresPage() {
     console.log('Adding markers for', displayStructures.length, 'structures');
 
     displayStructures.forEach((structure) => {
-      const lat = structure.latitudine || structure.lat;
-      const lng = structure.longitudine || structure.lng;
+      const lat = structure.latitudine ?? structure.lat;
+      const lng = structure.longitudine ?? structure.lng;
       
-      if (!lat || !lng) {
-        console.log('Skipping structure without coords:', structure.nome);
+      // Check if coordinates are valid numbers
+      const latNum = parseFloat(lat);
+      const lngNum = parseFloat(lng);
+      
+      if (isNaN(latNum) || isNaN(lngNum) || latNum === 0 || lngNum === 0) {
+        console.log('Skipping structure without valid coords:', structure.nome, lat, lng);
         return;
       }
       
-      console.log('Adding marker for:', structure.nome, lat, lng);
+      console.log('Adding marker for:', structure.nome, latNum, lngNum);
 
       const marker = new window.google.maps.Marker({
-        position: { lat: parseFloat(lat), lng: parseFloat(lng) },
+        position: { lat: latNum, lng: lngNum },
         map: map,
         title: structure.nome,
         icon: getCategoryIcon(structure.categoria || structure.tipo)
