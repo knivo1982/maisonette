@@ -44,44 +44,6 @@ import BookingPage from "./pages/BookingPage";
 
 import "@/App.css";
 
-// Fix iOS safe area background color
-if (typeof window !== 'undefined') {
-  const setIOSBackground = () => {
-    document.documentElement.style.backgroundColor = '#FFFFFF';
-    document.body.style.backgroundColor = '#FFFFFF';
-    
-    // For Capacitor iOS
-    if (window.Capacitor) {
-      const style = document.createElement('style');
-      style.textContent = `
-        html, body { 
-          background-color: #FFFFFF !important; 
-          min-height: 100%;
-          min-height: -webkit-fill-available;
-        }
-        html::before {
-          content: '';
-          position: fixed;
-          bottom: -50px;
-          left: 0;
-          right: 0;
-          height: 150px;
-          background-color: #FFFFFF;
-          z-index: 40;
-          pointer-events: none;
-        }
-      `;
-      document.head.appendChild(style);
-    }
-  };
-  
-  if (document.readyState === 'complete') {
-    setIOSBackground();
-  } else {
-    window.addEventListener('load', setIOSBackground);
-  }
-}
-
 function App() {
   const [showSplash, setShowSplash] = useState(true);
 
