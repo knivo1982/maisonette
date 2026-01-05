@@ -61,7 +61,7 @@ if (typeof window !== 'undefined') {
           bottom: 0;
           left: 0;
           right: 0;
-          height: 50px;
+          height: 100px;
           background-color: #FFFFFF;
           z-index: 9998;
           pointer-events: none;
