@@ -1220,62 +1220,128 @@ async def populate_structure_coordinates(admin: dict = Depends(get_admin_user)):
     """Popola automaticamente le coordinate per le strutture che non le hanno"""
     import random
     
-    # Centro di Paestum
-    PAESTUM_CENTER = (40.4219, 15.0067)
+    # Zone di Paestum con coordinate reali
+    ZONES = {
+        # Centro storico/archeologico
+        "centro": {"lat": 40.4219, "lng": 15.0067, "radius": 0.003},
+        # Zona mare/spiaggia
+        "mare": {"lat": 40.4250, "lng": 14.9920, "radius": 0.005},
+        # Zona Capaccio (paese)
+        "capaccio": {"lat": 40.4350, "lng": 15.0800, "radius": 0.008},
+        # Zona Laura (frazione)
+        "laura": {"lat": 40.4100, "lng": 15.0300, "radius": 0.005},
+        # Zona Licinella
+        "licinella": {"lat": 40.4400, "lng": 14.9950, "radius": 0.004},
+    }
     
     # Luoghi conosciuti con coordinate precise
     known_locations = {
-        "parco archeologico": (40.4205, 15.0055),
-        "museo archeologico": (40.4230, 15.0050),
+        "parco archeologico di paestum": (40.4205, 15.0055),
+        "museo archeologico nazionale": (40.4215, 15.0048),
         "museo narrante": (40.4080, 15.0380),
-        "templi": (40.4219, 15.0067),
-        "spiaggia": (40.4180, 14.9950),
-        "torre": (40.4200, 15.0100),
+        "templi di paestum": (40.4210, 15.0060),
+        "tempio di nettuno": (40.4200, 15.0058),
+        "tempio di cerere": (40.4225, 15.0045),
+        "basilica": (40.4195, 15.0062),
+        "porta sirena": (40.4218, 15.0080),
+        "porta giustizia": (40.4205, 15.0035),
+        "anfiteatro": (40.4190, 15.0070),
+        "foro": (40.4208, 15.0055),
     }
     
-    # Trova tutte le strutture senza coordinate
-    structures = await db.structures.find({
-        "$or": [
-            {"latitudine": None},
-            {"latitudine": {"$exists": False}},
-            {"longitudine": None},
-            {"longitudine": {"$exists": False}}
-        ]
-    }).to_list(500)
+    # Mapping tipo struttura -> zona preferita
+    tipo_to_zone = {
+        "ristorante": ["centro", "mare", "laura"],
+        "hotel": ["mare", "centro", "licinella"],
+        "b&b": ["centro", "mare", "laura"],
+        "spiaggia": ["mare", "licinella"],
+        "lido": ["mare", "licinella"],
+        "stabilimento": ["mare"],
+        "museo": ["centro"],
+        "parco": ["centro"],
+        "farmacia": ["capaccio", "centro", "laura"],
+        "banca": ["capaccio", "centro"],
+        "atm": ["capaccio", "centro"],
+        "supermercato": ["capaccio", "laura"],
+        "negozio": ["capaccio", "centro"],
+        "bar": ["centro", "mare", "capaccio"],
+        "pizzeria": ["centro", "capaccio", "laura"],
+        "gelateria": ["mare", "centro"],
+        "parcheggio": ["centro"],
+        "chiesa": ["capaccio", "centro"],
+        "ospedale": ["capaccio"],
+        "veterinario": ["capaccio"],
+    }
+    
+    # Trova TUTTE le strutture (anche quelle con coordinate per resettarle)
+    structures = await db.structures.find({}).to_list(500)
     
     updated_count = 0
+    used_positions = []  # Per evitare sovrapposizioni
     
     for i, structure in enumerate(structures):
         nome = structure.get("nome", "").lower()
+        tipo = structure.get("tipo", "").lower()
+        categoria = structure.get("categoria", "").lower()
         
-        # Cerca coordinate conosciute
         lat, lng = None, None
+        
+        # 1. Prima cerca nei luoghi conosciuti
         for key, coords in known_locations.items():
             if key in nome:
                 lat, lng = coords
+                # Aggiungi piccola variazione per evitare sovrapposizioni
+                lat += random.uniform(-0.0002, 0.0002)
+                lng += random.uniform(-0.0002, 0.0002)
                 break
         
-        # Se non trovato, genera coordinate casuali intorno a Paestum
+        # 2. Se non trovato, usa la zona basata sul tipo
         if lat is None:
-            # Genera coordinate in un raggio di ~5km da Paestum
-            angle = (i * 37 + random.randint(0, 360)) % 360
-            distance = 0.01 + random.random() * 0.03  # ~1-4km
-            lat = PAESTUM_CENTER[0] + distance * math.cos(math.radians(angle))
-            lng = PAESTUM_CENTER[1] + distance * math.sin(math.radians(angle))
+            # Determina la zona
+            zone_names = tipo_to_zone.get(tipo, ["centro"])
+            if not zone_names:
+                # Prova con parole chiave nel nome
+                if any(x in nome for x in ["spiaggia", "mare", "lido", "beach"]):
+                    zone_names = ["mare"]
+                elif any(x in nome for x in ["museo", "tempio", "parco", "archeologico"]):
+                    zone_names = ["centro"]
+                elif any(x in nome for x in ["capaccio"]):
+                    zone_names = ["capaccio"]
+                else:
+                    zone_names = ["centro", "mare", "laura"]
+            
+            # Scegli una zona casuale tra quelle disponibili
+            zone_name = random.choice(zone_names)
+            zone = ZONES[zone_name]
+            
+            # Genera coordinate nella zona
+            angle = random.uniform(0, 360)
+            distance = random.uniform(0, zone["radius"])
+            lat = zone["lat"] + distance * math.cos(math.radians(angle))
+            lng = zone["lng"] + distance * math.sin(math.radians(angle))
+        
+        # 3. Assicurati che non ci siano sovrapposizioni
+        for existing_lat, existing_lng in used_positions:
+            if abs(lat - existing_lat) < 0.0003 and abs(lng - existing_lng) < 0.0003:
+                lat += random.uniform(0.0003, 0.0008)
+                lng += random.uniform(0.0003, 0.0008)
+                break
+        
+        used_positions.append((lat, lng))
         
         # Aggiorna la struttura
         result = await db.structures.update_one(
             {"id": structure.get("id")},
-            {"$set": {"latitudine": lat, "longitudine": lng}}
+            {"$set": {"latitudine": round(lat, 6), "longitudine": round(lng, 6)}}
         )
         
         if result.modified_count > 0:
             updated_count += 1
     
     return {
-        "message": f"Coordinate aggiornate per {updated_count} strutture",
+        "message": f"Coordinate aggiornate per {updated_count} strutture su {len(structures)}",
         "updated": updated_count,
-        "total_without_coords": len(structures)
+        "total": len(structures)
     }
 
 # ==================== GOOGLE PLACES SCRAPING ====================
