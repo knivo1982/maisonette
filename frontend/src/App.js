@@ -63,7 +63,7 @@ if (typeof window !== 'undefined') {
           right: 0;
           height: 100px;
           background-color: #FFFFFF;
-          z-index: 9998;
+          z-index: 40;
           pointer-events: none;
         }
       `;
