@@ -6,11 +6,11 @@
 
 /* iOS Native App - Safe Area Fix */
 html {
-    background-color: #000000 !important;
+    background-color: #FFFFFF !important;
 }
 
 body {
-    background-color: #000000 !important;
+    background-color: #FFFFFF !important;
     min-height: 100vh;
     min-height: -webkit-fill-available;
 }
