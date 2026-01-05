@@ -201,12 +201,13 @@ export default function StructuresPage() {
     loadScript();
   }, [viewMode, initMap]);
 
-  // Update markers when filtered structures change
+  // Update markers when structures change
   useEffect(() => {
-    if (mapInstanceRef.current && filteredStructures.length > 0) {
+    if (mapInstanceRef.current && (filteredStructures.length > 0 || structures.length > 0)) {
+      console.log('Updating markers, structures:', structures.length, 'filtered:', filteredStructures.length);
       addMarkers(mapInstanceRef.current);
     }
-  }, [filteredStructures, addMarkers]);
+  }, [filteredStructures, structures, addMarkers]);
 
   const getCategoryIcon = (categoria) => {
     switch (categoria) {
