@@ -4,6 +4,23 @@
 @tailwind components;
 @tailwind utilities;
 
+/* iOS Native App - Safe Area Fix */
+html {
+    background-color: #000000 !important;
+}
+
+body {
+    background-color: #000000 !important;
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+}
+
+#root {
+    background-color: #F9F9F7;
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+}
+
 /* iOS Native App - Remove all safe area padding from body */
 html, body {
     padding: 0 !important;
