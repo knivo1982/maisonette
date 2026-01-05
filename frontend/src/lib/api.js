@@ -1,8 +1,22 @@
 // Centralized API configuration
 // Use relative URL in production (same domain), env variable in development
 
+// Check if running inside Capacitor (native app)
+const isCapacitorApp = () => {
+  return window.Capacitor !== undefined || 
+         window.location.protocol === 'capacitor:' ||
+         window.location.hostname === 'lamaisonettepaestum.com' ||
+         window.location.hostname === 'localhost';
+};
+
+const PRODUCTION_URL = 'https://booking.lamaisonettepaestum.com';
+
 const getApiUrl = () => {
-  // In production, use relative URLs (same domain)
+  // In Capacitor native app, always use production URL
+  if (isCapacitorApp() && window.Capacitor !== undefined) {
+    return `${PRODUCTION_URL}/api`;
+  }
+  // In production web, use relative URLs (same domain)
   if (window.location.hostname !== 'localhost' && 
       window.location.hostname !== '127.0.0.1' &&
       !window.location.hostname.includes('preview.emergentagent.com')) {
@@ -13,6 +27,10 @@ const getApiUrl = () => {
 };
 
 const getBaseUrl = () => {
+  // In Capacitor native app, always use production URL
+  if (isCapacitorApp() && window.Capacitor !== undefined) {
+    return PRODUCTION_URL;
+  }
   if (window.location.hostname !== 'localhost' && 
       window.location.hostname !== '127.0.0.1' &&
       !window.location.hostname.includes('preview.emergentagent.com')) {
