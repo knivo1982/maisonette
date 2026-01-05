@@ -47,15 +47,19 @@ export default function StructuresPage() {
 
   const fetchStructures = async () => {
     try {
+      console.log('Fetching structures from:', `${API}/structures`);
       const response = await fetch(`${API}/structures`);
       if (response.ok) {
         const data = await response.json();
+        console.log('Structures received:', data.length);
         setStructures(data);
         setFilteredStructures(data);
         
         // Extract unique tipi
         const tipi = [...new Set(data.map(s => s.tipo).filter(Boolean))];
         setAvailableTipi(tipi);
+      } else {
+        console.error('Failed to fetch structures:', response.status);
       }
     } catch (error) {
       console.error('Error fetching structures:', error);
