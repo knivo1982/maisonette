@@ -295,31 +295,30 @@ export default function StructuresPage() {
     <Layout>
       <div className="min-h-screen bg-[#F9F9F7]">
         {/* Header */}
-        <div className="bg-[#1A202C] text-white py-12 px-4">
+        <div className="bg-[#1A202C] text-white py-8 md:py-12 px-4">
           <div className="max-w-6xl mx-auto">
             <p className="font-cormorant text-[#C5A059] tracking-[0.2em] uppercase text-sm mb-2">
               Esplora
             </p>
-            <h1 className="font-cinzel text-4xl md:text-5xl mb-4">
+            <h1 className="font-cinzel text-3xl md:text-5xl mb-3">
               Il Territorio
             </h1>
-            <p className="font-manrope text-gray-300 max-w-2xl">
-              Scopri le meraviglie di Paestum e dintorni. Templi millenari, spiagge dorate, 
-              gastronomia locale e molto altro ti aspettano.
+            <p className="font-manrope text-gray-300 text-sm md:text-base max-w-2xl">
+              Scopri le meraviglie di Paestum e dintorni
             </p>
           </div>
         </div>
 
         {/* View Toggle & Filters */}
         <div className="max-w-6xl mx-auto px-4 py-4">
-          <div className="flex flex-wrap items-center justify-between gap-4">
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
             {/* View Mode Toggle */}
-            <div className="flex bg-white rounded-lg p-1 shadow-sm border border-[#E2E8F0]">
+            <div className="flex bg-white rounded-xl p-1 shadow-sm border border-[#E2E8F0]">
               <button
                 onClick={() => setViewMode('map')}
-                className={`flex items-center gap-2 px-4 py-2 rounded-md transition-colors ${
+                className={`flex items-center gap-2 px-4 py-2.5 rounded-lg transition-all ${
                   viewMode === 'map' 
-                    ? 'bg-[#C5A059] text-white' 
+                    ? 'bg-[#C5A059] text-white shadow-md' 
                     : 'text-[#4A5568] hover:bg-gray-100'
                 }`}
               >
@@ -328,9 +327,9 @@ export default function StructuresPage() {
               </button>
               <button
                 onClick={() => setViewMode('list')}
-                className={`flex items-center gap-2 px-4 py-2 rounded-md transition-colors ${
+                className={`flex items-center gap-2 px-4 py-2.5 rounded-lg transition-all ${
                   viewMode === 'list' 
-                    ? 'bg-[#C5A059] text-white' 
+                    ? 'bg-[#C5A059] text-white shadow-md' 
                     : 'text-[#4A5568] hover:bg-gray-100'
                 }`}
               >
@@ -346,7 +345,7 @@ export default function StructuresPage() {
                 <select
                   value={selectedTipo}
                   onChange={(e) => setSelectedTipo(e.target.value)}
-                  className="border border-[#E2E8F0] rounded-lg px-3 py-2 text-sm bg-white"
+                  className="border border-[#E2E8F0] rounded-xl px-4 py-2.5 text-sm bg-white shadow-sm"
                 >
                   <option value="all">Tutte le categorie</option>
                   {availableTipi.map(tipo => (
@@ -355,16 +354,6 @@ export default function StructuresPage() {
                 </select>
               </div>
             )}
-
-            {/* Legend */}
-            <div className="flex flex-wrap items-center gap-3 text-xs">
-              <span className="text-[#4A5568]">Legenda:</span>
-              <span className="flex items-center gap-1">🔵 Maisonette</span>
-              <span className="flex items-center gap-1">🟣 Cultura</span>
-              <span className="flex items-center gap-1">🟢 Natura</span>
-              <span className="flex items-center gap-1">🟠 Gastronomia</span>
-              <span className="flex items-center gap-1">🟡 Servizi</span>
-            </div>
           </div>
         </div>
 
