@@ -64,35 +64,39 @@ export default function BottomNav() {
   };
 
   return (
-    <nav 
-      className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50"
-    >
-      <div className="flex justify-around items-center" style={{ height: '56px' }}>
-        {navItems.map((item) => {
-          const isActive = location.pathname === item.to || 
-            (item.to !== '/' && location.pathname.startsWith(item.to));
-          return (
-            <Link
-              key={item.to}
-              to={item.to}
-              className="flex flex-col items-center justify-center flex-1 h-full"
-              style={{ WebkitTapHighlightColor: 'transparent' }}
-            >
-              {getIcon(item.icon, isActive)}
-              <span style={{ 
-                fontSize: '10px', 
-                marginTop: '2px', 
-                fontWeight: isActive ? '600' : '400',
-                color: isActive ? '#C5A059' : '#6B7280'
-              }}>
-                {item.label}
-              </span>
-            </Link>
-          );
-        })}
-      </div>
-      {/* Safe area spacer with white background */}
-      <div style={{ height: 'env(safe-area-inset-bottom, 0px)', backgroundColor: 'white' }}></div>
-    </nav>
+    <div className="md:hidden fixed bottom-0 left-0 right-0 z-50" style={{ backgroundColor: 'white' }}>
+      <nav className="border-t border-gray-200">
+        <div className="flex justify-around items-center" style={{ height: '56px' }}>
+          {navItems.map((item) => {
+            const isActive = location.pathname === item.to || 
+              (item.to !== '/' && location.pathname.startsWith(item.to));
+            return (
+              <Link
+                key={item.to}
+                to={item.to}
+                className="flex flex-col items-center justify-center flex-1 h-full"
+                style={{ WebkitTapHighlightColor: 'transparent' }}
+              >
+                {getIcon(item.icon, isActive)}
+                <span style={{ 
+                  fontSize: '10px', 
+                  marginTop: '2px', 
+                  fontWeight: isActive ? '600' : '400',
+                  color: isActive ? '#C5A059' : '#6B7280'
+                }}>
+                  {item.label}
+                </span>
+              </Link>
+            );
+          })}
+        </div>
+      </nav>
+      {/* Safe area fill */}
+      <div style={{ 
+        height: 'env(safe-area-inset-bottom, 0px)', 
+        minHeight: '20px',
+        backgroundColor: 'white' 
+      }}></div>
+    </div>
   );
 }
