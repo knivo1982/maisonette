@@ -2460,13 +2460,17 @@ async def admin_update_structure(structure_id: str, data: StructureCreate, admin
         "telefono": data.telefono,
         "orari": data.orari,
         "descrizione": data.descrizione,
-        "latitudine": data.latitudine,
-        "longitudine": data.longitudine,
         "immagine_url": data.immagine_url,
         "categoria": data.categoria,
         "distanza": data.distanza
     }
-    # Remove None values
+    # Handle coordinates separately - allow 0.0 values
+    if data.latitudine is not None:
+        update_data["latitudine"] = data.latitudine
+    if data.longitudine is not None:
+        update_data["longitudine"] = data.longitudine
+    
+    # Remove None values for other fields
     update_data = {k: v for k, v in update_data.items() if v is not None}
     
     result = await db.structures.update_one(
