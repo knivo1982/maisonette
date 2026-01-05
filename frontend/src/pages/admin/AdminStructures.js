@@ -311,6 +311,7 @@ export default function AdminStructures() {
             </form>
           </DialogContent>
         </Dialog>
+        </div>
       </div>
 
       {loading ? (
