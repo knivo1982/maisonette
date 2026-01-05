@@ -162,13 +162,22 @@ export default function AdminStructures() {
         <p className="font-manrope text-[#4A5568]">
           {structures.length} punti di interesse
         </p>
-        <Dialog open={dialogOpen} onOpenChange={(open) => { setDialogOpen(open); if (!open) resetForm(); }}>
-          <DialogTrigger asChild>
-            <Button className="bg-[#C5A059] hover:bg-[#B08D45] text-white">
-              <Plus className="w-4 h-4 mr-2" />
-              Nuovo Punto
-            </Button>
-          </DialogTrigger>
+        <div className="flex gap-2">
+          <Button 
+            onClick={populateCoordinates}
+            variant="outline"
+            className="border-[#C5A059] text-[#C5A059] hover:bg-[#C5A059] hover:text-white"
+          >
+            <MapPin className="w-4 h-4 mr-2" />
+            Popola Coordinate
+          </Button>
+          <Dialog open={dialogOpen} onOpenChange={(open) => { setDialogOpen(open); if (!open) resetForm(); }}>
+            <DialogTrigger asChild>
+              <Button className="bg-[#C5A059] hover:bg-[#B08D45] text-white">
+                <Plus className="w-4 h-4 mr-2" />
+                Nuovo Punto
+              </Button>
+            </DialogTrigger>
           <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle className="font-cinzel">
