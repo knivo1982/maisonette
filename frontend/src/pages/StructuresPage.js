@@ -162,7 +162,7 @@ export default function StructuresPage() {
 
       markersRef.current.push(marker);
     });
-  }, [filteredStructures]);
+  }, [filteredStructures, structures]);
 
   // Load Google Maps script
   useEffect(() => {
