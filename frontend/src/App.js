@@ -54,14 +54,18 @@ if (typeof window !== 'undefined') {
     if (window.Capacitor) {
       const style = document.createElement('style');
       style.textContent = `
-        html, body { background-color: #FFFFFF !important; }
-        html::after {
+        html, body { 
+          background-color: #FFFFFF !important; 
+          min-height: 100%;
+          min-height: -webkit-fill-available;
+        }
+        html::before {
           content: '';
           position: fixed;
-          bottom: 0;
+          bottom: -50px;
           left: 0;
           right: 0;
-          height: 100px;
+          height: 150px;
           background-color: #FFFFFF;
           z-index: 40;
           pointer-events: none;
