@@ -57,6 +57,16 @@ export default function HomePage() {
         const data = await weatherRes.json();
         setWeather(data.meteo);
         setItineraries(data.itinerari_suggeriti || []);
+      } else {
+        // Fallback: meteo demo se l'API non funziona
+        setWeather({
+          temperatura: 22,
+          umidita: 65,
+          vento: 12,
+          condizione: 'sunny',
+          descrizione: 'Soleggiato',
+          localita: 'Paestum'
+        });
       }
       
       // Fetch events
@@ -67,6 +77,15 @@ export default function HomePage() {
       }
     } catch (error) {
       console.error('Error fetching data:', error);
+      // Fallback meteo in caso di errore
+      setWeather({
+        temperatura: 22,
+        umidita: 65,
+        vento: 12,
+        condizione: 'sunny',
+        descrizione: 'Soleggiato',
+        localita: 'Paestum'
+      });
     } finally {
       setLoadingWeather(false);
     }
