@@ -156,34 +156,77 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Weather Section - Right after Hero */}
+      {/* Weather Section with Tour Suggestions */}
       {weather && (
-        <section className="py-8 bg-gradient-to-r from-[#1A202C] to-[#2D3748]">
+        <section className="py-6 md:py-8 bg-gradient-to-r from-[#1A202C] to-[#2D3748]">
           <div className="max-w-7xl mx-auto px-4">
-            <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-              <div className="flex items-center gap-4">
-                {getWeatherIcon(weather.condizione)}
+            {/* Main Weather Display */}
+            <div className="flex flex-col md:flex-row items-center justify-between gap-4 md:gap-6">
+              <div className="flex items-center gap-3 md:gap-4">
+                <div className="w-14 h-14 md:w-16 md:h-16 flex items-center justify-center">
+                  {getWeatherIcon(weather.condizione)}
+                </div>
                 <div className="text-white">
-                  <p className="font-cinzel text-sm text-[#C5A059] uppercase tracking-wider">Meteo Locale</p>
-                  <h3 className="font-cinzel text-xl">{weather.localita}</h3>
-                  <p className="font-manrope text-gray-300 capitalize">{weather.descrizione}</p>
+                  <p className="font-cinzel text-xs text-[#C5A059] uppercase tracking-wider">Paestum Ora</p>
+                  <p className="font-cinzel text-3xl md:text-4xl">{weather.temperatura}°C</p>
                 </div>
               </div>
-              <div className="flex items-center gap-8">
-                <div className="text-center">
-                  <p className="font-cinzel text-4xl text-white">{weather.temperatura}°C</p>
-                  <p className="font-manrope text-xs text-gray-400">Percepita: {weather.temperatura_percepita}°C</p>
+              
+              <div className="flex items-center gap-4 md:gap-6 text-white text-sm">
+                <div className="flex items-center gap-2">
+                  <Droplets className="w-4 h-4 text-blue-400" />
+                  <span>{weather.umidita}%</span>
                 </div>
-                <div className="hidden md:flex gap-6 text-white">
-                  <div className="text-center">
-                    <Droplets className="w-5 h-5 mx-auto text-blue-400" />
-                    <p className="text-sm mt-1">{weather.umidita}%</p>
-                  </div>
-                  <div className="text-center">
-                    <Wind className="w-5 h-5 mx-auto text-gray-400" />
-                    <p className="text-sm mt-1">{weather.vento} km/h</p>
-                  </div>
+                <div className="flex items-center gap-2">
+                  <Wind className="w-4 h-4 text-gray-400" />
+                  <span>{weather.vento} km/h</span>
                 </div>
+              </div>
+            </div>
+            
+            {/* Weather-based Tour Suggestions */}
+            <div className="mt-4 pt-4 border-t border-white/10">
+              <p className="font-cormorant text-[#C5A059] text-xs uppercase tracking-wider mb-3">
+                Consigliato Oggi
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {weather.condizione === 'sunny' || weather.condizione === 'clear' ? (
+                  <>
+                    <Link to="/structures" className="bg-[#C5A059]/20 hover:bg-[#C5A059]/30 text-white px-3 py-1.5 rounded-full text-xs font-medium transition-colors flex items-center gap-1">
+                      🏖️ Spiaggia
+                    </Link>
+                    <Link to="/structures" className="bg-[#C5A059]/20 hover:bg-[#C5A059]/30 text-white px-3 py-1.5 rounded-full text-xs font-medium transition-colors flex items-center gap-1">
+                      🏛️ Templi
+                    </Link>
+                    <Link to="/structures" className="bg-[#C5A059]/20 hover:bg-[#C5A059]/30 text-white px-3 py-1.5 rounded-full text-xs font-medium transition-colors flex items-center gap-1">
+                      🚴 Escursioni
+                    </Link>
+                  </>
+                ) : weather.condizione === 'rainy' || weather.condizione === 'cloudy' ? (
+                  <>
+                    <Link to="/structures" className="bg-[#C5A059]/20 hover:bg-[#C5A059]/30 text-white px-3 py-1.5 rounded-full text-xs font-medium transition-colors flex items-center gap-1">
+                      🏛️ Museo
+                    </Link>
+                    <Link to="/structures" className="bg-[#C5A059]/20 hover:bg-[#C5A059]/30 text-white px-3 py-1.5 rounded-full text-xs font-medium transition-colors flex items-center gap-1">
+                      🧀 Caseifici
+                    </Link>
+                    <Link to="/structures" className="bg-[#C5A059]/20 hover:bg-[#C5A059]/30 text-white px-3 py-1.5 rounded-full text-xs font-medium transition-colors flex items-center gap-1">
+                      🍝 Ristoranti
+                    </Link>
+                  </>
+                ) : (
+                  <>
+                    <Link to="/structures" className="bg-[#C5A059]/20 hover:bg-[#C5A059]/30 text-white px-3 py-1.5 rounded-full text-xs font-medium transition-colors flex items-center gap-1">
+                      🏛️ Templi
+                    </Link>
+                    <Link to="/structures" className="bg-[#C5A059]/20 hover:bg-[#C5A059]/30 text-white px-3 py-1.5 rounded-full text-xs font-medium transition-colors flex items-center gap-1">
+                      🍕 Gastronomia
+                    </Link>
+                    <Link to="/events" className="bg-[#C5A059]/20 hover:bg-[#C5A059]/30 text-white px-3 py-1.5 rounded-full text-xs font-medium transition-colors flex items-center gap-1">
+                      🎭 Eventi
+                    </Link>
+                  </>
+                )}
               </div>
             </div>
           </div>
