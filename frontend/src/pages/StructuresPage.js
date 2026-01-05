@@ -105,16 +105,27 @@ export default function StructuresPage() {
     markersRef.current.forEach(marker => marker.setMap(null));
     markersRef.current = [];
 
-    const displayStructures = filteredStructures.length > 0 ? filteredStructures : defaultStructures;
+    // Use filteredStructures if available, otherwise use structures, fallback to defaultStructures
+    let displayStructures = filteredStructures;
+    if (!displayStructures || displayStructures.length === 0) {
+      displayStructures = structures.length > 0 ? structures : defaultStructures;
+    }
+
+    console.log('Adding markers for', displayStructures.length, 'structures');
 
     displayStructures.forEach((structure) => {
-      if (!structure.lat && !structure.latitudine) return;
+      const lat = structure.latitudine || structure.lat;
+      const lng = structure.longitudine || structure.lng;
       
-      const lat = structure.lat || structure.latitudine;
-      const lng = structure.lng || structure.longitudine;
+      if (!lat || !lng) {
+        console.log('Skipping structure without coords:', structure.nome);
+        return;
+      }
+      
+      console.log('Adding marker for:', structure.nome, lat, lng);
 
       const marker = new window.google.maps.Marker({
-        position: { lat, lng },
+        position: { lat: parseFloat(lat), lng: parseFloat(lng) },
         map: map,
         title: structure.nome,
         icon: getCategoryIcon(structure.categoria || structure.tipo)
