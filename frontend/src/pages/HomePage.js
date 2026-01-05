@@ -310,19 +310,19 @@ export default function HomePage() {
       </section>
 
       {/* Events Section - Always visible */}
-      <section className="py-16 px-4 bg-[#1A202C]">
+      <section className="py-12 md:py-16 px-4 bg-[#1A202C]">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-10">
+          <div className="text-center mb-8 md:mb-10">
             <p className="font-cormorant text-[#C5A059] tracking-[0.2em] uppercase text-sm mb-3">
               Non Perderti
             </p>
-            <h2 className="font-cinzel text-3xl text-white mb-4">
+            <h2 className="font-cinzel text-2xl md:text-3xl text-white mb-4">
               Eventi in Zona
             </h2>
             <div className="w-20 h-1 bg-[#C5A059] mx-auto" />
           </div>
 
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-3 gap-4 md:gap-6">
             {events.length > 0 ? events.map((event, index) => {
               // Format date range
               const formatEventDate = () => {
@@ -334,31 +334,57 @@ export default function HomePage() {
                 return startDate;
               };
               
+              // Get image URL with fallback
+              const getEventImageUrl = (url) => {
+                if (!url) return null;
+                if (url.startsWith('http')) return url;
+                if (url.startsWith('/api')) {
+                  const baseUrl = process.env.REACT_APP_BACKEND_URL || '';
+                  return `${baseUrl}${url}`;
+                }
+                return url;
+              };
+              
+              const imageUrl = getEventImageUrl(event.immagine_url);
+              
               return (
-                <div key={event.id || index} className="bg-white/10 backdrop-blur-sm rounded-lg overflow-hidden group hover:bg-white/15 transition-colors">
-                  {event.immagine_url && (
-                    <div className="h-40 overflow-hidden">
+                <Link 
+                  to="/events"
+                  key={event.id || index} 
+                  className="bg-white/10 backdrop-blur-sm rounded-xl overflow-hidden group hover:bg-white/15 transition-all duration-300 hover:scale-[1.02]"
+                >
+                  <div className="h-36 md:h-44 overflow-hidden relative">
+                    {imageUrl ? (
                       <img 
-                        src={event.immagine_url} 
+                        src={imageUrl} 
                         alt={event.titolo}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = 'https://images.unsplash.com/photo-1504644708628-9c1dd99f497f?auto=format&fit=crop&q=80&w=800';
+                        }}
                       />
-                    </div>
-                  )}
-                  <div className="p-5">
-                    <div className="flex items-center gap-2 text-[#C5A059] text-sm mb-2">
-                      <Calendar className="w-4 h-4" />
-                      <span>{formatEventDate()}</span>
-                      {event.ora && <span>• {event.ora}</span>}
-                    </div>
-                    <h3 className="font-cinzel text-lg text-white mb-2">{event.titolo}</h3>
-                    <p className="font-manrope text-sm text-gray-300 line-clamp-2">{event.descrizione}</p>
-                    <div className="flex items-center gap-1 text-gray-400 text-xs mt-3">
-                      <MapPin className="w-3 h-3" />
-                      <span>{event.luogo}</span>
+                    ) : (
+                      <div className="w-full h-full bg-gradient-to-br from-[#C5A059]/30 to-[#1A202C] flex items-center justify-center">
+                        <Calendar className="w-12 h-12 text-[#C5A059]/50" />
+                      </div>
+                    )}
+                    {/* Gradient overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                    {/* Date badge on image */}
+                    <div className="absolute bottom-3 left-3 bg-[#C5A059] text-white px-3 py-1 rounded-full text-xs font-semibold">
+                      {formatEventDate()}
                     </div>
                   </div>
-                </div>
+                  <div className="p-4">
+                    <h3 className="font-cinzel text-base md:text-lg text-white mb-1 line-clamp-1">{event.titolo}</h3>
+                    <p className="font-manrope text-xs md:text-sm text-gray-300 line-clamp-2 mb-2">{event.descrizione}</p>
+                    <div className="flex items-center gap-1 text-[#C5A059] text-xs">
+                      <MapPin className="w-3 h-3" />
+                      <span className="line-clamp-1">{event.luogo}</span>
+                    </div>
+                  </div>
+                </Link>
               );
             }) : (
               <div className="col-span-3 text-center py-8">
@@ -367,9 +393,9 @@ export default function HomePage() {
             )}
           </div>
 
-          <div className="text-center mt-8">
+          <div className="text-center mt-6 md:mt-8">
             <Link to="/events">
-              <Button className="bg-[#C5A059] hover:bg-[#B08D45] text-white">
+              <Button className="bg-[#C5A059] hover:bg-[#B08D45] text-white rounded-xl">
                 Tutti gli Eventi
                 <ArrowRight className="ml-2 w-4 h-4" />
               </Button>
