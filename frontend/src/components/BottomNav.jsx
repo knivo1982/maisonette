@@ -64,8 +64,14 @@ export default function BottomNav() {
   };
 
   return (
-    <div className="md:hidden fixed bottom-0 left-0 right-0 z-50" style={{ backgroundColor: 'white' }}>
-      <nav className="border-t border-gray-200">
+    <div 
+      className="md:hidden fixed bottom-0 left-0 right-0 z-50"
+      style={{ 
+        backgroundColor: '#FFFFFF',
+        paddingBottom: '34px'  // Fixed height for iPhone safe area
+      }}
+    >
+      <nav className="border-t border-gray-200 bg-white">
         <div className="flex justify-around items-center" style={{ height: '56px' }}>
           {navItems.map((item) => {
             const isActive = location.pathname === item.to || 
@@ -74,7 +80,7 @@ export default function BottomNav() {
               <Link
                 key={item.to}
                 to={item.to}
-                className="flex flex-col items-center justify-center flex-1 h-full"
+                className="flex flex-col items-center justify-center flex-1 h-full bg-white"
                 style={{ WebkitTapHighlightColor: 'transparent' }}
               >
                 {getIcon(item.icon, isActive)}
@@ -91,12 +97,6 @@ export default function BottomNav() {
           })}
         </div>
       </nav>
-      {/* Safe area fill */}
-      <div style={{ 
-        height: 'env(safe-area-inset-bottom, 0px)', 
-        minHeight: '20px',
-        backgroundColor: 'white' 
-      }}></div>
     </div>
   );
 }
