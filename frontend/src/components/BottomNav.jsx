@@ -64,53 +64,35 @@ export default function BottomNav() {
   };
 
   return (
-    <>
-      {/* White background that fills entire bottom area */}
-      <div 
-        className="md:hidden fixed left-0 right-0 z-40"
-        style={{ 
-          bottom: 0,
-          height: '150px',
-          backgroundColor: '#FFFFFF'
-        }}
-      />
-      {/* Navigation bar */}
-      <div 
-        className="md:hidden fixed left-0 right-0 z-50"
-        style={{ 
-          bottom: 0,
-          backgroundColor: '#FFFFFF'
-        }}
-      >
-        <nav className="border-t border-gray-200">
-          <div className="flex justify-around items-center" style={{ height: '56px', backgroundColor: '#FFFFFF' }}>
-            {navItems.map((item) => {
-              const isActive = location.pathname === item.to || 
-                (item.to !== '/' && location.pathname.startsWith(item.to));
-              return (
-                <Link
-                  key={item.to}
-                  to={item.to}
-                  className="flex flex-col items-center justify-center flex-1 h-full"
-                  style={{ WebkitTapHighlightColor: 'transparent', backgroundColor: '#FFFFFF' }}
-                >
-                  {getIcon(item.icon, isActive)}
-                  <span style={{ 
-                    fontSize: '10px', 
-                    marginTop: '2px', 
-                    fontWeight: isActive ? '600' : '400',
-                    color: isActive ? '#C5A059' : '#6B7280'
-                  }}>
-                    {item.label}
-                  </span>
-                </Link>
-              );
-            })}
-          </div>
-        </nav>
-        {/* Safe area padding - 60px to cover all iPhone models */}
-        <div style={{ height: '60px', backgroundColor: '#FFFFFF' }}></div>
-      </div>
-    </>
+    <div 
+      className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white"
+      style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
+    >
+      <nav className="border-t border-gray-200">
+        <div className="flex justify-around items-center h-14">
+          {navItems.map((item) => {
+            const isActive = location.pathname === item.to || 
+              (item.to !== '/' && location.pathname.startsWith(item.to));
+            return (
+              <Link
+                key={item.to}
+                to={item.to}
+                className="flex flex-col items-center justify-center flex-1 h-full"
+              >
+                {getIcon(item.icon, isActive)}
+                <span style={{ 
+                  fontSize: '10px', 
+                  marginTop: '2px', 
+                  fontWeight: isActive ? '600' : '400',
+                  color: isActive ? '#C5A059' : '#6B7280'
+                }}>
+                  {item.label}
+                </span>
+              </Link>
+            );
+          })}
+        </div>
+      </nav>
+    </div>
   );
 }
