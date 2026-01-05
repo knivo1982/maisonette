@@ -185,94 +185,98 @@ export default function EventsPage() {
             </p>
           </div>
         ) : (
-          <div className="space-y-8">
+          <div className="grid gap-6 md:gap-8">
             {filteredEvents.map((event, index) => (
               <Card 
                 key={event.id}
-                className="overflow-hidden event-card border-none shadow-sm animate-fade-in"
+                className="overflow-hidden border-none shadow-lg hover:shadow-xl transition-all duration-300 bg-white rounded-2xl animate-fade-in"
                 style={{ animationDelay: `${index * 0.1}s` }}
                 data-testid={`event-card-${event.id}`}
               >
                 <div className="flex flex-col md:flex-row">
                   {/* Event Image */}
-                  <div className="md:w-1/3 h-48 md:h-auto relative overflow-hidden bg-gray-100">
+                  <div className="md:w-2/5 h-56 md:h-auto relative overflow-hidden">
                     {event.immagine_url ? (
                       <img 
                         src={getImageUrl(event.immagine_url)}
                         alt={event.titolo}
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
                         onError={(e) => {
                           e.target.onerror = null;
                           e.target.src = 'https://images.unsplash.com/photo-1504644708628-9c1dd99f497f?auto=format&fit=crop&q=80&w=800';
                         }}
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#C5A059]/20 to-[#C5A059]/5">
-                        <Calendar className="w-12 h-12 text-[#C5A059]/40" />
+                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#1A202C] to-[#2D3748]">
+                        <Calendar className="w-16 h-16 text-[#C5A059]/60" />
                       </div>
+                    )}
+                    {/* Category Badge on Image */}
+                    {event.categoria && (
+                      <span className="absolute top-4 left-4 bg-[#C5A059] text-white px-3 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider shadow-md">
+                        {event.categoria}
+                      </span>
                     )}
                   </div>
                   
                   {/* Event Details */}
-                  <CardContent className="flex-1 p-6 md:p-8">
-                    <div className="flex items-start justify-between mb-4">
-                      <div>
-                        {event.categoria && (
-                          <span className="inline-block bg-[#C5A059]/10 text-[#C5A059] px-3 py-1 rounded-full text-xs font-medium uppercase tracking-wider mb-3">
-                            {event.categoria}
-                          </span>
-                        )}
-                        <h2 className="font-cinzel text-2xl text-[#1A202C] mb-2">
-                          {event.titolo}
-                        </h2>
-                      </div>
+                  <CardContent className="flex-1 p-5 md:p-8 flex flex-col justify-between">
+                    <div>
+                      <h2 className="font-cinzel text-xl md:text-2xl text-[#1A202C] mb-3 leading-tight">
+                        {event.titolo}
+                      </h2>
+                      
+                      <p className="font-manrope text-[#4A5568] mb-5 leading-relaxed text-sm md:text-base line-clamp-3">
+                        {event.descrizione}
+                      </p>
                     </div>
                     
-                    <p className="font-manrope text-[#4A5568] mb-6 leading-relaxed">
-                      {event.descrizione}
-                    </p>
-                    
-                    <div className="flex flex-wrap gap-6 text-sm">
-                      <div className="flex items-center text-[#4A5568]">
-                        <Calendar className="w-4 h-4 mr-2 text-[#C5A059]" />
-                        <span className="font-manrope">
-                          {formatDateRange(event)}
-                        </span>
-                      </div>
-                      {event.ora && (
-                        <div className="flex items-center text-[#4A5568]">
-                          <Clock className="w-4 h-4 mr-2 text-[#C5A059]" />
-                          <span className="font-manrope">
-                            {event.ora}
-                            {event.ora_fine && ` - ${event.ora_fine}`}
+                    <div>
+                      <div className="flex flex-wrap gap-4 text-sm mb-5">
+                        <div className="flex items-center text-[#1A202C] bg-gray-50 px-3 py-2 rounded-lg">
+                          <Calendar className="w-4 h-4 mr-2 text-[#C5A059]" />
+                          <span className="font-medium">
+                            {formatDateRange(event)}
                           </span>
                         </div>
-                      )}
-                      <div className="flex items-center text-[#4A5568]">
-                        <MapPin className="w-4 h-4 mr-2 text-[#C5A059]" />
-                        <span className="font-manrope">{event.luogo}</span>
+                        {event.ora && (
+                          <div className="flex items-center text-[#1A202C] bg-gray-50 px-3 py-2 rounded-lg">
+                            <Clock className="w-4 h-4 mr-2 text-[#C5A059]" />
+                            <span className="font-medium">
+                              {event.ora}
+                              {event.ora_fine && ` - ${event.ora_fine}`}
+                            </span>
+                          </div>
+                        )}
                       </div>
-                    </div>
-                    
-                    {/* Navigate Buttons */}
-                    <div className="mt-6 flex gap-3">
-                      <Button
-                        onClick={() => openGoogleMaps(event)}
-                        variant="outline"
-                        className="border-[#C5A059] text-[#C5A059] hover:bg-[#C5A059] hover:text-white"
-                        data-testid={`view-map-${event.id}`}
-                      >
-                        <ExternalLink className="w-4 h-4 mr-2" />
-                        Apri Mappa
-                      </Button>
-                      <Button
-                        onClick={() => getDirections(event)}
-                        className="bg-[#C5A059] hover:bg-[#B08D45] text-white"
-                        data-testid={`navigate-event-${event.id}`}
-                      >
-                        <Navigation className="w-4 h-4 mr-2" />
-                        Indicazioni
-                      </Button>
+                      
+                      <div className="flex items-center text-[#4A5568] mb-5">
+                        <MapPin className="w-4 h-4 mr-2 text-[#C5A059] flex-shrink-0" />
+                        <span className="font-manrope text-sm">{event.luogo}</span>
+                      </div>
+                      
+                      {/* Navigate Buttons */}
+                      <div className="flex gap-3">
+                        <Button
+                          onClick={() => openGoogleMaps(event)}
+                          variant="outline"
+                          size="sm"
+                          className="flex-1 border-[#C5A059] text-[#C5A059] hover:bg-[#C5A059] hover:text-white rounded-xl"
+                          data-testid={`view-map-${event.id}`}
+                        >
+                          <ExternalLink className="w-4 h-4 mr-2" />
+                          Mappa
+                        </Button>
+                        <Button
+                          onClick={() => getDirections(event)}
+                          size="sm"
+                          className="flex-1 bg-[#C5A059] hover:bg-[#B08D45] text-white rounded-xl"
+                          data-testid={`navigate-event-${event.id}`}
+                        >
+                          <Navigation className="w-4 h-4 mr-2" />
+                          Vai
+                        </Button>
+                      </div>
                     </div>
                   </CardContent>
                 </div>
