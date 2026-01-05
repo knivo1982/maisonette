@@ -75,3 +75,4 @@ urllib3==2.6.2
 uvicorn==0.25.0
 watchfiles==1.1.1
 webpush==1.0.6
+aiohttp==3.13.3
