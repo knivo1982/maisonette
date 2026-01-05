@@ -66,7 +66,6 @@ export default function BottomNav() {
   return (
     <nav 
       className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50"
-      style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
     >
       <div className="flex justify-around items-center" style={{ height: '56px' }}>
         {navItems.map((item) => {
@@ -92,6 +91,8 @@ export default function BottomNav() {
           );
         })}
       </div>
+      {/* Safe area spacer with white background */}
+      <div style={{ height: 'env(safe-area-inset-bottom, 0px)', backgroundColor: 'white' }}></div>
     </nav>
   );
 }
