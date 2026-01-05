@@ -1217,22 +1217,14 @@ async def get_structure(structure_id: str):
 
 @api_router.post("/admin/structures/populate-coordinates")
 async def populate_structure_coordinates(admin: dict = Depends(get_admin_user)):
-    """Popola automaticamente le coordinate per le strutture che non le hanno"""
+    """Popola automaticamente le coordinate usando geocoding da indirizzo"""
+    import aiohttp
     import random
     
-    # Zone di Paestum con coordinate reali
-    ZONES = {
-        # Centro storico/archeologico
-        "centro": {"lat": 40.4219, "lng": 15.0067, "radius": 0.003},
-        # Zona mare/spiaggia
-        "mare": {"lat": 40.4250, "lng": 14.9920, "radius": 0.005},
-        # Zona Capaccio (paese)
-        "capaccio": {"lat": 40.4350, "lng": 15.0800, "radius": 0.008},
-        # Zona Laura (frazione)
-        "laura": {"lat": 40.4100, "lng": 15.0300, "radius": 0.005},
-        # Zona Licinella
-        "licinella": {"lat": 40.4400, "lng": 14.9950, "radius": 0.004},
-    }
+    GOOGLE_MAPS_API_KEY = "AIzaSyAz6yCJ1xH8DkzJ4N1bJfvKiX3k7CR4ohg"
+    
+    # Fallback: Centro di Paestum
+    PAESTUM_CENTER = (40.4219, 15.0067)
     
     # Luoghi conosciuti con coordinate precise
     known_locations = {
@@ -1240,49 +1232,44 @@ async def populate_structure_coordinates(admin: dict = Depends(get_admin_user)):
         "museo archeologico nazionale": (40.4215, 15.0048),
         "museo narrante": (40.4080, 15.0380),
         "templi di paestum": (40.4210, 15.0060),
-        "tempio di nettuno": (40.4200, 15.0058),
-        "tempio di cerere": (40.4225, 15.0045),
-        "basilica": (40.4195, 15.0062),
-        "porta sirena": (40.4218, 15.0080),
-        "porta giustizia": (40.4205, 15.0035),
-        "anfiteatro": (40.4190, 15.0070),
-        "foro": (40.4208, 15.0055),
     }
     
-    # Mapping tipo struttura -> zona preferita
-    tipo_to_zone = {
-        "ristorante": ["centro", "mare", "laura"],
-        "hotel": ["mare", "centro", "licinella"],
-        "b&b": ["centro", "mare", "laura"],
-        "spiaggia": ["mare", "licinella"],
-        "lido": ["mare", "licinella"],
-        "stabilimento": ["mare"],
-        "museo": ["centro"],
-        "parco": ["centro"],
-        "farmacia": ["capaccio", "centro", "laura"],
-        "banca": ["capaccio", "centro"],
-        "atm": ["capaccio", "centro"],
-        "supermercato": ["capaccio", "laura"],
-        "negozio": ["capaccio", "centro"],
-        "bar": ["centro", "mare", "capaccio"],
-        "pizzeria": ["centro", "capaccio", "laura"],
-        "gelateria": ["mare", "centro"],
-        "parcheggio": ["centro"],
-        "chiesa": ["capaccio", "centro"],
-        "ospedale": ["capaccio"],
-        "veterinario": ["capaccio"],
-    }
+    async def geocode_address(address: str, name: str) -> tuple:
+        """Usa Google Maps Geocoding API per ottenere le coordinate"""
+        try:
+            # Aggiungi "Paestum" o "Capaccio" se non presente
+            search_query = address if address else name
+            if search_query and "paestum" not in search_query.lower() and "capaccio" not in search_query.lower():
+                search_query = f"{search_query}, Paestum, Capaccio Paestum, SA, Italy"
+            elif search_query:
+                search_query = f"{search_query}, Italy"
+            
+            if not search_query:
+                return None, None
+                
+            url = f"https://maps.googleapis.com/maps/api/geocode/json?address={search_query}&key={GOOGLE_MAPS_API_KEY}"
+            
+            async with aiohttp.ClientSession() as session:
+                async with session.get(url, timeout=10) as response:
+                    if response.status == 200:
+                        data = await response.json()
+                        if data.get("results"):
+                            location = data["results"][0]["geometry"]["location"]
+                            return location["lat"], location["lng"]
+        except Exception as e:
+            print(f"Geocoding error for {name}: {e}")
+        
+        return None, None
     
-    # Trova TUTTE le strutture (anche quelle con coordinate per resettarle)
+    # Trova TUTTE le strutture
     structures = await db.structures.find({}).to_list(500)
     
     updated_count = 0
-    used_positions = []  # Per evitare sovrapposizioni
+    geocoded_count = 0
     
     for i, structure in enumerate(structures):
         nome = structure.get("nome", "").lower()
-        tipo = structure.get("tipo", "").lower()
-        categoria = structure.get("categoria", "").lower()
+        indirizzo = structure.get("indirizzo", "")
         
         lat, lng = None, None
         
@@ -1290,44 +1277,22 @@ async def populate_structure_coordinates(admin: dict = Depends(get_admin_user)):
         for key, coords in known_locations.items():
             if key in nome:
                 lat, lng = coords
-                # Aggiungi piccola variazione per evitare sovrapposizioni
                 lat += random.uniform(-0.0002, 0.0002)
                 lng += random.uniform(-0.0002, 0.0002)
                 break
         
-        # 2. Se non trovato, usa la zona basata sul tipo
+        # 2. Se ha indirizzo, usa geocoding
+        if lat is None and (indirizzo or structure.get("nome")):
+            lat, lng = await geocode_address(indirizzo, structure.get("nome", ""))
+            if lat:
+                geocoded_count += 1
+        
+        # 3. Fallback: coordinate casuali intorno a Paestum
         if lat is None:
-            # Determina la zona
-            zone_names = tipo_to_zone.get(tipo, ["centro"])
-            if not zone_names:
-                # Prova con parole chiave nel nome
-                if any(x in nome for x in ["spiaggia", "mare", "lido", "beach"]):
-                    zone_names = ["mare"]
-                elif any(x in nome for x in ["museo", "tempio", "parco", "archeologico"]):
-                    zone_names = ["centro"]
-                elif any(x in nome for x in ["capaccio"]):
-                    zone_names = ["capaccio"]
-                else:
-                    zone_names = ["centro", "mare", "laura"]
-            
-            # Scegli una zona casuale tra quelle disponibili
-            zone_name = random.choice(zone_names)
-            zone = ZONES[zone_name]
-            
-            # Genera coordinate nella zona
             angle = random.uniform(0, 360)
-            distance = random.uniform(0, zone["radius"])
-            lat = zone["lat"] + distance * math.cos(math.radians(angle))
-            lng = zone["lng"] + distance * math.sin(math.radians(angle))
-        
-        # 3. Assicurati che non ci siano sovrapposizioni
-        for existing_lat, existing_lng in used_positions:
-            if abs(lat - existing_lat) < 0.0003 and abs(lng - existing_lng) < 0.0003:
-                lat += random.uniform(0.0003, 0.0008)
-                lng += random.uniform(0.0003, 0.0008)
-                break
-        
-        used_positions.append((lat, lng))
+            distance = random.uniform(0.002, 0.015)
+            lat = PAESTUM_CENTER[0] + distance * math.cos(math.radians(angle))
+            lng = PAESTUM_CENTER[1] + distance * math.sin(math.radians(angle))
         
         # Aggiorna la struttura
         result = await db.structures.update_one(
@@ -1339,8 +1304,9 @@ async def populate_structure_coordinates(admin: dict = Depends(get_admin_user)):
             updated_count += 1
     
     return {
-        "message": f"Coordinate aggiornate per {updated_count} strutture su {len(structures)}",
+        "message": f"Coordinate aggiornate: {updated_count} totali, {geocoded_count} da geocoding",
         "updated": updated_count,
+        "geocoded": geocoded_count,
         "total": len(structures)
     }
 
