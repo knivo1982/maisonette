@@ -20,6 +20,7 @@ export default function EventsPage() {
   const [events, setEvents] = useState([]);
   const [filteredEvents, setFilteredEvents] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [search, setSearch] = useState('');
   const [categoria, setCategoria] = useState('all');
 
@@ -33,11 +34,15 @@ export default function EventsPage() {
 
   const fetchEvents = async () => {
     try {
+      setError(null);
+      console.log('Fetching events from:', `${API}/events`);
       // Fetch only current and future events (default behavior)
       const response = await axios.get(`${API}/events`);
-      setEvents(response.data);
+      console.log('Events response:', response.data);
+      setEvents(response.data || []);
     } catch (error) {
       console.error('Error fetching events:', error);
+      setError('Errore nel caricamento degli eventi');
     } finally {
       setLoading(false);
     }
