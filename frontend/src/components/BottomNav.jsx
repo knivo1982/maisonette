@@ -70,7 +70,7 @@ export default function BottomNav() {
         className="md:hidden fixed left-0 right-0 z-40"
         style={{ 
           bottom: 0,
-          height: '100px',
+          height: '150px',
           backgroundColor: '#FFFFFF'
         }}
       />
@@ -83,7 +83,7 @@ export default function BottomNav() {
         }}
       >
         <nav className="border-t border-gray-200">
-          <div className="flex justify-around items-center" style={{ height: '56px' }}>
+          <div className="flex justify-around items-center" style={{ height: '56px', backgroundColor: '#FFFFFF' }}>
             {navItems.map((item) => {
               const isActive = location.pathname === item.to || 
                 (item.to !== '/' && location.pathname.startsWith(item.to));
@@ -108,8 +108,8 @@ export default function BottomNav() {
             })}
           </div>
         </nav>
-        {/* Safe area padding */}
-        <div style={{ height: '34px', backgroundColor: '#FFFFFF' }}></div>
+        {/* Safe area padding - 50px to cover all iPhone models */}
+        <div style={{ height: '50px', backgroundColor: '#FFFFFF' }}></div>
       </div>
     </>
   );
