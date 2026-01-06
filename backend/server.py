@@ -2448,6 +2448,36 @@ async def admin_search_guests(q: str = "", admin: dict = Depends(get_admin_user)
     
     return result
 
+@api_router.delete("/admin/guests/{guest_id}")
+async def admin_delete_guest(guest_id: str, admin: dict = Depends(get_admin_user)):
+    """Elimina un utente e tutti i suoi dati associati"""
+    
+    # Verifica che l'utente esista
+    guest = await db.guests.find_one({"id": guest_id})
+    if not guest:
+        # Prova anche nella collection users
+        guest = await db.users.find_one({"id": guest_id})
+        if not guest:
+            raise HTTPException(status_code=404, detail="Utente non trovato")
+    
+    # Non permettere l'eliminazione di admin
+    if guest.get("is_admin"):
+        raise HTTPException(status_code=403, detail="Non puoi eliminare un amministratore")
+    
+    guest_email = guest.get("email", "")
+    
+    # Elimina i check-in dell'utente
+    await db.checkins.delete_many({"user_id": guest_id})
+    
+    # Elimina le prenotazioni associate
+    await db.bookings.delete_many({"user_id": guest_id})
+    
+    # Elimina l'utente da entrambe le collections
+    await db.guests.delete_one({"id": guest_id})
+    await db.users.delete_one({"id": guest_id})
+    
+    return {"message": f"Utente {guest_email} eliminato con successo"}
+
 @api_router.get("/admin/checkins")
 async def admin_get_checkins(admin: dict = Depends(get_admin_user)):
     """Get all check-ins from both collections (form + online/validated)"""
