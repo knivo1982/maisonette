@@ -246,7 +246,24 @@ export default function StructuresPage() {
     }
   };
 
-  const getDirections = (structure) => {
+  const [showMapChoice, setShowMapChoice] = useState(false);
+  const [selectedStructure, setSelectedStructure] = useState(null);
+
+  const openAppleMaps = (structure) => {
+    const lat = structure.lat || structure.latitudine;
+    const lng = structure.lng || structure.longitudine;
+    
+    let url;
+    if (lat && lng) {
+      url = `maps://maps.apple.com/?daddr=${lat},${lng}`;
+    } else {
+      const query = structure.indirizzo || structure.nome || 'Paestum';
+      url = `maps://maps.apple.com/?daddr=${encodeURIComponent(query)}`;
+    }
+    window.location.href = url;
+  };
+
+  const openGoogleMaps = (structure) => {
     const lat = structure.lat || structure.latitudine;
     const lng = structure.lng || structure.longitudine;
     
@@ -258,6 +275,11 @@ export default function StructuresPage() {
       url = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(query)}`;
     }
     window.open(url, '_blank', 'noopener,noreferrer');
+  };
+
+  const handleGetDirections = (structure) => {
+    setSelectedStructure(structure);
+    setShowMapChoice(true);
   };
 
   const callPhone = (telefono) => {
