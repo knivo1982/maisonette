@@ -551,6 +551,47 @@ export default function StructuresPage() {
             </div>
           )}
         </div>
+
+        {/* Map Choice Dialog */}
+        {showMapChoice && (
+          <div className="fixed inset-0 bg-black/50 z-[200] flex items-end justify-center p-4" onClick={() => setShowMapChoice(false)}>
+            <div className="bg-white rounded-2xl w-full max-w-md p-6 mb-4" onClick={e => e.stopPropagation()}>
+              <h3 className="font-cinzel text-xl text-center mb-6">Scegli l'App Mappe</h3>
+              <div className="space-y-3">
+                <button
+                  onClick={() => { openAppleMaps(selectedStructure); setShowMapChoice(false); }}
+                  className="w-full flex items-center gap-4 p-4 bg-gray-50 hover:bg-gray-100 rounded-xl transition-colors"
+                >
+                  <div className="w-12 h-12 bg-gradient-to-br from-green-400 to-green-600 rounded-xl flex items-center justify-center">
+                    <MapPin className="w-6 h-6 text-white" />
+                  </div>
+                  <div className="text-left">
+                    <p className="font-semibold text-[#1A202C]">Apple Maps</p>
+                    <p className="text-sm text-gray-500">Mappe di Apple</p>
+                  </div>
+                </button>
+                <button
+                  onClick={() => { openGoogleMaps(selectedStructure); setShowMapChoice(false); }}
+                  className="w-full flex items-center gap-4 p-4 bg-gray-50 hover:bg-gray-100 rounded-xl transition-colors"
+                >
+                  <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-red-500 rounded-xl flex items-center justify-center">
+                    <MapPin className="w-6 h-6 text-white" />
+                  </div>
+                  <div className="text-left">
+                    <p className="font-semibold text-[#1A202C]">Google Maps</p>
+                    <p className="text-sm text-gray-500">Mappe di Google</p>
+                  </div>
+                </button>
+              </div>
+              <button
+                onClick={() => setShowMapChoice(false)}
+                className="w-full mt-4 py-3 text-gray-500 font-medium"
+              >
+                Annulla
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </Layout>
   );
