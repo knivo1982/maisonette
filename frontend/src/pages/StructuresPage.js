@@ -446,7 +446,7 @@ export default function StructuresPage() {
                           <Button
                             size="sm"
                             variant="ghost"
-                            onClick={(e) => { e.stopPropagation(); getDirections(structure); }}
+                            onClick={(e) => { e.stopPropagation(); handleGetDirections(structure); }}
                             className="text-[#C5A059] hover:bg-[#C5A059]/10"
                           >
                             <Navigation className="w-4 h-4" />
@@ -528,7 +528,7 @@ export default function StructuresPage() {
                         <Button
                           size="sm"
                           variant="outline"
-                          onClick={() => getDirections(structure)}
+                          onClick={() => handleGetDirections(structure)}
                           className="border-[#C5A059] text-[#C5A059] hover:bg-[#C5A059] hover:text-white"
                         >
                           <Navigation className="w-4 h-4" />
