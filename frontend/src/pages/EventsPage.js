@@ -66,16 +66,36 @@ export default function EventsPage() {
     setFilteredEvents(filtered);
   };
 
-  const openGoogleMaps = (event) => {
+  const [showMapChoice, setShowMapChoice] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState(null);
+  const [mapAction, setMapAction] = useState('view'); // 'view' or 'directions'
+
+  const openAppleMaps = (event, action = 'view') => {
     const query = event.indirizzo || event.luogo || 'Paestum';
-    const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
+    let url;
+    if (action === 'directions') {
+      url = `maps://maps.apple.com/?daddr=${encodeURIComponent(query)}`;
+    } else {
+      url = `maps://maps.apple.com/?q=${encodeURIComponent(query)}`;
+    }
+    window.location.href = url;
+  };
+
+  const openGoogleMaps = (event, action = 'view') => {
+    const query = event.indirizzo || event.luogo || 'Paestum';
+    let url;
+    if (action === 'directions') {
+      url = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(query)}`;
+    } else {
+      url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
+    }
     window.open(url, '_blank', 'noopener,noreferrer');
   };
 
-  const getDirections = (event) => {
-    const query = event.indirizzo || event.luogo || 'Paestum';
-    const url = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(query)}`;
-    window.open(url, '_blank', 'noopener,noreferrer');
+  const handleMapAction = (event, action) => {
+    setSelectedEvent(event);
+    setMapAction(action);
+    setShowMapChoice(true);
   };
 
   const formatDate = (dateStr) => {
