@@ -902,6 +902,28 @@ async def get_me(current_user: dict = Depends(get_current_user)):
         codice_prenotazione=current_user.get("codice_prenotazione")
     )
 
+@api_router.delete("/auth/delete-account")
+async def delete_account(current_user: dict = Depends(get_current_user)):
+    """
+    Elimina permanentemente l'account dell'utente e tutti i dati associati.
+    """
+    user_id = current_user["id"]
+    user_email = current_user["email"]
+    
+    # Elimina i check-in dell'utente
+    await db.checkins.delete_many({"user_id": user_id})
+    
+    # Elimina le prenotazioni associate
+    await db.bookings.delete_many({"user_id": user_id})
+    
+    # Elimina l'utente
+    result = await db.users.delete_one({"id": user_id})
+    
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Utente non trovato")
+    
+    return {"message": f"Account {user_email} eliminato con successo"}
+
 # ==================== CHECK-IN ROUTES ====================
 
 @api_router.post("/checkin", response_model=CheckInResponse)
