@@ -247,7 +247,6 @@ export default function StructuresPage() {
   };
 
   const [showMapChoice, setShowMapChoice] = useState(false);
-  const [selectedStructure, setSelectedStructure] = useState(null);
 
   const openAppleMaps = (structure) => {
     const lat = structure.lat || structure.latitudine;
