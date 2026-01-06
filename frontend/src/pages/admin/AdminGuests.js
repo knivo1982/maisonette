@@ -8,7 +8,7 @@ import { Label } from '../../components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../../components/ui/dialog';
 import axios from 'axios';
 import { toast } from 'sonner';
-import { Users, Gift, Mail, Phone, Star } from 'lucide-react';
+import { Users, Gift, Mail, Phone, Star, Trash2 } from 'lucide-react';
 
 import { API } from '../../lib/api';
 
