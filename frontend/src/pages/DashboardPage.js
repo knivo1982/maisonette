@@ -216,6 +216,45 @@ export default function DashboardPage() {
             )}
           </CardContent>
         </Card>
+
+        {/* Account Settings */}
+        <Card className="mt-8 border-red-200">
+          <CardHeader>
+            <CardTitle className="font-cinzel text-xl text-[#1A202C]">
+              Impostazioni Account
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="p-4 bg-red-50 rounded-xl border border-red-100">
+              <h4 className="font-semibold text-red-700 mb-2">Elimina Account</h4>
+              <p className="text-sm text-red-600 mb-4">
+                Questa azione è irreversibile. Tutti i tuoi dati, check-in e prenotazioni saranno eliminati permanentemente.
+              </p>
+              <Button 
+                variant="destructive"
+                onClick={async () => {
+                  if (window.confirm('Sei sicuro di voler eliminare il tuo account? Questa azione non può essere annullata.')) {
+                    if (window.confirm('Conferma: tutti i tuoi dati saranno eliminati permanentemente.')) {
+                      try {
+                        await axios.delete(`${API}/auth/delete-account`, {
+                          headers: { Authorization: `Bearer ${token}` }
+                        });
+                        toast.success('Account eliminato con successo');
+                        window.location.href = '/';
+                      } catch (error) {
+                        toast.error('Errore durante l\'eliminazione dell\'account');
+                      }
+                    }
+                  }
+                }}
+                className="bg-red-600 hover:bg-red-700"
+                data-testid="delete-account-btn"
+              >
+                Elimina il mio account
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </Layout>
   );
