@@ -278,7 +278,7 @@ export default function EventsPage() {
                       {/* Navigate Buttons */}
                       <div className="flex gap-3">
                         <Button
-                          onClick={() => openGoogleMaps(event)}
+                          onClick={() => handleMapAction(event, 'view')}
                           variant="outline"
                           size="sm"
                           className="flex-1 border-[#C5A059] text-[#C5A059] hover:bg-[#C5A059] hover:text-white rounded-xl"
@@ -288,7 +288,7 @@ export default function EventsPage() {
                           Mappa
                         </Button>
                         <Button
-                          onClick={() => getDirections(event)}
+                          onClick={() => handleMapAction(event, 'directions')}
                           size="sm"
                           className="flex-1 bg-[#C5A059] hover:bg-[#B08D45] text-white rounded-xl"
                           data-testid={`navigate-event-${event.id}`}
